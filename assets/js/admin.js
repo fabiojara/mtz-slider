@@ -30,6 +30,9 @@
       );
       $(document).on("click", "#mtz-loading", this.closeLoading.bind(this));
 
+      // Toggle panel de ayuda
+      $("#mtz-toggle-help").on("click", this.toggleHelp.bind(this));
+
       // Sortable
       if ($.fn.sortable) {
         $("#mtz-slider-grid").sortable({
@@ -278,6 +281,14 @@
 
     saveChanges: function() {
       MTZSlider.showNotice(mtzSlider.strings.saved, "success");
+    },
+
+    toggleHelp: function() {
+      const $helpContent = $(".mtz-help-content");
+      const $helpToggle = $(".mtz-help-toggle");
+
+      $helpContent.slideToggle(300);
+      $helpToggle.toggleClass("active");
     }
   };
 

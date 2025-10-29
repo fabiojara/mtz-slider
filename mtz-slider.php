@@ -91,7 +91,7 @@ class MTZ_Slider {
     public function activate() {
         // Cargar la clase de base de datos primero
         require_once MTZ_SLIDER_PLUGIN_DIR . 'includes/class-mtz-slider-database.php';
-        
+
         $database = new MTZ_Slider_Database();
         $database->create_tables();
         flush_rewrite_rules();

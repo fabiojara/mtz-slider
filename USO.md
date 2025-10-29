@@ -100,8 +100,8 @@ Edita tu página de inicio (homepage) y agrega el shortcode al principio.
 
 ```php
 <!-- En header.php del tema -->
-<?php if (is_front_page()) { 
-    echo do_shortcode('[mtz_slider]'); 
+<?php if (is_front_page()) {
+    echo do_shortcode('[mtz_slider]');
 } ?>
 ```
 
