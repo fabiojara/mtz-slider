@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 class MTZ_Slider_Admin {
-    
+
     /**
      * Constructor
      */

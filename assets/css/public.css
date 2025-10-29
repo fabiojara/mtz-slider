@@ -190,29 +190,29 @@
         height: 50vh;
         min-height: 300px;
     }
-    
+
     .mtz-slide-title {
         font-size: 2rem;
     }
-    
+
     .mtz-slide-description {
         font-size: 1rem;
     }
-    
+
     .mtz-slider-prev,
     .mtz-slider-next {
         width: 40px;
         height: 40px;
     }
-    
+
     .mtz-slider-prev {
         left: 10px;
     }
-    
+
     .mtz-slider-next {
         right: 10px;
     }
-    
+
     .mtz-slide-content {
         padding: 20px;
     }
@@ -222,7 +222,7 @@
     .mtz-slide {
         min-height: 250px;
     }
-    
+
     .mtz-slide-title {
         font-size: 1.5rem;
     }

@@ -11,10 +11,10 @@ if (!defined('ABSPATH')) {
 ?>
 
 <div class="mtz-slider-wrapper">
-    <div class="mtz-slider" 
-         data-autoplay="<?php echo esc_attr($atts['autoplay']); ?>" 
+    <div class="mtz-slider"
+         data-autoplay="<?php echo esc_attr($atts['autoplay']); ?>"
          data-speed="<?php echo esc_attr($atts['speed']); ?>">
-        
+
         <div class="mtz-slider-track">
             <?php foreach ($images as $image): ?>
                 <div class="mtz-slide" style="background-image: url('<?php echo esc_url($image['image_url']); ?>');">
@@ -31,16 +31,16 @@ if (!defined('ABSPATH')) {
                 </div>
             <?php endforeach; ?>
         </div>
-        
+
         <button class="mtz-slider-prev" aria-label="<?php esc_attr_e('Anterior', 'mtz-slider'); ?>">
             <span class="dashicons dashicons-arrow-left-alt2"></span>
         </button>
         <button class="mtz-slider-next" aria-label="<?php esc_attr_e('Siguiente', 'mtz-slider'); ?>">
             <span class="dashicons dashicons-arrow-right-alt2"></span>
         </button>
-        
+
         <div class="mtz-slider-dots"></div>
-        
+
         <?php if ($atts['autoplay']): ?>
             <button class="mtz-slider-pause-play" aria-label="<?php esc_attr_e('Pausar/Reproducir', 'mtz-slider'); ?>">
                 <span class="dashicons dashicons-controls-pause"></span>

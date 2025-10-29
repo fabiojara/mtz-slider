@@ -245,11 +245,11 @@
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .mtz-slider-toolbar button {
         width: 100%;
     }
-    
+
     .mtz-slider-images-list {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 15px;
