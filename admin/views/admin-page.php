@@ -112,9 +112,9 @@ if (!defined('ABSPATH')) {
                                     <?php esc_html_e('Copia el siguiente código donde desees mostrar el slider:', 'mtz-slider'); ?>
                                 </p>
                             </div>
-                            <div class="mtz-slider-item-shortcode">
-                                <input type="text" readonly value="<?php echo esc_attr($shortcode); ?>" class="mtz-shortcode-input">
-                                <button class="button button-small mtz-copy-shortcode" data-shortcode="<?php echo esc_attr($shortcode); ?>">
+                            <div class="mtz-slider-item-shortcode" onclick="event.stopPropagation();">
+                                <input type="text" readonly value="<?php echo esc_attr($shortcode); ?>" class="mtz-shortcode-input" onclick="event.stopPropagation();">
+                                <button class="button button-small mtz-copy-shortcode" data-shortcode="<?php echo esc_attr($shortcode); ?>" onclick="event.stopPropagation();">
                                     <i data-lucide="copy"></i>
                                 </button>
                             </div>
