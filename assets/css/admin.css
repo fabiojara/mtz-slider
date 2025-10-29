@@ -28,11 +28,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    vertical-align: middle;
+    line-height: 1.4;
 }
 
 .mtz-slider-header-actions button i {
     width: 18px;
     height: 18px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .mtz-slider-title .dashicons,
@@ -391,6 +395,20 @@
     font-size: 14px;
 }
 
+.mtz-sliders-header button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.mtz-sliders-header button i {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
 .mtz-sliders-list {
     overflow-y: auto;
     flex: 1;
@@ -521,18 +539,42 @@
 
 /* Estilos para iconos Lucide */
 .mtz-slider-item-delete i,
-.mtz-copy-shortcode i,
-#mtz-add-images i,
-#mtz-create-slider i {
+.mtz-copy-shortcode i {
     width: 16px;
     height: 16px;
     stroke-width: 2;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
 }
 
 #mtz-add-images i,
-#mtz-create-slider i {
+#mtz-create-slider i,
+#mtz-toggle-help i {
     width: 18px;
     height: 18px;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+/* Asegurar que los botones tengan alineación perfecta */
+#mtz-create-slider,
+#mtz-add-images,
+#mtz-toggle-help {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+    vertical-align: middle;
+}
+
+.mtz-copy-shortcode,
+.mtz-slider-item-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
 }
 
 /* Responsive */
