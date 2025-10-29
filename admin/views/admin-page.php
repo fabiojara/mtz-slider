@@ -11,43 +11,59 @@ if (!defined('ABSPATH')) {
 ?>
 
 <div class="wrap mtz-slider-admin">
-    <h1 class="mtz-slider-title">
-        <span class="dashicons dashicons-images-alt2"></span>
-        <?php esc_html_e('MTZ Slider', 'mtz-slider'); ?>
-        <span class="mtz-version-badge">v<?php echo MTZ_SLIDER_VERSION; ?></span>
-    </h1>
+    <div class="mtz-slider-header-actions">
+        <h1 class="mtz-slider-title">
+            <span class="dashicons dashicons-images-alt2"></span>
+            <?php esc_html_e('MTZ Slider', 'mtz-slider'); ?>
+            <span class="mtz-version-badge">v<?php echo MTZ_SLIDER_VERSION; ?></span>
+        </h1>
+        <button type="button" class="button" id="mtz-toggle-help">
+            <i data-lucide="help-circle"></i>
+            <?php esc_html_e('¿Cómo usar este plugin?', 'mtz-slider'); ?>
+        </button>
+    </div>
 
-    <!-- Panel de ayuda -->
-    <div class="mtz-help-panel">
-        <div class="mtz-help-toggle">
-            <button type="button" class="button-link" id="mtz-toggle-help">
-                <span class="dashicons dashicons-info"></span>
-                <?php esc_html_e('¿Cómo usar este plugin?', 'mtz-slider'); ?>
-                <span class="dashicons dashicons-arrow-down mtz-help-arrow"></span>
-            </button>
-        </div>
-        <div class="mtz-help-content" style="display: none;">
-            <div class="mtz-help-sections">
-                <div class="mtz-help-section">
-                    <h3><span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('Paso 1: Crear un Slider', 'mtz-slider'); ?></h3>
-                    <p><?php esc_html_e('Haz clic en "Crear Nuevo Slider" y asígnale un nombre único.', 'mtz-slider'); ?></p>
-                </div>
-
-                <div class="mtz-help-section">
-                    <h3><span class="dashicons dashicons-images-alt2"></span> <?php esc_html_e('Paso 2: Agregar Imágenes', 'mtz-slider'); ?></h3>
-                    <p><?php esc_html_e('Selecciona el slider de la lista y haz clic en "Agregar Imágenes" para añadir tus imágenes.', 'mtz-slider'); ?></p>
-                </div>
-
-                <div class="mtz-help-section">
-                    <h3><span class="dashicons dashicons-admin-post"></span> <?php esc_html_e('Paso 3: Copiar y Usar el Shortcode', 'mtz-slider'); ?></h3>
-                    <p><?php esc_html_e('Cada slider tiene su propio shortcode. Copia el shortcode que aparece junto a cada slider y pégalo en tus páginas.', 'mtz-slider'); ?></p>
-                    <code class="mtz-code-block">[mtz_slider id="1"]</code>
-                    <p><strong><?php esc_html_e('Ejemplos:', 'mtz-slider'); ?></strong></p>
-                    <ul>
-                        <li><code>[mtz_slider id="1"]</code> - <?php esc_html_e('Usar slider con ID 1', 'mtz-slider'); ?></li>
-                        <li><code>[mtz_slider id="2" speed="3000"]</code> - <?php esc_html_e('Slider 2 con velocidad personalizada', 'mtz-slider'); ?></li>
-                        <li><code>[mtz_slider id="3" autoplay="false"]</code> - <?php esc_html_e('Slider 3 sin reproducción automática', 'mtz-slider'); ?></li>
-                    </ul>
+    <!-- Modal de ayuda -->
+    <div id="mtz-help-modal" class="mtz-modal" style="display: none;">
+        <div class="mtz-modal-content mtz-help-modal-content">
+            <div class="mtz-modal-header">
+                <h2><i data-lucide="help-circle"></i> <?php esc_html_e('¿Cómo usar este plugin?', 'mtz-slider'); ?></h2>
+                <button class="mtz-modal-close">&times;</button>
+            </div>
+            <div class="mtz-modal-body">
+                <div class="mtz-help-sections">
+                    <div class="mtz-help-section">
+                        <h3><i data-lucide="settings"></i> <?php esc_html_e('Paso 1: Crear un Slider', 'mtz-slider'); ?></h3>
+                        <p><?php esc_html_e('Haz clic en "Crear Nuevo Slider" en la barra lateral y asígnale un nombre único.', 'mtz-slider'); ?></p>
+                    </div>
+                    
+                    <div class="mtz-help-section">
+                        <h3><i data-lucide="image-plus"></i> <?php esc_html_e('Paso 2: Agregar Imágenes', 'mtz-slider'); ?></h3>
+                        <p><?php esc_html_e('Selecciona el slider de la lista y haz clic en "Agregar Imágenes" para añadir tus imágenes.', 'mtz-slider'); ?></p>
+                    </div>
+                    
+                    <div class="mtz-help-section">
+                        <h3><i data-lucide="code"></i> <?php esc_html_e('Paso 3: Copiar y Usar el Shortcode', 'mtz-slider'); ?></h3>
+                        <p><?php esc_html_e('Cada slider tiene su propio shortcode. Copia el shortcode que aparece junto a cada slider y pégalo en tus páginas.', 'mtz-slider'); ?></p>
+                        <code class="mtz-code-block">[mtz_slider id="1"]</code>
+                        <p><strong><?php esc_html_e('Ejemplos:', 'mtz-slider'); ?></strong></p>
+                        <ul>
+                            <li><code>[mtz_slider id="1"]</code> - <?php esc_html_e('Usar slider con ID 1', 'mtz-slider'); ?></li>
+                            <li><code>[mtz_slider id="2" speed="3000"]</code> - <?php esc_html_e('Slider 2 con velocidad personalizada', 'mtz-slider'); ?></li>
+                            <li><code>[mtz_slider id="3" autoplay="false"]</code> - <?php esc_html_e('Slider 3 sin reproducción automática', 'mtz-slider'); ?></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mtz-help-section">
+                        <h3><i data-lucide="layout"></i> <?php esc_html_e('Ubicaciones', 'mtz-slider'); ?></h3>
+                        <p><?php esc_html_e('Puedes usar el slider en:', 'mtz-slider'); ?></p>
+                        <ul>
+                            <li>✓ <?php esc_html_e('Páginas y Entradas', 'mtz-slider'); ?></li>
+                            <li>✓ <?php esc_html_e('Plantillas personalizadas', 'mtz-slider'); ?></li>
+                            <li>✓ <?php esc_html_e('Widgets (si soportan shortcodes)', 'mtz-slider'); ?></li>
+                            <li>✓ <?php esc_html_e('Código PHP:', 'mtz-slider'); ?> <code>&lt;?php echo do_shortcode('[mtz_slider id="1"]'); ?&gt;</code></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

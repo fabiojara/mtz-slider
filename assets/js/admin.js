@@ -462,11 +462,12 @@
     },
 
     toggleHelp: function() {
-      const $helpContent = $(".mtz-help-content");
-      const $helpToggle = $(".mtz-help-toggle");
-
-      $helpContent.slideToggle(300);
-      $helpToggle.toggleClass("active");
+      $("#mtz-help-modal").show();
+      
+      // Reinicializar iconos en la modal
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
     }
   };
 
