@@ -539,7 +539,7 @@
 }
 
 .mtz-copy-shortcode {
-    padding: 8px 8px 0px 8px;
+    padding: 8px 8px 0px 8px !important;
     min-width: auto;
     min-height: 26px;
     display: inline-flex;
