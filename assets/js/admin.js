@@ -146,6 +146,14 @@
     },
 
     selectSlider: function(e) {
+      // No hacer nada si el click fue en el shortcode o en el botón de copiar
+      if ($(e.target).hasClass('mtz-copy-shortcode') || 
+          $(e.target).closest('.mtz-copy-shortcode').length > 0 ||
+          $(e.target).hasClass('mtz-shortcode-input') ||
+          $(e.target).closest('.mtz-shortcode-input').length > 0) {
+        return;
+      }
+
       const sliderId = $(e.currentTarget)
         .closest(".mtz-slider-item")
         .data("slider-id");
