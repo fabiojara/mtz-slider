@@ -202,6 +202,11 @@
 
   // Inicializar todos los sliders en la página
   $(document).ready(function() {
+    // Inicializar Lucide Icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+    
     // Navegación con teclado (solo para el slider activo en focus)
     let currentFocusedSlider = null;
 

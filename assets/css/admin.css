@@ -11,9 +11,16 @@
     margin-bottom: 20px;
 }
 
-.mtz-slider-title .dashicons {
+.mtz-slider-title .dashicons,
+.mtz-slider-title i {
     margin-right: 10px;
     color: #2271b1;
+}
+
+.mtz-slider-title i {
+    width: 32px;
+    height: 32px;
+    stroke-width: 2;
 }
 
 .mtz-slider-header {
@@ -527,6 +534,22 @@
 
 .mtz-no-slider h3 {
     margin: 0 0 10px 0;
+}
+
+/* Estilos para iconos Lucide */
+.mtz-slider-item-delete i,
+.mtz-copy-shortcode i,
+#mtz-add-images i,
+#mtz-create-slider i {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+}
+
+#mtz-add-images i,
+#mtz-create-slider i {
+    width: 18px;
+    height: 18px;
 }
 
 /* Responsive */

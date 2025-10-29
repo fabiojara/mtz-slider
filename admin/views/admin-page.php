@@ -60,7 +60,7 @@ if (!defined('ABSPATH')) {
             <div class="mtz-sliders-header">
                 <h3><?php esc_html_e('Mis Sliders', 'mtz-slider'); ?></h3>
                 <button type="button" id="mtz-create-slider" class="button button-primary">
-                    <span class="dashicons dashicons-plus"></span>
+                    <i data-lucide="plus"></i>
                     <?php esc_html_e('Crear Nuevo Slider', 'mtz-slider'); ?>
                 </button>
             </div>
@@ -81,7 +81,7 @@ if (!defined('ABSPATH')) {
                             <div class="mtz-slider-item-header">
                                 <h4><?php echo esc_html($slider_item['name']); ?></h4>
                                 <button class="mtz-slider-item-delete" data-id="<?php echo esc_attr($slider_item['id']); ?>" title="<?php esc_attr_e('Eliminar', 'mtz-slider'); ?>">
-                                    <span class="dashicons dashicons-trash"></span>
+                                    <i data-lucide="trash-2"></i>
                                 </button>
                             </div>
                             <div class="mtz-slider-item-info">
@@ -96,7 +96,7 @@ if (!defined('ABSPATH')) {
                             <div class="mtz-slider-item-shortcode">
                                 <input type="text" readonly value="<?php echo esc_attr($shortcode); ?>" class="mtz-shortcode-input">
                                 <button class="button button-small mtz-copy-shortcode" data-shortcode="<?php echo esc_attr($shortcode); ?>">
-                                    <span class="dashicons dashicons-clipboard"></span>
+                                    <i data-lucide="copy"></i>
                                 </button>
                             </div>
                         </div>
@@ -119,7 +119,7 @@ if (!defined('ABSPATH')) {
 
                 <div class="mtz-slider-toolbar">
                     <button type="button" id="mtz-add-images" class="button button-primary button-large">
-                        <span class="dashicons dashicons-plus-alt"></span>
+                        <i data-lucide="image-plus"></i>
                         <?php esc_html_e('Agregar Imágenes', 'mtz-slider'); ?>
                     </button>
                     <div class="mtz-slider-notice" id="mtz-notice"></div>

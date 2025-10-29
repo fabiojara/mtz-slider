@@ -10,14 +10,14 @@ if (!defined('ABSPATH')) {
 }
 ?>
 
-<?php 
+<?php
 $slider_id = isset($atts['id']) ? intval($atts['id']) : 1;
 $unique_id = 'mtz-slider-' . $slider_id;
 ?>
 <div class="mtz-slider-wrapper" id="<?php echo esc_attr($unique_id); ?>">
-    <div class="mtz-slider" 
+    <div class="mtz-slider"
          id="<?php echo esc_attr($unique_id); ?>-container"
-         data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>" 
+         data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
          data-speed="<?php echo esc_attr($speed); ?>"
          data-slider-id="<?php echo esc_attr($slider_id); ?>">
 
@@ -39,17 +39,17 @@ $unique_id = 'mtz-slider-' . $slider_id;
         </div>
 
         <button class="mtz-slider-prev" aria-label="<?php esc_attr_e('Anterior', 'mtz-slider'); ?>">
-            <span class="dashicons dashicons-arrow-left-alt2"></span>
+            <i data-lucide="chevron-left"></i>
         </button>
         <button class="mtz-slider-next" aria-label="<?php esc_attr_e('Siguiente', 'mtz-slider'); ?>">
-            <span class="dashicons dashicons-arrow-right-alt2"></span>
+            <i data-lucide="chevron-right"></i>
         </button>
 
         <div class="mtz-slider-dots"></div>
-
+        
         <?php if ($autoplay): ?>
             <button class="mtz-slider-pause-play" aria-label="<?php esc_attr_e('Pausar/Reproducir', 'mtz-slider'); ?>">
-                <span class="dashicons dashicons-controls-pause"></span>
+                <i data-lucide="pause"></i>
             </button>
         <?php endif; ?>
     </div>

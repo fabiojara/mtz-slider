@@ -113,12 +113,12 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.mtz-slider-prev .dashicons,
-.mtz-slider-next .dashicons {
-    font-size: 24px;
+.mtz-slider-prev i,
+.mtz-slider-next i {
     width: 24px;
     height: 24px;
-    color: #333;
+    stroke: #333;
+    stroke-width: 2;
 }
 
 /* Dots */
@@ -177,11 +177,11 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.mtz-slider-pause-play .dashicons {
-    font-size: 18px;
+.mtz-slider-pause-play i {
     width: 18px;
     height: 18px;
-    color: #333;
+    stroke: #333;
+    stroke-width: 2;
 }
 
 /* Responsive */

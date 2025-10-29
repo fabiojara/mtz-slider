@@ -113,7 +113,11 @@ class MTZ_Slider {
         }
 
         wp_enqueue_media();
-        wp_enqueue_script('mtz-slider-admin', MTZ_SLIDER_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'wp-api'), MTZ_SLIDER_VERSION, true);
+        
+        // Encolar Lucide Icons para el admin
+        wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.js', array(), 'latest', false);
+        
+        wp_enqueue_script('mtz-slider-admin', MTZ_SLIDER_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'wp-api', 'lucide'), MTZ_SLIDER_VERSION, true);
         wp_enqueue_style('mtz-slider-admin', MTZ_SLIDER_PLUGIN_URL . 'assets/css/admin.css', array(), MTZ_SLIDER_VERSION);
 
         wp_localize_script('mtz-slider-admin', 'mtzSlider', array(
@@ -135,8 +139,12 @@ class MTZ_Slider {
      */
     public function enqueue_public_scripts() {
         wp_enqueue_style('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/css/public.css', array(), MTZ_SLIDER_VERSION);
-        wp_enqueue_script('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/js/public.js', array('jquery'), MTZ_SLIDER_VERSION, true);
-
+        
+        // Encolar Lucide Icons
+        wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.js', array(), 'latest', false);
+        
+        wp_enqueue_script('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/js/public.js', array('jquery', 'lucide'), MTZ_SLIDER_VERSION, true);
+        
         wp_localize_script('mtz-slider-public', 'mtzSliderPublic', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('mtz-slider-public'),
@@ -230,9 +238,9 @@ class MTZ_Slider {
             'speed' => $speed,
             'atts' => $atts
         );
-        
+
         extract($template_data);
-        
+
         ob_start();
         include MTZ_SLIDER_PLUGIN_DIR . 'public/views/slider.php';
         return ob_get_clean();
