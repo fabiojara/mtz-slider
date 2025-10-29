@@ -35,10 +35,7 @@
       $(document).on(
         "click",
         ".mtz-copy-shortcode",
-        function(e) {
-          console.log('Copy button clicked');
-          MTZSlider.copyShortcode(e);
-        }
+        this.copyShortcode.bind(this)
       );
 
       // Eventos modales
@@ -196,9 +193,7 @@
       e.stopPropagation();
       e.preventDefault();
 
-      console.log("copyShortcode triggered");
       const shortcode = $(e.currentTarget).data("shortcode");
-      console.log("Shortcode to copy:", shortcode);
 
       if (!shortcode) {
         console.error("No shortcode found in button data");
