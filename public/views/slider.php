@@ -46,7 +46,7 @@ $unique_id = 'mtz-slider-' . $slider_id;
         </button>
 
         <div class="mtz-slider-dots"></div>
-        
+
         <?php if ($autoplay): ?>
             <button class="mtz-slider-pause-play" aria-label="<?php esc_attr_e('Pausar/Reproducir', 'mtz-slider'); ?>">
                 <i data-lucide="pause"></i>

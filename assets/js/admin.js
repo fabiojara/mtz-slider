@@ -473,9 +473,9 @@
   // Inicializar cuando el documento esté listo
   $(document).ready(function() {
     MTZSlider.init();
-    
+
     // Inicializar Lucide Icons en el admin
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
   });
