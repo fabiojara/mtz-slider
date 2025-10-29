@@ -135,7 +135,8 @@ class MTZ_Slider_API {
 
         // Agregar contador de imágenes a cada slider
         foreach ($sliders as &$slider) {
-            $slider['image_count'] = $database->get_image_count($slider['id']);
+            $img_count = $database->get_image_count($slider['id']);
+            $slider['image_count'] = intval($img_count);
             $slider['shortcode'] = '[mtz_slider id="' . $slider['id'] . '"]';
         }
 

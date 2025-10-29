@@ -36,12 +36,12 @@ if (!defined('ABSPATH')) {
                         <h3><i data-lucide="settings"></i> <?php esc_html_e('Paso 1: Crear un Slider', 'mtz-slider'); ?></h3>
                         <p><?php esc_html_e('Haz clic en "Crear Nuevo Slider" en la barra lateral y asígnale un nombre único.', 'mtz-slider'); ?></p>
                     </div>
-                    
+
                     <div class="mtz-help-section">
                         <h3><i data-lucide="image-plus"></i> <?php esc_html_e('Paso 2: Agregar Imágenes', 'mtz-slider'); ?></h3>
                         <p><?php esc_html_e('Selecciona el slider de la lista y haz clic en "Agregar Imágenes" para añadir tus imágenes.', 'mtz-slider'); ?></p>
                     </div>
-                    
+
                     <div class="mtz-help-section">
                         <h3><i data-lucide="code"></i> <?php esc_html_e('Paso 3: Copiar y Usar el Shortcode', 'mtz-slider'); ?></h3>
                         <p><?php esc_html_e('Cada slider tiene su propio shortcode. Copia el shortcode que aparece junto a cada slider y pégalo en tus páginas.', 'mtz-slider'); ?></p>
@@ -53,7 +53,7 @@ if (!defined('ABSPATH')) {
                             <li><code>[mtz_slider id="3" autoplay="false"]</code> - <?php esc_html_e('Slider 3 sin reproducción automática', 'mtz-slider'); ?></li>
                         </ul>
                     </div>
-                    
+
                     <div class="mtz-help-section">
                         <h3><i data-lucide="layout"></i> <?php esc_html_e('Ubicaciones', 'mtz-slider'); ?></h3>
                         <p><?php esc_html_e('Puedes usar el slider en:', 'mtz-slider'); ?></p>
@@ -102,9 +102,9 @@ if (!defined('ABSPATH')) {
                             </div>
                             <div class="mtz-slider-item-info">
                                 <div class="mtz-slider-item-stat">
-                                    <span class="dashicons dashicons-images-alt2"></span>
+                                    <i data-lucide="image"></i>
                                     <?php
-                                    $img_count = isset($slider_item['image_count']) ? $slider_item['image_count'] : 0;
+                                    $img_count = isset($slider_item['image_count']) ? intval($slider_item['image_count']) : 0;
                                     printf(_n('%d imagen', '%d imágenes', $img_count, 'mtz-slider'), $img_count);
                                     ?>
                                 </div>

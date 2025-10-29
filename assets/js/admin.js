@@ -274,6 +274,7 @@
           imageData.id = response.id;
           MTZSlider.images.push(imageData);
           MTZSlider.renderImages();
+          MTZSlider.updateImageCount(); // Actualizar contador en la lista
         },
         error: function() {
           MTZSlider.showNotice(mtzSlider.strings.error, "error");
@@ -356,6 +357,7 @@
           MTZSlider.images = MTZSlider.images.filter(img => img.id != id);
           MTZSlider.renderImages();
           MTZSlider.showNotice(mtzSlider.strings.saved, "success");
+          MTZSlider.updateImageCount(); // Actualizar contador
         },
         error: function() {
           MTZSlider.showNotice(mtzSlider.strings.error, "error");
@@ -468,6 +470,39 @@
       if (typeof lucide !== "undefined") {
         lucide.createIcons();
       }
+    },
+    
+    updateImageCount: function() {
+      const sliderId = MTZSlider.currentSliderId;
+      if (!sliderId) return;
+      
+      // Obtener sliders para actualizar el contador
+      $.ajax({
+        url: mtzSlider.apiUrl + "sliders",
+        method: "GET",
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
+        },
+        success: function(response) {
+          // Buscar el slider actual en la lista
+          const currentSlider = response.find(s => s.id == sliderId);
+          if (currentSlider) {
+            // Actualizar el contador en la interfaz
+            $('.mtz-slider-item[data-slider-id="' + sliderId + '"] .mtz-slider-item-stat')
+              .html('<i data-lucide="image"></i> ' + 
+                (currentSlider.image_count == 1 ? 
+                  currentSlider.image_count + ' imagen' : 
+                  currentSlider.image_count + ' imágenes'
+                )
+              );
+            
+            // Reinicializar iconos
+            if (typeof lucide !== "undefined") {
+              lucide.createIcons();
+            }
+          }
+        }
+      });
     }
   };
 
