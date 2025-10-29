@@ -39,6 +39,28 @@
     align-items: center;
 }
 
+/* Estilos específicos para el botón de ayuda */
+#mtz-toggle-help {
+    background-color: #2271b1;
+    color: #fff;
+    border-color: #2271b1;
+}
+
+#mtz-toggle-help:hover {
+    background-color: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+#mtz-toggle-help i,
+#mtz-toggle-help:hover i {
+    stroke: #fff !important;
+}
+
+#mtz-toggle-help:hover {
+    color: #fff !important;
+}
+
 .mtz-slider-title .dashicons,
 .mtz-slider-title i {
     margin-right: 10px;
