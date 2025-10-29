@@ -193,9 +193,18 @@
       e.stopPropagation();
       e.preventDefault();
 
+      console.log('copyShortcode triggered');
       const shortcode = $(e.currentTarget).data("shortcode");
-      const $button = $(e.currentTarget);
+      console.log('Shortcode to copy:', shortcode);
       
+      if (!shortcode) {
+        console.error('No shortcode found in button data');
+        this.showNotice("Error: No se encontró el shortcode", "error");
+        return;
+      }
+      
+      const $button = $(e.currentTarget);
+
       // Intentar usar la Clipboard API moderna
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard
@@ -205,9 +214,9 @@
             const originalHTML = $button.html();
             $button.html('<i data-lucide="check"></i>');
             $button.css("color", "#00a32a");
-            
+
             // Reinicializar Lucide para el nuevo icono
-            if (typeof lucide !== 'undefined') {
+            if (typeof lucide !== "undefined") {
               lucide.createIcons();
             }
 
@@ -215,13 +224,13 @@
               $button.html(originalHTML);
               $button.css("color", "");
               // Reinicializar Lucide para restaurar el icono original
-              if (typeof lucide !== 'undefined') {
+              if (typeof lucide !== "undefined") {
                 lucide.createIcons();
               }
             }, 2000);
           })
-          .catch((err) => {
-            console.error('Error al copiar:', err);
+          .catch(err => {
+            console.error("Error al copiar:", err);
             this.showNotice("Error al copiar el shortcode", "error");
           });
       } else {
@@ -235,9 +244,9 @@
         const originalHTML = $button.html();
         $button.html('<i data-lucide="check"></i>');
         $button.css("color", "#00a32a");
-        
+
         // Reinicializar Lucide para el nuevo icono
-        if (typeof lucide !== 'undefined') {
+        if (typeof lucide !== "undefined") {
           lucide.createIcons();
         }
 
@@ -245,7 +254,7 @@
           $button.html(originalHTML);
           $button.css("color", "");
           // Reinicializar Lucide para restaurar el icono original
-          if (typeof lucide !== 'undefined') {
+          if (typeof lucide !== "undefined") {
             lucide.createIcons();
           }
         }, 2000);
