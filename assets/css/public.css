@@ -2,6 +2,12 @@
  * Estilos públicos del Slider - MTZ Slider
  */
 
+/* Fuente Poppins para el plugin */
+.mtz-slider-wrapper,
+.mtz-slider-wrapper * {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+}
+
 .mtz-slider-wrapper {
     width: 100%;
     position: relative;

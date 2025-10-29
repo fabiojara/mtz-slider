@@ -2,6 +2,12 @@
  * Estilos del panel administrativo - MTZ Slider
  */
 
+/* Fuente Poppins para el plugin */
+.mtz-slider-admin,
+.mtz-slider-admin * {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+}
+
 .mtz-slider-admin {
     margin: 20px 0;
 }
