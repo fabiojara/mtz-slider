@@ -146,21 +146,21 @@ class MTZ_Slider_Database {
      */
     public function get_sliders() {
         global $wpdb;
-        
+
         // Asegurar que las tablas existan
         $this->ensure_tables_exist();
-        
+
         $sliders = $wpdb->get_results(
             "SELECT * FROM {$this->sliders_table} ORDER BY created_at DESC",
             ARRAY_A
         );
-        
+
         // Agregar contador de imágenes manualmente
         foreach ($sliders as &$slider) {
             $slider['image_count'] = $this->get_image_count($slider['id']);
             error_log('Slider ID: ' . $slider['id'] . ', Name: ' . $slider['name'] . ', Image count: ' . $slider['image_count']);
         }
-        
+
         return $sliders;
     }
 
@@ -433,15 +433,16 @@ class MTZ_Slider_Database {
         // Verificar que las tablas existan
         $this->ensure_tables_exist();
         
+        // Contar TODAS las imágenes del slider, sin filtro de is_active
         $count = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT COUNT(*) FROM {$this->images_table} WHERE slider_id = %d AND is_active = 1",
+                "SELECT COUNT(*) FROM {$this->images_table} WHERE slider_id = %d",
                 $slider_id
             )
         );
         
         error_log('get_image_count - slider_id: ' . $slider_id . ', count: ' . $count);
         
-        return $count;
+        return intval($count);
     }
 }
