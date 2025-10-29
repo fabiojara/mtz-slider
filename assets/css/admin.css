@@ -504,12 +504,21 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    margin-bottom: 8px;
 }
 
 .mtz-slider-item-stat .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
+}
+
+.mtz-slider-shortcode-hint {
+    font-size: 11px;
+    color: #666;
+    margin: 5px 0;
+    line-height: 1.4;
+    font-style: italic;
 }
 
 .mtz-slider-item-shortcode {

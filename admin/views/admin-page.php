@@ -108,6 +108,9 @@ if (!defined('ABSPATH')) {
                                     printf(_n('%d imagen', '%d imágenes', $img_count, 'mtz-slider'), $img_count);
                                     ?>
                                 </div>
+                                <p class="mtz-slider-shortcode-hint">
+                                    <?php esc_html_e('Copia el siguiente código donde desees mostrar el slider:', 'mtz-slider'); ?>
+                                </p>
                             </div>
                             <div class="mtz-slider-item-shortcode">
                                 <input type="text" readonly value="<?php echo esc_attr($shortcode); ?>" class="mtz-shortcode-input">

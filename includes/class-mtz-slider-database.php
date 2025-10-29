@@ -429,10 +429,10 @@ class MTZ_Slider_Database {
      */
     public function get_image_count($slider_id) {
         global $wpdb;
-        
+
         // Verificar que las tablas existan
         $this->ensure_tables_exist();
-        
+
         // Contar TODAS las imágenes del slider, sin filtro de is_active
         $count = $wpdb->get_var(
             $wpdb->prepare(
@@ -440,9 +440,9 @@ class MTZ_Slider_Database {
                 $slider_id
             )
         );
-        
+
         error_log('get_image_count - slider_id: ' . $slider_id . ', count: ' . $count);
-        
+
         return intval($count);
     }
 }
