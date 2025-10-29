@@ -63,8 +63,7 @@ class MTZ_Slider_Database {
             KEY slider_id (slider_id),
             KEY image_id (image_id),
             KEY is_active (is_active),
-            KEY sort_order (sort_order),
-            FOREIGN KEY (slider_id) REFERENCES {$this->sliders_table}(id) ON DELETE CASCADE
+            KEY sort_order (sort_order)
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -151,7 +150,10 @@ class MTZ_Slider_Database {
      */
     public function create_slider($name, $autoplay = 1, $speed = 5000) {
         global $wpdb;
-
+        
+        // Asegurarse de que las tablas existan
+        $this->ensure_tables_exist();
+        
         $result = $wpdb->insert(
             $this->sliders_table,
             array(
@@ -162,8 +164,28 @@ class MTZ_Slider_Database {
             ),
             array('%s', '%d', '%d', '%d')
         );
-
-        return $result ? $wpdb->insert_id : false;
+        
+        if ($result === false) {
+            error_log('Error al crear slider: ' . $wpdb->last_error);
+            return false;
+        }
+        
+        return $wpdb->insert_id;
+    }
+    
+    /**
+     * Asegurar que las tablas existan
+     */
+    private function ensure_tables_exist() {
+        global $wpdb;
+        
+        // Verificar si las tablas existen
+        $slider_table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$this->sliders_table}'");
+        $images_table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$this->images_table}'");
+        
+        if (!$slider_table_exists || !$images_table_exists) {
+            $this->create_tables();
+        }
     }
 
     /**
@@ -200,7 +222,15 @@ class MTZ_Slider_Database {
      */
     public function delete_slider($id) {
         global $wpdb;
-
+        
+        // Primero eliminar todas las imágenes del slider
+        $wpdb->delete(
+            $this->images_table,
+            array('slider_id' => intval($id)),
+            array('%d')
+        );
+        
+        // Luego eliminar el slider
         return $wpdb->delete(
             $this->sliders_table,
             array('id' => intval($id)),
