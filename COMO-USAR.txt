@@ -1,0 +1,102 @@
+═══════════════════════════════════════════════════════════════
+          CÓMO USAR EL SLIDER MTZ - GUÍA RÁPIDA
+═══════════════════════════════════════════════════════════════
+
+OPCIÓN 1: EDITOR DE WORDPRESS (MÁS FÁCIL)
+─────────────────────────────────────────
+
+1. Ve a Páginas → Agregar nueva (o Editar una existente)
+
+2. En el editor, escribe exactamente esto:
+
+   [mtz_slider]
+
+3. Haz clic en "Publicar" o "Actualizar"
+
+4. ¡Listo! El slider aparecerá en tu página.
+
+
+OPCIÓN 2: CON OPCIONES PERSONALIZADAS
+─────────────────────────────────────
+
+   [mtz_slider autoplay="true" speed="5000"]
+
+   Cambiar velocidad (más rápido):
+   [mtz_slider speed="3000"]
+
+   Sin reproducción automática:
+   [mtz_slider autoplay="false"]
+
+
+OPCIÓN 3: DESDE CODIGO PHP
+───────────────────────────
+
+Si necesitas insertarlo en archivos PHP del tema:
+
+   <?php echo do_shortcode('[mtz_slider]'); ?>
+
+
+═══════════════════════════════════════════════════════════════
+          ANTES DE USAR EL SLIDER
+═══════════════════════════════════════════════════════════════
+
+PASO 1: Agregar Imágenes al Slider
+───────────────────────────────────
+
+1. Ve a MTZ Slider en el menú lateral de WordPress
+
+2. Haz clic en el botón "Agregar Imágenes"
+
+3. Selecciona las imágenes que quieres mostrar
+
+4. (Opcional) Edita cada imagen para agregar títulos y descripciones
+
+
+═══════════════════════════════════════════════════════════════
+          EJEMPLOS DE USO
+═══════════════════════════════════════════════════════════════
+
+EJEMPLO 1: Slider básico en una página
+────────────────────────────────────────
+
+   Título: Página de Inicio
+   Contenido: [mtz_slider]
+
+
+EJEMPLO 2: Slider rápido (3 segundos)
+──────────────────────────────────────
+
+   [mtz_slider speed="3000"]
+
+
+EJEMPLO 3: Slider manual (sin autoplay)
+────────────────────────────────────────
+
+   [mtz_slider autoplay="false"]
+
+
+═══════════════════════════════════════════════════════════════
+          SITIOS DONDE PUEDES USARLO
+═══════════════════════════════════════════════════════════════
+
+✓ Páginas de WordPress
+✓ Entradas de blog
+✓ Plantillas de página personalizadas
+✓ Widgets (si soporta shortcodes)
+✓ Header (desde funciones.php)
+✓ Footer (desde footer.php)
+
+
+═══════════════════════════════════════════════════════════════
+          PARÁMETROS DISPONIBLES
+═══════════════════════════════════════════════════════════════
+
+autoplay     true o false    Activa/desactiva autoplay
+speed        número (ms)     Velocidad de transición
+
+Ejemplo completo:
+   [mtz_slider autoplay="true" speed="4000"]
+
+
+═══════════════════════════════════════════════════════════════
+
