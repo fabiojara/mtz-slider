@@ -1,0 +1,258 @@
+/**
+ * Estilos del panel administrativo - MTZ Slider
+ */
+
+.mtz-slider-admin {
+    margin: 20px 0;
+}
+
+.mtz-slider-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.mtz-slider-title .dashicons {
+    margin-right: 10px;
+    color: #2271b1;
+}
+
+.mtz-slider-header {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.mtz-slider-toolbar {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.mtz-slider-notice {
+    padding: 10px 15px;
+    border-radius: 4px;
+    display: none;
+}
+
+.mtz-slider-notice.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.mtz-slider-notice.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
+
+.mtz-slider-grid {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    min-height: 200px;
+}
+
+.mtz-slider-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.mtz-slider-empty-state .dashicons {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.mtz-slider-images-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.mtz-slider-image-item {
+    position: relative;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: move;
+}
+
+.mtz-slider-image-item:hover {
+    border-color: #2271b1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.mtz-slider-image-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.mtz-slider-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mtz-slider-image-item:hover .mtz-slider-image-overlay {
+    opacity: 1;
+}
+
+.mtz-slider-image-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.mtz-slider-image-actions button {
+    background: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mtz-slider-image-actions button:hover {
+    background: #2271b1;
+    color: #fff;
+}
+
+.mtz-slider-loading {
+    text-align: center;
+    padding: 40px;
+}
+
+.mtz-slider-loading .spinner {
+    float: none;
+    margin: 0 auto;
+}
+
+/* Modal */
+.mtz-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mtz-modal-content {
+    background: #fff;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.mtz-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mtz-modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.mtz-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.mtz-modal-close:hover {
+    background: #f0f0f0;
+}
+
+.mtz-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.mtz-form-field {
+    margin-bottom: 20px;
+}
+
+.mtz-form-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.mtz-form-field input[type="text"],
+.mtz-form-field textarea {
+    width: 100%;
+}
+
+.mtz-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mtz-slider-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .mtz-slider-toolbar button {
+        width: 100%;
+    }
+    
+    .mtz-slider-images-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+}
+

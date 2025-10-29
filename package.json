@@ -1,0 +1,25 @@
+{
+  "name": "mtz-slider",
+  "version": "1.0.0",
+  "description": "Slider moderno y responsive para WordPress con gestión de imágenes desde el panel administrativo",
+  "main": "mtz-slider.php",
+  "scripts": {
+    "build": "echo 'Build process not configured'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "slider",
+    "carousel",
+    "images"
+  ],
+  "author": "Tu Nombre",
+  "license": "GPL-2.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/mtz-slider.git"
+  },
+  "devDependencies": {}
+}
+

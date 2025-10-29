@@ -1,0 +1,230 @@
+/**
+ * Estilos públicos del Slider - MTZ Slider
+ */
+
+.mtz-slider-wrapper {
+    width: 100%;
+    position: relative;
+}
+
+.mtz-slider {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+.mtz-slider-track {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mtz-slide {
+    min-width: 100%;
+    width: 100%;
+    height: 60vh;
+    min-height: 400px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mtz-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 50%, rgba(0,0,0,0.7) 100%);
+}
+
+.mtz-slide-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    padding: 40px;
+    text-align: center;
+    color: #fff;
+}
+
+.mtz-slide-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    animation: fadeInUp 0.8s ease;
+}
+
+.mtz-slide-description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Botones de navegación */
+.mtz-slider-prev,
+.mtz-slider-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mtz-slider-prev {
+    left: 20px;
+}
+
+.mtz-slider-next {
+    right: 20px;
+}
+
+.mtz-slider-prev:hover,
+.mtz-slider-next:hover {
+    background: #fff;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.mtz-slider-prev .dashicons,
+.mtz-slider-next .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #333;
+}
+
+/* Dots */
+.mtz-slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 2;
+}
+
+.mtz-slider-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mtz-slider-dot.active {
+    background: #fff;
+    transform: scale(1.2);
+}
+
+.mtz-slider-dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+/* Botón de pausa/reproducción */
+.mtz-slider-pause-play {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mtz-slider-pause-play:hover {
+    background: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mtz-slider-pause-play .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mtz-slide {
+        height: 50vh;
+        min-height: 300px;
+    }
+    
+    .mtz-slide-title {
+        font-size: 2rem;
+    }
+    
+    .mtz-slide-description {
+        font-size: 1rem;
+    }
+    
+    .mtz-slider-prev,
+    .mtz-slider-next {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .mtz-slider-prev {
+        left: 10px;
+    }
+    
+    .mtz-slider-next {
+        right: 10px;
+    }
+    
+    .mtz-slide-content {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mtz-slide {
+        min-height: 250px;
+    }
+    
+    .mtz-slide-title {
+        font-size: 1.5rem;
+    }
+}
+

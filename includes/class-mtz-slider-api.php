@@ -1,0 +1,200 @@
+<?php
+/**
+ * API REST para MTZ Slider
+ *
+ * @package MTZ_Slider
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class MTZ_Slider_API {
+    
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        add_action('rest_api_init', array($this, 'register_routes'));
+    }
+    
+    /**
+     * Registrar rutas REST
+     */
+    public function register_routes() {
+        $namespace = 'mtz-slider/v1';
+        
+        // Obtener todas las imágenes
+        register_rest_route($namespace, '/images', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_images'),
+            'permission_callback' => array($this, 'check_permissions'),
+        ));
+        
+        // Crear nueva imagen
+        register_rest_route($namespace, '/images', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'create_image'),
+            'permission_callback' => array($this, 'check_permissions'),
+        ));
+        
+        // Actualizar imagen
+        register_rest_route($namespace, '/images/(?P<id>\d+)', array(
+            'methods' => 'PUT',
+            'callback' => array($this, 'update_image'),
+            'permission_callback' => array($this, 'check_permissions'),
+            'args' => array(
+                'id' => array(
+                    'required' => true,
+                    'validate_callback' => function($param) {
+                        return is_numeric($param);
+                    }
+                ),
+            ),
+        ));
+        
+        // Eliminar imagen
+        register_rest_route($namespace, '/images/(?P<id>\d+)', array(
+            'methods' => 'DELETE',
+            'callback' => array($this, 'delete_image'),
+            'permission_callback' => array($this, 'check_permissions'),
+            'args' => array(
+                'id' => array(
+                    'required' => true,
+                    'validate_callback' => function($param) {
+                        return is_numeric($param);
+                    }
+                ),
+            ),
+        ));
+        
+        // Actualizar orden
+        register_rest_route($namespace, '/images/order', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'update_order'),
+            'permission_callback' => array($this, 'check_permissions'),
+        ));
+    }
+    
+    /**
+     * Verificar permisos
+     */
+    public function check_permissions() {
+        return current_user_can('manage_options');
+    }
+    
+    /**
+     * Obtener imágenes
+     */
+    public function get_images($request) {
+        $database = new MTZ_Slider_Database();
+        $images = $database->get_slider_images();
+        
+        return new WP_REST_Response($images, 200);
+    }
+    
+    /**
+     * Crear imagen
+     */
+    public function create_image($request) {
+        $database = new MTZ_Slider_Database();
+        
+        $params = $request->get_json_params();
+        
+        $data = array(
+            'image_id' => isset($params['image_id']) ? intval($params['image_id']) : 0,
+            'image_url' => isset($params['image_url']) ? esc_url_raw($params['image_url']) : '',
+            'image_title' => isset($params['image_title']) ? sanitize_text_field($params['image_title']) : '',
+            'image_description' => isset($params['image_description']) ? sanitize_textarea_field($params['image_description']) : '',
+            'image_alt' => isset($params['image_alt']) ? sanitize_text_field($params['image_alt']) : '',
+            'sort_order' => isset($params['sort_order']) ? intval($params['sort_order']) : 0,
+            'is_active' => isset($params['is_active']) ? intval($params['is_active']) : 1,
+        );
+        
+        $result = $database->insert_image($data);
+        
+        if ($result) {
+            return new WP_REST_Response(array('success' => true, 'id' => $result), 201);
+        } else {
+            return new WP_Error('create_failed', 'Error al crear la imagen', array('status' => 500));
+        }
+    }
+    
+    /**
+     * Actualizar imagen
+     */
+    public function update_image($request) {
+        $database = new MTZ_Slider_Database();
+        
+        $id = $request->get_param('id');
+        $params = $request->get_json_params();
+        
+        $data = array();
+        
+        if (isset($params['image_title'])) {
+            $data['image_title'] = sanitize_text_field($params['image_title']);
+        }
+        if (isset($params['image_description'])) {
+            $data['image_description'] = sanitize_textarea_field($params['image_description']);
+        }
+        if (isset($params['image_alt'])) {
+            $data['image_alt'] = sanitize_text_field($params['image_alt']);
+        }
+        if (isset($params['sort_order'])) {
+            $data['sort_order'] = intval($params['sort_order']);
+        }
+        if (isset($params['is_active'])) {
+            $data['is_active'] = intval($params['is_active']);
+        }
+        
+        $result = $database->update_image($id, $data);
+        
+        if ($result !== false) {
+            return new WP_REST_Response(array('success' => true), 200);
+        } else {
+            return new WP_Error('update_failed', 'Error al actualizar la imagen', array('status' => 500));
+        }
+    }
+    
+    /**
+     * Eliminar imagen
+     */
+    public function delete_image($request) {
+        $database = new MTZ_Slider_Database();
+        
+        $id = $request->get_param('id');
+        $result = $database->delete_image($id);
+        
+        if ($result) {
+            return new WP_REST_Response(array('success' => true), 200);
+        } else {
+            return new WP_Error('delete_failed', 'Error al eliminar la imagen', array('status' => 500));
+        }
+    }
+    
+    /**
+     * Actualizar orden
+     */
+    public function update_order($request) {
+        $database = new MTZ_Slider_Database();
+        
+        $params = $request->get_json_params();
+        $images = isset($params['images']) ? $params['images'] : array();
+        
+        if (!is_array($images)) {
+            return new WP_Error('invalid_data', 'Datos inválidos', array('status' => 400));
+        }
+        
+        $result = $database->update_image_order($images);
+        
+        if ($result) {
+            return new WP_REST_Response(array('success' => true), 200);
+        } else {
+            return new WP_Error('update_failed', 'Error al actualizar el orden', array('status' => 500));
+        }
+    }
+}
+
+// Inicializar API
+new MTZ_Slider_API();
+
