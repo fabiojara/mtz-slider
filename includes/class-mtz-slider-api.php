@@ -219,7 +219,15 @@ class MTZ_Slider_API {
         $database = new MTZ_Slider_Database();
 
         $params = $request->get_json_params();
+        
+        error_log('API create_image - Parámetros recibidos: ' . print_r($params, true));
+        
         $slider_id = isset($params['slider_id']) ? intval($params['slider_id']) : 0;
+
+        if (!$slider_id) {
+            error_log('Error: slider_id no proporcionado');
+            return new WP_Error('invalid_data', 'slider_id es requerido', array('status' => 400));
+        }
 
         $data = array(
             'image_id' => isset($params['image_id']) ? intval($params['image_id']) : 0,
@@ -231,11 +239,15 @@ class MTZ_Slider_API {
             'is_active' => isset($params['is_active']) ? intval($params['is_active']) : 1,
         );
 
+        error_log('API create_image - Intentando insertar imagen con data: ' . print_r($data, true));
+
         $result = $database->insert_image($slider_id, $data);
 
         if ($result) {
+            error_log('API create_image - Imagen creada exitosamente con ID: ' . $result);
             return new WP_REST_Response(array('success' => true, 'id' => $result), 201);
         } else {
+            error_log('API create_image - Error al crear la imagen');
             return new WP_Error('create_failed', 'Error al crear la imagen', array('status' => 500));
         }
     }

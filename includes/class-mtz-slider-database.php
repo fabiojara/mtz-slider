@@ -150,10 +150,10 @@ class MTZ_Slider_Database {
      */
     public function create_slider($name, $autoplay = 1, $speed = 5000) {
         global $wpdb;
-        
+
         // Asegurarse de que las tablas existan
         $this->ensure_tables_exist();
-        
+
         $result = $wpdb->insert(
             $this->sliders_table,
             array(
@@ -164,25 +164,25 @@ class MTZ_Slider_Database {
             ),
             array('%s', '%d', '%d', '%d')
         );
-        
+
         if ($result === false) {
             error_log('Error al crear slider: ' . $wpdb->last_error);
             return false;
         }
-        
+
         return $wpdb->insert_id;
     }
-    
+
     /**
      * Asegurar que las tablas existan
      */
     private function ensure_tables_exist() {
         global $wpdb;
-        
+
         // Verificar si las tablas existen
         $slider_table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$this->sliders_table}'");
         $images_table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$this->images_table}'");
-        
+
         if (!$slider_table_exists || !$images_table_exists) {
             $this->create_tables();
         }
@@ -222,14 +222,14 @@ class MTZ_Slider_Database {
      */
     public function delete_slider($id) {
         global $wpdb;
-        
+
         // Primero eliminar todas las imágenes del slider
         $wpdb->delete(
             $this->images_table,
             array('slider_id' => intval($id)),
             array('%d')
         );
-        
+
         // Luego eliminar el slider
         return $wpdb->delete(
             $this->sliders_table,
@@ -279,7 +279,10 @@ class MTZ_Slider_Database {
      */
     public function insert_image($slider_id, $data) {
         global $wpdb;
-
+        
+        // Asegurar que las tablas existan
+        $this->ensure_tables_exist();
+        
         $defaults = array(
             'image_id' => 0,
             'image_url' => '',
@@ -289,9 +292,9 @@ class MTZ_Slider_Database {
             'sort_order' => 0,
             'is_active' => 1,
         );
-
+        
         $data = wp_parse_args($data, $defaults);
-
+        
         // Sanitizar datos
         $insert_data = array(
             'slider_id' => intval($slider_id),
@@ -303,14 +306,25 @@ class MTZ_Slider_Database {
             'sort_order' => intval($data['sort_order']),
             'is_active' => intval($data['is_active']),
         );
-
+        
+        error_log('Intentando insertar imagen en slider_id: ' . $slider_id);
+        error_log('Datos: ' . print_r($insert_data, true));
+        
         $result = $wpdb->insert(
             $this->images_table,
             $insert_data,
             array('%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
         );
-
-        return $result ? $wpdb->insert_id : false;
+        
+        if ($result === false) {
+            error_log('Error al insertar imagen: ' . $wpdb->last_error);
+            error_log('Query fallida: ' . $wpdb->last_query);
+            return false;
+        }
+        
+        error_log('Imagen insertada correctamente con ID: ' . $wpdb->insert_id);
+        
+        return $wpdb->insert_id;
     }
 
     /**
