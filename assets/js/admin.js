@@ -35,7 +35,10 @@
       $(document).on(
         "click",
         ".mtz-copy-shortcode",
-        this.copyShortcode.bind(this)
+        function(e) {
+          console.log('Copy button clicked');
+          MTZSlider.copyShortcode(e);
+        }
       );
 
       // Eventos modales
@@ -193,16 +196,16 @@
       e.stopPropagation();
       e.preventDefault();
 
-      console.log('copyShortcode triggered');
+      console.log("copyShortcode triggered");
       const shortcode = $(e.currentTarget).data("shortcode");
-      console.log('Shortcode to copy:', shortcode);
-      
+      console.log("Shortcode to copy:", shortcode);
+
       if (!shortcode) {
-        console.error('No shortcode found in button data');
+        console.error("No shortcode found in button data");
         this.showNotice("Error: No se encontró el shortcode", "error");
         return;
       }
-      
+
       const $button = $(e.currentTarget);
 
       // Intentar usar la Clipboard API moderna
