@@ -13,9 +13,9 @@
     init: function() {
       const sliderId = $("#mtz-current-slider-id").val();
       this.currentSliderId = sliderId;
-      
+
       this.bindEvents();
-      
+
       if (sliderId) {
         this.loadImages(sliderId);
       }
@@ -26,19 +26,30 @@
       $("#mtz-add-images").on("click", this.openMediaLibrary.bind(this));
       $("#mtz-save-changes").on("click", this.saveChanges.bind(this));
       $("#mtz-image-form").on("submit", this.saveImageForm.bind(this));
-      
+
       // Eventos de sliders
       $("#mtz-create-slider").on("click", this.openSliderModal.bind(this));
       $("#mtz-slider-form").on("submit", this.saveSlider.bind(this));
       $(".mtz-slider-item").on("click", this.selectSlider.bind(this));
       $(".mtz-slider-item-delete").on("click", this.deleteSlider.bind(this));
-      $(document).on("click", ".mtz-copy-shortcode", this.copyShortcode.bind(this));
-      
+      $(document).on(
+        "click",
+        ".mtz-copy-shortcode",
+        this.copyShortcode.bind(this)
+      );
+
       // Eventos modales
-      $(".mtz-modal-close, .mtz-modal-cancel").on("click", this.closeModal.bind(this));
+      $(".mtz-modal-close, .mtz-modal-cancel").on(
+        "click",
+        this.closeModal.bind(this)
+      );
       $(document).on("click", ".mtz-slider-edit", this.editImage.bind(this));
-      $(document).on("click", ".mtz-slider-delete", this.deleteImage.bind(this));
-      
+      $(document).on(
+        "click",
+        ".mtz-slider-delete",
+        this.deleteImage.bind(this)
+      );
+
       // Toggle panel de ayuda
       $("#mtz-toggle-help").on("click", this.toggleHelp.bind(this));
 
@@ -79,44 +90,61 @@
         return;
       }
 
+      const url = sliderId ? mtzSlider.apiUrl + "sliders/" + sliderId : mtzSlider.apiUrl + "sliders";
+      const data = {
+        name: name,
+        autoplay: autoplay,
+        speed: speed
+      };
+
+      if (sliderId) {
+        data.id = sliderId;
+      }
+
       $.ajax({
-        url: mtzSlider.apiUrl + "sliders",
+        url: url,
         method: sliderId ? "PUT" : "POST",
-        data: JSON.stringify({
-          id: sliderId,
-          name: name,
-          autoplay: autoplay,
-          speed: speed
-        }),
+        data: JSON.stringify(data),
         contentType: "application/json",
         beforeSend: function(xhr) {
           xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
         },
         success: function(response) {
           MTZSlider.showNotice("Slider guardado correctamente", "success");
-          MTZSlider.closeModal();
+          $("#mtz-slider-modal").hide();
+          
           setTimeout(function() {
             location.reload();
           }, 1000);
         },
-        error: function() {
-          MTZSlider.showNotice("Error al guardar el slider", "error");
+        error: function(xhr, status, error) {
+          console.error("Error al guardar slider:", xhr.responseText);
+          MTZSlider.showNotice("Error al guardar el slider: " + (xhr.responseText || error), "error");
         }
       });
     },
 
     selectSlider: function(e) {
-      const sliderId = $(e.currentTarget).closest(".mtz-slider-item").data("slider-id");
-      
+      const sliderId = $(e.currentTarget)
+        .closest(".mtz-slider-item")
+        .data("slider-id");
+
       if (sliderId) {
-        window.location.href = window.location.href.split("?")[0] + "?page=mtz-slider&slider=" + sliderId;
+        window.location.href =
+          window.location.href.split("?")[0] +
+          "?page=mtz-slider&slider=" +
+          sliderId;
       }
     },
 
     deleteSlider: function(e) {
       e.stopPropagation();
 
-      if (!confirm("¿Estás seguro de eliminar este slider? Esta acción no se puede deshacer.")) {
+      if (
+        !confirm(
+          "¿Estás seguro de eliminar este slider? Esta acción no se puede deshacer."
+        )
+      ) {
         return;
       }
 
@@ -142,10 +170,10 @@
 
     copyShortcode: function(e) {
       e.stopPropagation();
-      
+
       const shortcode = $(e.currentTarget).data("shortcode");
       const tempInput = $("<input>");
-      
+
       $("body").append(tempInput);
       tempInput.val(shortcode).select();
       document.execCommand("copy");
@@ -239,7 +267,8 @@
         $grid.html(`
           <div class="mtz-slider-empty-state">
             <span class="dashicons dashicons-images-alt2"></span>
-            <p>${mtzSlider.strings.emptyState || "No hay imágenes en el slider."}</p>
+            <p>${mtzSlider.strings.emptyState ||
+              "No hay imágenes en el slider."}</p>
           </div>
         `);
         return;
@@ -371,18 +400,34 @@
 
     closeModal: function() {
       $(".mtz-modal").hide();
-      $("#mtz-image-form, #mtz-slider-form")[0].reset();
+      
+      // Reset forms si existen
+      const imageForm = $("#mtz-image-form")[0];
+      const sliderForm = $("#mtz-slider-form")[0];
+      
+      if (imageForm) imageForm.reset();
+      if (sliderForm) sliderForm.reset();
+      
       MTZSlider.currentImageId = null;
     },
 
     showNotice: function(message, type) {
-      const $notice = $("#mtz-notice");
+      let $notice = $("#mtz-notice");
+      
+      // Si no existe el contenedor, crear uno temporal
+      if ($notice.length === 0) {
+        $notice = $('<div id="mtz-notice" class="mtz-slider-notice"></div>');
+        $("body").append($notice);
+      }
+      
       $notice.removeClass("success error").addClass(type);
       $notice.text(message);
+      $notice.css("display", "block").css("position", "fixed").css("top", "40px").css("right", "20px").css("z-index", "999999");
 
       setTimeout(function() {
         $notice.removeClass("success error");
         $notice.text("");
+        $notice.css("display", "none");
       }, 3000);
     },
 
