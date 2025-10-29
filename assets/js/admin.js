@@ -8,28 +8,37 @@
   const MTZSlider = {
     images: [],
     currentImageId: null,
+    currentSliderId: null,
 
     init: function() {
+      const sliderId = $("#mtz-current-slider-id").val();
+      this.currentSliderId = sliderId;
+      
       this.bindEvents();
-      this.loadImages();
+      
+      if (sliderId) {
+        this.loadImages(sliderId);
+      }
     },
 
     bindEvents: function() {
+      // Eventos de imágenes
       $("#mtz-add-images").on("click", this.openMediaLibrary.bind(this));
       $("#mtz-save-changes").on("click", this.saveChanges.bind(this));
-      $(".mtz-modal-close, .mtz-modal-cancel").on(
-        "click",
-        this.closeModal.bind(this)
-      );
       $("#mtz-image-form").on("submit", this.saveImageForm.bind(this));
+      
+      // Eventos de sliders
+      $("#mtz-create-slider").on("click", this.openSliderModal.bind(this));
+      $("#mtz-slider-form").on("submit", this.saveSlider.bind(this));
+      $(".mtz-slider-item").on("click", this.selectSlider.bind(this));
+      $(".mtz-slider-item-delete").on("click", this.deleteSlider.bind(this));
+      $(document).on("click", ".mtz-copy-shortcode", this.copyShortcode.bind(this));
+      
+      // Eventos modales
+      $(".mtz-modal-close, .mtz-modal-cancel").on("click", this.closeModal.bind(this));
       $(document).on("click", ".mtz-slider-edit", this.editImage.bind(this));
-      $(document).on(
-        "click",
-        ".mtz-slider-delete",
-        this.deleteImage.bind(this)
-      );
-      $(document).on("click", "#mtz-loading", this.closeLoading.bind(this));
-
+      $(document).on("click", ".mtz-slider-delete", this.deleteImage.bind(this));
+      
       // Toggle panel de ayuda
       $("#mtz-toggle-help").on("click", this.toggleHelp.bind(this));
 
@@ -48,9 +57,116 @@
       }
     },
 
-    loadImages: function() {
+    // ============ MÉTODOS PARA SLIDERS ============
+
+    openSliderModal: function() {
+      $("#mtz-modal-title").text("Crear Nuevo Slider");
+      $("#mtz-slider-form")[0].reset();
+      $("#mtz-slider-id").val("");
+      $("#mtz-slider-modal").show();
+    },
+
+    saveSlider: function(e) {
+      e.preventDefault();
+
+      const sliderId = $("#mtz-slider-id").val();
+      const name = $("#mtz-slider-name").val();
+      const autoplay = $("#mtz-slider-autoplay").is(":checked") ? 1 : 0;
+      const speed = $("#mtz-slider-speed").val();
+
+      if (!name) {
+        this.showNotice("Por favor ingresa un nombre para el slider", "error");
+        return;
+      }
+
       $.ajax({
-        url: mtzSlider.apiUrl + "images",
+        url: mtzSlider.apiUrl + "sliders",
+        method: sliderId ? "PUT" : "POST",
+        data: JSON.stringify({
+          id: sliderId,
+          name: name,
+          autoplay: autoplay,
+          speed: speed
+        }),
+        contentType: "application/json",
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
+        },
+        success: function(response) {
+          MTZSlider.showNotice("Slider guardado correctamente", "success");
+          MTZSlider.closeModal();
+          setTimeout(function() {
+            location.reload();
+          }, 1000);
+        },
+        error: function() {
+          MTZSlider.showNotice("Error al guardar el slider", "error");
+        }
+      });
+    },
+
+    selectSlider: function(e) {
+      const sliderId = $(e.currentTarget).closest(".mtz-slider-item").data("slider-id");
+      
+      if (sliderId) {
+        window.location.href = window.location.href.split("?")[0] + "?page=mtz-slider&slider=" + sliderId;
+      }
+    },
+
+    deleteSlider: function(e) {
+      e.stopPropagation();
+
+      if (!confirm("¿Estás seguro de eliminar este slider? Esta acción no se puede deshacer.")) {
+        return;
+      }
+
+      const sliderId = $(e.currentTarget).data("id");
+
+      $.ajax({
+        url: mtzSlider.apiUrl + "sliders/" + sliderId,
+        method: "DELETE",
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
+        },
+        success: function() {
+          MTZSlider.showNotice("Slider eliminado correctamente", "success");
+          setTimeout(function() {
+            location.reload();
+          }, 1000);
+        },
+        error: function() {
+          MTZSlider.showNotice("Error al eliminar el slider", "error");
+        }
+      });
+    },
+
+    copyShortcode: function(e) {
+      e.stopPropagation();
+      
+      const shortcode = $(e.currentTarget).data("shortcode");
+      const tempInput = $("<input>");
+      
+      $("body").append(tempInput);
+      tempInput.val(shortcode).select();
+      document.execCommand("copy");
+      tempInput.remove();
+
+      const $button = $(e.currentTarget);
+      const originalText = $button.html();
+      $button.html('<span class="dashicons dashicons-yes"></span>');
+      $button.css("color", "#00a32a");
+
+      setTimeout(function() {
+        $button.html(originalText);
+        $button.css("color", "");
+      }, 2000);
+    },
+
+    // ============ MÉTODOS PARA IMÁGENES ============
+
+    loadImages: function(sliderId) {
+      $.ajax({
+        url: mtzSlider.apiUrl + "sliders/" + sliderId + "/images",
         method: "GET",
         beforeSend: function(xhr) {
           xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
@@ -79,6 +195,7 @@
 
         attachments.forEach(function(attachment) {
           const imageData = {
+            slider_id: MTZSlider.currentSliderId,
             image_id: attachment.id,
             image_url: attachment.url,
             image_title: attachment.title || "",
@@ -120,12 +237,11 @@
 
       if (MTZSlider.images.length === 0) {
         $grid.html(`
-                    <div class="mtz-slider-empty-state">
-                        <span class="dashicons dashicons-images-alt2"></span>
-                        <p>${mtzSlider.strings.emptyState ||
-                          "No hay imágenes en el slider."}</p>
-                    </div>
-                `);
+          <div class="mtz-slider-empty-state">
+            <span class="dashicons dashicons-images-alt2"></span>
+            <p>${mtzSlider.strings.emptyState || "No hay imágenes en el slider."}</p>
+          </div>
+        `);
         return;
       }
 
@@ -133,21 +249,20 @@
 
       MTZSlider.images.forEach(function(image, index) {
         html += `
-                    <div class="mtz-slider-image-item" data-id="${image.id}" data-index="${index}">
-                        <img src="${image.image_url}" alt="${image.image_alt ||
-          ""}" />
-                        <div class="mtz-slider-image-overlay">
-                            <div class="mtz-slider-image-actions">
-                                <button class="mtz-slider-edit" data-id="${image.id}">
-                                    <span class="dashicons dashicons-edit"></span>
-                                </button>
-                                <button class="mtz-slider-delete" data-id="${image.id}">
-                                    <span class="dashicons dashicons-trash"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
+          <div class="mtz-slider-image-item" data-id="${image.id}" data-index="${index}">
+            <img src="${image.image_url}" alt="${image.image_alt || ""}" />
+            <div class="mtz-slider-image-overlay">
+              <div class="mtz-slider-image-actions">
+                <button class="mtz-slider-edit" data-id="${image.id}">
+                  <span class="dashicons dashicons-edit"></span>
+                </button>
+                <button class="mtz-slider-delete" data-id="${image.id}">
+                  <span class="dashicons dashicons-trash"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
       });
 
       html += "</div>";
@@ -255,17 +370,9 @@
     },
 
     closeModal: function() {
-      $("#mtz-image-modal").hide();
-      $("#mtz-image-form")[0].reset();
+      $(".mtz-modal").hide();
+      $("#mtz-image-form, #mtz-slider-form")[0].reset();
       MTZSlider.currentImageId = null;
-    },
-
-    showLoading: function() {
-      $("#mtz-loading").show();
-    },
-
-    closeLoading: function() {
-      $("#mtz-loading").hide();
     },
 
     showNotice: function(message, type) {

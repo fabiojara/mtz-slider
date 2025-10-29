@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: MTZ Slider
- * Plugin URI: https://github.com/tu-usuario/mtz-slider
- * Description: Slider moderno y responsive para WordPress con gestión de imágenes desde el panel administrativo
- * Version: 1.0.0
- * Author: Tu Nombre
- * Author URI: https://tusitio.com
+ * Plugin URI: https://github.com/fabiojara/mtz-slider
+ * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
+ * Version: 2.0.0
+ * Author: Fabio Jara
+ * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: mtz-slider
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '1.0.0');
+define('MTZ_SLIDER_VERSION', '2.0.0');
 define('MTZ_SLIDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -165,7 +165,31 @@ class MTZ_Slider {
         if (!current_user_can('manage_options')) {
             return;
         }
-
+        
+        // Obtener sliders
+        $database = new MTZ_Slider_Database();
+        $sliders = $database->get_sliders();
+        
+        // Obtener el slider actual desde la URL
+        $current_slider_id = isset($_GET['slider']) ? intval($_GET['slider']) : null;
+        $current_slider = null;
+        
+        if ($current_slider_id) {
+            $current_slider = $database->get_slider($current_slider_id);
+        } elseif (!empty($sliders)) {
+            $current_slider = $sliders[0];
+            $current_slider_id = $current_slider['id'];
+        }
+        
+        // Variables para la vista
+        $view_data = array(
+            'sliders' => $sliders,
+            'current_slider' => $current_slider,
+            'current_slider_id' => $current_slider_id,
+        );
+        
+        extract($view_data);
+        
         include MTZ_SLIDER_PLUGIN_DIR . 'admin/views/admin-page.php';
     }
 
@@ -174,18 +198,31 @@ class MTZ_Slider {
      */
     public function render_slider_shortcode($atts) {
         $atts = shortcode_atts(array(
-            'id' => 0,
-            'autoplay' => true,
-            'speed' => 5000,
+            'id' => 1,
+            'autoplay' => null,
+            'speed' => null,
         ), $atts);
-
+        
         $database = new MTZ_Slider_Database();
-        $images = $database->get_slider_images();
-
+        $slider = $database->get_slider(intval($atts['id']));
+        
+        if (!$slider || !$slider['is_active']) {
+            return '';
+        }
+        
+        // Usar configuración del slider o parámetros del shortcode
+        $autoplay = $atts['autoplay'] !== null ? filter_var($atts['autoplay'], FILTER_VALIDATE_BOOLEAN) : $slider['autoplay'];
+        $speed = $atts['speed'] !== null ? intval($atts['speed']) : $slider['speed'];
+        
+        // Convertir autoplay de int a bool
+        $autoplay = $autoplay == 1 || $autoplay === true || $autoplay === 'true';
+        
+        $images = $database->get_slider_images(intval($atts['id']));
+        
         if (empty($images)) {
             return '';
         }
-
+        
         ob_start();
         include MTZ_SLIDER_PLUGIN_DIR . 'public/views/slider.php';
         return ob_get_clean();
