@@ -69,9 +69,32 @@ class MTZ_Slider_Database {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql_sliders);
         dbDelta($sql_images);
-
+        
+        // Actualizar estructura si la tabla existe sin slider_id
+        $this->update_table_structure();
+        
         // Migración de datos antiguos si existe
         $this->migrate_old_data();
+    }
+
+    /**
+     * Actualizar estructura de la tabla de imágenes
+     */
+    private function update_table_structure() {
+        global $wpdb;
+        
+        // Verificar si la columna slider_id existe
+        $column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$this->images_table} LIKE 'slider_id'");
+        
+        if (empty($column_exists)) {
+            // Agregar la columna slider_id
+            $wpdb->query("ALTER TABLE {$this->images_table} ADD COLUMN slider_id bigint(20) unsigned NOT NULL DEFAULT 1 AFTER id");
+            
+            // Agregar índice para slider_id
+            $wpdb->query("ALTER TABLE {$this->images_table} ADD INDEX slider_id (slider_id)");
+            
+            error_log('Columna slider_id agregada a la tabla wp_mtz_slider_images');
+        }
     }
 
     /**
@@ -279,10 +302,10 @@ class MTZ_Slider_Database {
      */
     public function insert_image($slider_id, $data) {
         global $wpdb;
-        
+
         // Asegurar que las tablas existan
         $this->ensure_tables_exist();
-        
+
         $defaults = array(
             'image_id' => 0,
             'image_url' => '',
@@ -292,9 +315,9 @@ class MTZ_Slider_Database {
             'sort_order' => 0,
             'is_active' => 1,
         );
-        
+
         $data = wp_parse_args($data, $defaults);
-        
+
         // Sanitizar datos
         $insert_data = array(
             'slider_id' => intval($slider_id),
@@ -306,24 +329,24 @@ class MTZ_Slider_Database {
             'sort_order' => intval($data['sort_order']),
             'is_active' => intval($data['is_active']),
         );
-        
+
         error_log('Intentando insertar imagen en slider_id: ' . $slider_id);
         error_log('Datos: ' . print_r($insert_data, true));
-        
+
         $result = $wpdb->insert(
             $this->images_table,
             $insert_data,
             array('%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
         );
-        
+
         if ($result === false) {
             error_log('Error al insertar imagen: ' . $wpdb->last_error);
             error_log('Query fallida: ' . $wpdb->last_query);
             return false;
         }
-        
+
         error_log('Imagen insertada correctamente con ID: ' . $wpdb->insert_id);
-        
+
         return $wpdb->insert_id;
     }
 
