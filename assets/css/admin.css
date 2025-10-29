@@ -529,16 +529,31 @@
 .mtz-shortcode-input {
     flex: 1;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 11px;
-    padding: 5px;
-    background: #f8f9fa;
+    font-size: 13px;
+    padding: 6px 8px;
+    background: #fff;
     border: 1px solid #ddd;
     border-radius: 3px;
+    color: #333;
+    font-weight: 500;
 }
 
 .mtz-copy-shortcode {
-    padding: 5px 10px;
+    padding: 6px 10px;
     min-width: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.mtz-copy-shortcode i {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .mtz-slider-content {
@@ -569,8 +584,7 @@
 }
 
 /* Estilos para iconos Lucide */
-.mtz-slider-item-delete i,
-.mtz-copy-shortcode i {
+.mtz-slider-item-delete i {
     width: 16px;
     height: 16px;
     stroke-width: 2;
