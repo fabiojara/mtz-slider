@@ -10,10 +10,16 @@ if (!defined('ABSPATH')) {
 }
 ?>
 
-<div class="mtz-slider-wrapper">
-    <div class="mtz-slider"
-         data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
-         data-speed="<?php echo esc_attr($speed); ?>">
+<?php 
+$slider_id = isset($atts['id']) ? intval($atts['id']) : 1;
+$unique_id = 'mtz-slider-' . $slider_id;
+?>
+<div class="mtz-slider-wrapper" id="<?php echo esc_attr($unique_id); ?>">
+    <div class="mtz-slider" 
+         id="<?php echo esc_attr($unique_id); ?>-container"
+         data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>" 
+         data-speed="<?php echo esc_attr($speed); ?>"
+         data-slider-id="<?php echo esc_attr($slider_id); ?>">
 
         <div class="mtz-slider-track">
             <?php foreach ($images as $image): ?>

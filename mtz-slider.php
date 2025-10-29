@@ -223,6 +223,16 @@ class MTZ_Slider {
             return '';
         }
 
+        // Pasar imágenes y configuración al template
+        $template_data = array(
+            'images' => $images,
+            'autoplay' => $autoplay,
+            'speed' => $speed,
+            'atts' => $atts
+        );
+        
+        extract($template_data);
+        
         ob_start();
         include MTZ_SLIDER_PLUGIN_DIR . 'public/views/slider.php';
         return ob_get_clean();

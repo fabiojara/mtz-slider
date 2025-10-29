@@ -92,7 +92,9 @@
         return;
       }
 
-      const url = sliderId ? mtzSlider.apiUrl + "sliders/" + sliderId : mtzSlider.apiUrl + "sliders";
+      const url = sliderId
+        ? mtzSlider.apiUrl + "sliders/" + sliderId
+        : mtzSlider.apiUrl + "sliders";
       const data = {
         name: name,
         autoplay: autoplay,
@@ -118,19 +120,23 @@
           console.log("Success:", response);
           MTZSlider.showNotice("Slider guardado correctamente", "success");
           $("#mtz-slider-modal").hide();
-          
+
           setTimeout(function() {
             location.reload();
           }, 1000);
         },
         error: function(xhr, status, error) {
-          console.error("Error al guardar slider:", xhr.status, xhr.responseText);
+          console.error(
+            "Error al guardar slider:",
+            xhr.status,
+            xhr.responseText
+          );
           let errorMsg = "Error al guardar el slider";
           if (xhr.responseText) {
             try {
               const errorData = JSON.parse(xhr.responseText);
               errorMsg = errorData.message || errorMsg;
-            } catch(e) {
+            } catch (e) {
               errorMsg = xhr.responseText;
             }
           }
@@ -415,29 +421,34 @@
 
     closeModal: function() {
       $(".mtz-modal").hide();
-      
+
       // Reset forms si existen
       const imageForm = $("#mtz-image-form")[0];
       const sliderForm = $("#mtz-slider-form")[0];
-      
+
       if (imageForm) imageForm.reset();
       if (sliderForm) sliderForm.reset();
-      
+
       MTZSlider.currentImageId = null;
     },
 
     showNotice: function(message, type) {
       let $notice = $("#mtz-notice");
-      
+
       // Si no existe el contenedor, crear uno temporal
       if ($notice.length === 0) {
         $notice = $('<div id="mtz-notice" class="mtz-slider-notice"></div>');
         $("body").append($notice);
       }
-      
+
       $notice.removeClass("success error").addClass(type);
       $notice.text(message);
-      $notice.css("display", "block").css("position", "fixed").css("top", "40px").css("right", "20px").css("z-index", "999999");
+      $notice
+        .css("display", "block")
+        .css("position", "fixed")
+        .css("top", "40px")
+        .css("right", "20px")
+        .css("z-index", "999999");
 
       setTimeout(function() {
         $notice.removeClass("success error");

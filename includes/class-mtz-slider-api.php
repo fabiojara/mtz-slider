@@ -219,9 +219,9 @@ class MTZ_Slider_API {
         $database = new MTZ_Slider_Database();
 
         $params = $request->get_json_params();
-        
+
         error_log('API create_image - Parámetros recibidos: ' . print_r($params, true));
-        
+
         $slider_id = isset($params['slider_id']) ? intval($params['slider_id']) : 0;
 
         if (!$slider_id) {

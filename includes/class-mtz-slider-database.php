@@ -69,10 +69,10 @@ class MTZ_Slider_Database {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql_sliders);
         dbDelta($sql_images);
-        
+
         // Actualizar estructura si la tabla existe sin slider_id
         $this->update_table_structure();
-        
+
         // Migración de datos antiguos si existe
         $this->migrate_old_data();
     }
@@ -82,17 +82,17 @@ class MTZ_Slider_Database {
      */
     private function update_table_structure() {
         global $wpdb;
-        
+
         // Verificar si la columna slider_id existe
         $column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$this->images_table} LIKE 'slider_id'");
-        
+
         if (empty($column_exists)) {
             // Agregar la columna slider_id
             $wpdb->query("ALTER TABLE {$this->images_table} ADD COLUMN slider_id bigint(20) unsigned NOT NULL DEFAULT 1 AFTER id");
-            
+
             // Agregar índice para slider_id
             $wpdb->query("ALTER TABLE {$this->images_table} ADD INDEX slider_id (slider_id)");
-            
+
             error_log('Columna slider_id agregada a la tabla wp_mtz_slider_images');
         }
     }
