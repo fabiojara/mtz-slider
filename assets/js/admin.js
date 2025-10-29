@@ -465,17 +465,17 @@
 
     toggleHelp: function() {
       $("#mtz-help-modal").show();
-      
+
       // Reinicializar iconos en la modal
       if (typeof lucide !== "undefined") {
         lucide.createIcons();
       }
     },
-    
+
     updateImageCount: function() {
       const sliderId = MTZSlider.currentSliderId;
       if (!sliderId) return;
-      
+
       // Obtener sliders para actualizar el contador
       $.ajax({
         url: mtzSlider.apiUrl + "sliders",
@@ -488,14 +488,17 @@
           const currentSlider = response.find(s => s.id == sliderId);
           if (currentSlider) {
             // Actualizar el contador en la interfaz
-            $('.mtz-slider-item[data-slider-id="' + sliderId + '"] .mtz-slider-item-stat')
-              .html('<i data-lucide="image"></i> ' + 
-                (currentSlider.image_count == 1 ? 
-                  currentSlider.image_count + ' imagen' : 
-                  currentSlider.image_count + ' imágenes'
-                )
-              );
-            
+            $(
+              '.mtz-slider-item[data-slider-id="' +
+                sliderId +
+                '"] .mtz-slider-item-stat'
+            ).html(
+              '<i data-lucide="image"></i> ' +
+                (currentSlider.image_count == 1
+                  ? currentSlider.image_count + " imagen"
+                  : currentSlider.image_count + " imágenes")
+            );
+
             // Reinicializar iconos
             if (typeof lucide !== "undefined") {
               lucide.createIcons();
