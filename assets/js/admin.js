@@ -191,24 +191,65 @@
 
     copyShortcode: function(e) {
       e.stopPropagation();
+      e.preventDefault();
 
       const shortcode = $(e.currentTarget).data("shortcode");
-      const tempInput = $("<input>");
-
-      $("body").append(tempInput);
-      tempInput.val(shortcode).select();
-      document.execCommand("copy");
-      tempInput.remove();
-
       const $button = $(e.currentTarget);
-      const originalText = $button.html();
-      $button.html('<span class="dashicons dashicons-yes"></span>');
-      $button.css("color", "#00a32a");
+      
+      // Intentar usar la Clipboard API moderna
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard
+          .writeText(shortcode)
+          .then(() => {
+            // Copiado exitosamente
+            const originalHTML = $button.html();
+            $button.html('<i data-lucide="check"></i>');
+            $button.css("color", "#00a32a");
+            
+            // Reinicializar Lucide para el nuevo icono
+            if (typeof lucide !== 'undefined') {
+              lucide.createIcons();
+            }
 
-      setTimeout(function() {
-        $button.html(originalText);
-        $button.css("color", "");
-      }, 2000);
+            setTimeout(function() {
+              $button.html(originalHTML);
+              $button.css("color", "");
+              // Reinicializar Lucide para restaurar el icono original
+              if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+              }
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error('Error al copiar:', err);
+            this.showNotice("Error al copiar el shortcode", "error");
+          });
+      } else {
+        // Fallback para navegadores antiguos
+        const tempInput = $("<input>");
+        $("body").append(tempInput);
+        tempInput.val(shortcode).select();
+        document.execCommand("copy");
+        tempInput.remove();
+
+        const originalHTML = $button.html();
+        $button.html('<i data-lucide="check"></i>');
+        $button.css("color", "#00a32a");
+        
+        // Reinicializar Lucide para el nuevo icono
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+
+        setTimeout(function() {
+          $button.html(originalHTML);
+          $button.css("color", "");
+          // Reinicializar Lucide para restaurar el icono original
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+          }
+        }, 2000);
+      }
     },
 
     // ============ MÉTODOS PARA IMÁGENES ============
