@@ -11,8 +11,8 @@ if (!defined('ABSPATH')) {
 ?>
 
 <div class="mtz-slider-wrapper">
-    <div class="mtz-slider" 
-         data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>" 
+    <div class="mtz-slider"
+         data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
          data-speed="<?php echo esc_attr($speed); ?>">
 
         <div class="mtz-slider-track">
@@ -40,7 +40,7 @@ if (!defined('ABSPATH')) {
         </button>
 
         <div class="mtz-slider-dots"></div>
-        
+
         <?php if ($autoplay): ?>
             <button class="mtz-slider-pause-play" aria-label="<?php esc_attr_e('Pausar/Reproducir', 'mtz-slider'); ?>">
                 <span class="dashicons dashicons-controls-pause"></span>

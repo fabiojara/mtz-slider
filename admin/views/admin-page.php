@@ -32,12 +32,12 @@ if (!defined('ABSPATH')) {
                     <h3><span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('Paso 1: Crear un Slider', 'mtz-slider'); ?></h3>
                     <p><?php esc_html_e('Haz clic en "Crear Nuevo Slider" y asígnale un nombre único.', 'mtz-slider'); ?></p>
                 </div>
-                
+
                 <div class="mtz-help-section">
                     <h3><span class="dashicons dashicons-images-alt2"></span> <?php esc_html_e('Paso 2: Agregar Imágenes', 'mtz-slider'); ?></h3>
                     <p><?php esc_html_e('Selecciona el slider de la lista y haz clic en "Agregar Imágenes" para añadir tus imágenes.', 'mtz-slider'); ?></p>
                 </div>
-                
+
                 <div class="mtz-help-section">
                     <h3><span class="dashicons dashicons-admin-post"></span> <?php esc_html_e('Paso 3: Copiar y Usar el Shortcode', 'mtz-slider'); ?></h3>
                     <p><?php esc_html_e('Cada slider tiene su propio shortcode. Copia el shortcode que aparece junto a cada slider y pégalo en tus páginas.', 'mtz-slider'); ?></p>
@@ -64,7 +64,7 @@ if (!defined('ABSPATH')) {
                     <?php esc_html_e('Crear Nuevo Slider', 'mtz-slider'); ?>
                 </button>
             </div>
-            
+
             <div class="mtz-sliders-list" id="mtz-sliders-list">
                 <?php if (empty($sliders)): ?>
                     <div class="mtz-empty-sliders">
@@ -109,7 +109,7 @@ if (!defined('ABSPATH')) {
         <div class="mtz-slider-content" id="mtz-slider-content">
             <?php if ($current_slider): ?>
                 <input type="hidden" id="mtz-current-slider-id" value="<?php echo esc_attr($current_slider_id); ?>">
-                
+
                 <div class="mtz-slider-header">
                     <h2><?php echo esc_html($current_slider['name']); ?></h2>
                     <p class="description">
@@ -155,25 +155,25 @@ if (!defined('ABSPATH')) {
             <div class="mtz-modal-body">
                 <form id="mtz-slider-form">
                     <input type="hidden" id="mtz-slider-id" />
-                    
+
                     <div class="mtz-form-field">
                         <label for="mtz-slider-name"><?php esc_html_e('Nombre del Slider', 'mtz-slider'); ?> *</label>
                         <input type="text" id="mtz-slider-name" class="regular-text" required placeholder="<?php esc_attr_e('Ej: Slider Principal, Home Banner, etc.', 'mtz-slider'); ?>" />
                     </div>
-                    
+
                     <div class="mtz-form-field">
                         <label>
                             <input type="checkbox" id="mtz-slider-autoplay" checked />
                             <?php esc_html_e('Activar reproducción automática', 'mtz-slider'); ?>
                         </label>
                     </div>
-                    
+
                     <div class="mtz-form-field">
                         <label for="mtz-slider-speed"><?php esc_html_e('Velocidad (milisegundos)', 'mtz-slider'); ?></label>
                         <input type="number" id="mtz-slider-speed" value="5000" min="1000" max="20000" step="500" />
                         <p class="description"><?php esc_html_e('Tiempo que cada imagen permanece visible antes de cambiar.', 'mtz-slider'); ?></p>
                     </div>
-                    
+
                     <div class="mtz-form-actions">
                         <button type="submit" class="button button-primary">
                             <?php esc_html_e('Guardar', 'mtz-slider'); ?>
@@ -198,29 +198,29 @@ if (!defined('ABSPATH')) {
                 <form id="mtz-image-form">
                     <input type="hidden" id="mtz-image-id" />
                     <input type="hidden" id="mtz-image-url" />
-                    
+
                     <div class="mtz-form-field">
                         <label for="mtz-image-title"><?php esc_html_e('Título', 'mtz-slider'); ?></label>
                         <input type="text" id="mtz-image-title" class="regular-text" />
                     </div>
-                    
+
                     <div class="mtz-form-field">
                         <label for="mtz-image-alt"><?php esc_html_e('Texto Alternativo (ALT)', 'mtz-slider'); ?></label>
                         <input type="text" id="mtz-image-alt" class="regular-text" />
                     </div>
-                    
+
                     <div class="mtz-form-field">
                         <label for="mtz-image-description"><?php esc_html_e('Descripción', 'mtz-slider'); ?></label>
                         <textarea id="mtz-image-description" rows="3" class="large-text"></textarea>
                     </div>
-                    
+
                     <div class="mtz-form-field">
                         <label>
                             <input type="checkbox" id="mtz-image-active" />
                             <?php esc_html_e('Activar imagen', 'mtz-slider'); ?>
                         </label>
                     </div>
-                    
+
                     <div class="mtz-form-actions">
                         <button type="submit" class="button button-primary">
                             <?php esc_html_e('Guardar', 'mtz-slider'); ?>

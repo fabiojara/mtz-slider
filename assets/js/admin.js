@@ -85,6 +85,8 @@
       const autoplay = $("#mtz-slider-autoplay").is(":checked") ? 1 : 0;
       const speed = $("#mtz-slider-speed").val();
 
+      console.log("Guardando slider:", { sliderId, name, autoplay, speed });
+
       if (!name) {
         this.showNotice("Por favor ingresa un nombre para el slider", "error");
         return;
@@ -101,6 +103,9 @@
         data.id = sliderId;
       }
 
+      console.log("URL:", url);
+      console.log("Data:", data);
+
       $.ajax({
         url: url,
         method: sliderId ? "PUT" : "POST",
@@ -110,6 +115,7 @@
           xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
         },
         success: function(response) {
+          console.log("Success:", response);
           MTZSlider.showNotice("Slider guardado correctamente", "success");
           $("#mtz-slider-modal").hide();
           
@@ -118,8 +124,17 @@
           }, 1000);
         },
         error: function(xhr, status, error) {
-          console.error("Error al guardar slider:", xhr.responseText);
-          MTZSlider.showNotice("Error al guardar el slider: " + (xhr.responseText || error), "error");
+          console.error("Error al guardar slider:", xhr.status, xhr.responseText);
+          let errorMsg = "Error al guardar el slider";
+          if (xhr.responseText) {
+            try {
+              const errorData = JSON.parse(xhr.responseText);
+              errorMsg = errorData.message || errorMsg;
+            } catch(e) {
+              errorMsg = xhr.responseText;
+            }
+          }
+          MTZSlider.showNotice(errorMsg, "error");
         }
       });
     },
