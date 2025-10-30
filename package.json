@@ -1,6 +1,6 @@
 {
   "name": "mtz-slider",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Slider moderno y responsive para WordPress con gestión de imágenes desde el panel administrativo",
   "main": "mtz-slider.php",
   "scripts": {
@@ -15,11 +15,11 @@
     "carousel",
     "images"
   ],
-  "author": "Tu Nombre",
+  "author": "Fabio Jara",
   "license": "GPL-2.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tu-usuario/mtz-slider.git"
+    "url": "https://github.com/fabiojara/mtz-slider.git"
   },
   "dependencies": {
     "lucide": "^0.548.0"

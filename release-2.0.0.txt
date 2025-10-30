@@ -1,0 +1,9 @@
+﻿MTZ Slider v2.0.0
+
+Cambios
+- Soporte para mÃºltiples sliders con shortcode por ID.
+- Nueva interfaz con lista lateral y reordenamiento drag & drop.
+- Mejoras de manejo de errores y logs.
+
+CÃ³mo actualizar
+- Desactiva/activa el plugin para crear/actualizar tablas.

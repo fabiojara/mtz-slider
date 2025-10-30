@@ -1,0 +1,10 @@
+MTZ Slider v2.2.1
+
+Cambios
+- Actualización de documentación (README y ACTUALIZACION.md) y metadatos del proyecto.
+- Sin cambios funcionales en el código.
+
+Cómo actualizar
+- Desactiva y activa el plugin para asegurar que no queden cachés.
+- Limpia caché del navegador (Ctrl/Cmd+F5). Opcional: npm i && npm run build si trabajas con assets locales.
+

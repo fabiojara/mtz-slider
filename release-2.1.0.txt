@@ -1,0 +1,8 @@
+﻿MTZ Slider v2.1.0
+
+Cambios
+- BotÃ³n â€œConocer mÃ¡sâ€¦â€ por imagen con URL configurable.
+- MigraciÃ³n automÃ¡tica de BD: nuevo campo link_url.
+- UnificaciÃ³n de Ã­conos a Lucide en admin y frontend.
+- Dots circulares y correcciÃ³n de estados focus/active en flechas.
+- Ajustes de textos de ayuda en admin.

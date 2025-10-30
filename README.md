@@ -1,4 +1,4 @@
-# MTZ Slider (v2.2.0)
+# MTZ Slider (v2.2.1)
 
 Plugin moderno y responsive para WordPress que permite crear sliders de imágenes con un panel de administración intuitivo.
 
@@ -139,7 +139,7 @@ GPL v2 o posterior
 
 ## 👤 Autor
 
-Tu Nombre
+Fabio Jara
 
 ## 🙏 Contribuciones
 
@@ -154,4 +154,8 @@ Las contribuciones son bienvenidas. Por favor:
 ## 📧 Soporte
 
 Para reportar problemas o sugerencias, abre un issue en GitHub.
+
+## 🗓️ Changelog
+
+Consulta `ACTUALIZACION.md` para ver el historial de cambios por versión.
 

@@ -1,0 +1,18 @@
+﻿MTZ Slider v2.2.0
+
+Cambios
+- Altura por defecto del slider: 80vh (antes 60vh).
+- Lazy-loading y srcset/sizes en imÃ¡genes del slider.
+- Autoplay pausado cuando el slider no estÃ¡ en viewport (IntersectionObserver).
+- Frontend reescrito en Vanilla JS (eliminado jQuery).
+- Carga condicional de assets solo cuando existe el shortcode en la pÃ¡gina.
+- Preparado build con Vite (minificaciÃ³n y cache busting).
+
+CÃ³mo actualizar
+- Actualiza a 2.2.0 y limpia cachÃ© (Ctrl+F5). Opcional: npm i && npm run build.
+
+Notas tÃ©cnicas
+- Encolado condicionado y versionado por filemtime. Cambios en assets pÃºblicos.
+
+Compatibilidad
+- WP â‰¥ 5.8, PHP â‰¥ 7.4.

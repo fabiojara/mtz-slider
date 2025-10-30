@@ -1,77 +1,71 @@
-# 🔄 Instrucciones de Actualización - Versión 2.2.0
+# 🔄 Instrucciones de actualización y changelog
 
-## ⚠️ IMPORTANTE: Actualización a Versión 2.2.0
+Este documento cubre instrucciones de actualización y el historial de cambios por versión.
 
-Si estás actualizando desde una versión anterior, sigue estos pasos:
+## ⚠️ Pasos recomendados al actualizar
 
-### Paso 1: Desactivar el Plugin
-1. Ve a **Plugins → Plugins Instalados**
-2. Busca "MTZ Slider"
-3. Haz clic en **Desactivar**
+1. Ve a **Plugins → Plugins instalados**.
+2. Desactiva **MTZ Slider**.
+3. Activa nuevamente **MTZ Slider** para aplicar migraciones de BD si corresponde.
+4. Limpia caché del navegador (Ctrl/Cmd + F5) y/o del sitio si usas plugins de caché.
 
-### Paso 2: Reactivar el Plugin
-1. Haz clic en **Activar** para el plugin MTZ Slider
-2. Esto actualizará automáticamente las tablas de la base de datos
+Si tras activar no ves cambios, revisa consola del navegador y logs de WordPress.
 
-### Paso 3: Verificar que Funcione
-1. Ve a **MTZ Slider** en el menú lateral
-2. Haz clic en **Crear Nuevo Slider**
-3. Ingresa un nombre (ej: "Slider Principal")
-4. Haz clic en **Guardar**
-5. Debería aparecer en la lista de sliders
+### Dónde ver logs
+- `wp-content/debug.log` (si `WP_DEBUG_LOG` está habilitado)
+- `error_log` de PHP del servidor
 
-## 🐛 Solución de Problemas
+---
 
-### Si la modal no se cierra al guardar:
+## 🗓️ Changelog
 
-1. **Abre la consola del navegador** (F12)
-2. **Actualiza la página** (F5)
-3. **Intenta crear el slider de nuevo**
-4. Verifica en la consola si hay errores
+### 2.2.1
+- Documentación actualizada (README, guía de actualización).
+- Sincronización de metadatos: autor y repositorio en `package.json`.
+- No hay cambios funcionales en código.
 
-### Si aparece error 500:
+### 2.2.0
+- Altura por defecto del slider: `80vh` (antes `60vh`).
+- Lazy-loading y `srcset/sizes` en imágenes del slider.
+- Autoplay pausado cuando el slider no está en viewport (IntersectionObserver).
+- Frontend reescrito en Vanilla JS (eliminado jQuery).
+- Carga condicional de assets solo cuando existe el shortcode en la página.
+- Preparado build con Vite (minificación y cache busting).
 
-1. Ve a **Plugins**
-2. **Desactiva** el plugin
-3. **Elimina** el plugin
-4. Vuelve a **instalar** el plugin
-5. Esto recreará las tablas correctamente
+### 2.1.0
+- Botón “Conocer más…” por imagen con URL configurable.
+- Migración automática de BD: nuevo campo `link_url`.
+- Unificación de íconos a Lucide en admin y frontend.
+- Dots circulares y corrección de estados `focus/active` en flechas.
+- Ajustes de textos de ayuda en admin.
 
-### Ver los logs de error:
+### 2.0.0
+- Soporte para múltiples sliders con shortcode por ID: `[mtz_slider id="1"]`.
+- Nueva interfaz con lista lateral y reordenamiento drag & drop.
+- Mejoras de manejo de errores y logs.
 
-Si tienes acceso a los logs de WordPress, verifica:
-- `wp-content/debug.log`
-- Errores en `error_log` de PHP
+---
 
-## ✅ Cambios en la Versión 2.2.0
+## 📋 Formato del shortcode
 
-- ✅ Altura por defecto del slider cambiada a `80vh` (antes `60vh`)
-- ✅ Lazy-loading y `srcset/sizes` en imágenes del slider
-- ✅ Autoplay pausado cuando el slider no está en viewport (IntersectionObserver)
-- ✅ Frontend reescrito sin jQuery (Vanilla JS)
-- ✅ Carga condicional de assets solo cuando existe el shortcode en la página
-- ✅ Preparación de build con Vite (minificación y cache busting)
-
-## 📋 Shortcode Nuevo Formato
-
-**Antes (Versión 1.0):**
+Ejemplo básico:
 ```
 [mtz_slider]
 ```
 
-**Ahora (Versión 2.0):**
+Con ID específico y opciones:
 ```
-[mtz_slider id="1"]
+[mtz_slider id="1" autoplay="true" speed="5000"]
 ```
 
-Cada slider tiene un ID único que puedes ver en el panel de administración.
+Cada slider tiene un ID único visible en el panel de administración.
 
-## 🆘 ¿Necesitas Ayuda?
+---
 
-Si sigues teniendo problemas después de seguir estos pasos, verifica:
+## 🆘 ¿Necesitas ayuda?
 
-1. Que WordPress esté actualizado a la versión 5.8 o superior
-2. Que PHP sea 7.4 o superior
-3. Que no haya errores de sintaxis en los archivos del plugin
-4. Los permisos de la base de datos estén correctos
+1. WordPress 5.8 o superior.
+2. PHP 7.4 o superior.
+3. Sin errores de sintaxis en archivos del plugin.
+4. Permisos correctos en la base de datos.
 
