@@ -92,12 +92,32 @@ class MTZ_Slider {
      * Activar plugin
      */
     public function activate() {
-        // Cargar la clase de base de datos primero
-        require_once MTZ_SLIDER_PLUGIN_DIR . 'includes/class-mtz-slider-database.php';
+        // Verificar que las constantes estén definidas
+        if (!defined('MTZ_SLIDER_PLUGIN_DIR')) {
+            wp_die(__('Error: Las constantes del plugin no están definidas correctamente.', 'mtz-slider'));
+        }
 
-        $database = new MTZ_Slider_Database();
-        $database->create_tables();
-        flush_rewrite_rules();
+        // Cargar la clase de base de datos primero
+        $database_file = MTZ_SLIDER_PLUGIN_DIR . 'includes/class-mtz-slider-database.php';
+
+        if (!file_exists($database_file)) {
+            wp_die(sprintf(__('Error: No se encontró el archivo de base de datos en: %s', 'mtz-slider'), $database_file));
+        }
+
+        require_once $database_file;
+
+        // Verificar que la clase existe
+        if (!class_exists('MTZ_Slider_Database')) {
+            wp_die(__('Error: La clase MTZ_Slider_Database no se pudo cargar.', 'mtz-slider'));
+        }
+
+        try {
+            $database = new MTZ_Slider_Database();
+            $database->create_tables();
+            flush_rewrite_rules();
+        } catch (Exception $e) {
+            wp_die(sprintf(__('Error al activar el plugin: %s', 'mtz-slider'), $e->getMessage()));
+        }
     }
 
     /**
