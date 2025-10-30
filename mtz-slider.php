@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 
 // Definir constantes del plugin
 define('MTZ_SLIDER_VERSION', '2.2.1');
-define('MTZ_SLIDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
 
@@ -99,9 +99,30 @@ class MTZ_Slider {
 
         // Cargar la clase de base de datos primero
         $database_file = MTZ_SLIDER_PLUGIN_DIR . 'includes/class-mtz-slider-database.php';
-
+        
+        // Verificar que el archivo existe antes de intentar cargarlo
         if (!file_exists($database_file)) {
-            wp_die(sprintf(__('Error: No se encontró el archivo de base de datos en: %s', 'mtz-slider'), $database_file));
+            // Intentar rutas alternativas por si hay problemas con la estructura
+            $alternatives = array(
+                dirname(MTZ_SLIDER_PLUGIN_DIR) . '/mtz-slider/includes/class-mtz-slider-database.php',
+                dirname(dirname(MTZ_SLIDER_PLUGIN_DIR)) . '/mtz-slider/includes/class-mtz-slider-database.php',
+            );
+            
+            $found = false;
+            foreach ($alternatives as $alt_path) {
+                if (file_exists($alt_path)) {
+                    $database_file = $alt_path;
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if (!$found) {
+                wp_die(sprintf(
+                    __('Error: No se encontró el archivo de base de datos. Ruta buscada: %s. Verifica que el plugin se haya instalado correctamente con todos sus archivos.', 'mtz-slider'), 
+                    $database_file
+                ));
+            }
         }
 
         require_once $database_file;
