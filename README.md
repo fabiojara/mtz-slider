@@ -33,6 +33,16 @@ wp-content/plugins/mtz-slider/
 
 3. Accede a **MTZ Slider** en el menú lateral para comenzar a agregar imágenes
 
+## 🔄 Actualizaciones Automáticas
+
+El plugin incluye soporte para actualizaciones automáticas desde GitHub Releases. Cuando haya una nueva versión disponible:
+
+1. WordPress te mostrará un aviso en **Plugins → Plugins instalados**
+2. Haz clic en **"Actualizar ahora"** para instalar la nueva versión
+3. El plugin se actualizará automáticamente sin necesidad de descargar manualmente
+
+**Nota para desarrolladores**: Para crear releases y habilitar actualizaciones automáticas, consulta el archivo `CREAR-RELEASE.md` en el repositorio.
+
 ## 📖 Uso
 
 ### Añadir Imágenes al Slider

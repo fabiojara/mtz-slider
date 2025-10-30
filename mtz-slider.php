@@ -82,6 +82,9 @@ class MTZ_Slider {
 
         if (is_admin()) {
             require_once MTZ_SLIDER_PLUGIN_DIR . 'includes/class-mtz-slider-admin.php';
+            // Cargar actualizador solo en admin
+            require_once MTZ_SLIDER_PLUGIN_DIR . 'includes/class-mtz-slider-updater.php';
+            new MTZ_Slider_Updater();
         }
     }
 
