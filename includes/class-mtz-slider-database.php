@@ -52,6 +52,7 @@ class MTZ_Slider_Database {
             slider_id bigint(20) unsigned NOT NULL,
             image_id bigint(20) unsigned NOT NULL,
             image_url varchar(255) NOT NULL,
+            link_url varchar(255) DEFAULT '',
             image_title varchar(255) DEFAULT '',
             image_description text DEFAULT '',
             image_alt varchar(255) DEFAULT '',
@@ -94,6 +95,13 @@ class MTZ_Slider_Database {
             $wpdb->query("ALTER TABLE {$this->images_table} ADD INDEX slider_id (slider_id)");
 
             error_log('Columna slider_id agregada a la tabla wp_mtz_slider_images');
+        }
+
+        // Verificar si la columna link_url existe
+        $link_column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$this->images_table} LIKE 'link_url'");
+        if (empty($link_column_exists)) {
+            $wpdb->query("ALTER TABLE {$this->images_table} ADD COLUMN link_url varchar(255) DEFAULT '' AFTER image_url");
+            error_log('Columna link_url agregada a la tabla wp_mtz_slider_images');
         }
     }
 
@@ -220,6 +228,9 @@ class MTZ_Slider_Database {
         if (!$slider_table_exists || !$images_table_exists) {
             $this->create_tables();
         }
+
+        // Asegurar también que la estructura esté actualizada (migraciones)
+        $this->update_table_structure();
     }
 
     /**
@@ -320,6 +331,7 @@ class MTZ_Slider_Database {
         $defaults = array(
             'image_id' => 0,
             'image_url' => '',
+            'link_url' => '',
             'image_title' => '',
             'image_description' => '',
             'image_alt' => '',
@@ -334,6 +346,7 @@ class MTZ_Slider_Database {
             'slider_id' => intval($slider_id),
             'image_id' => intval($data['image_id']),
             'image_url' => esc_url_raw($data['image_url']),
+            'link_url' => esc_url_raw($data['link_url']),
             'image_title' => sanitize_text_field($data['image_title']),
             'image_description' => sanitize_textarea_field($data['image_description']),
             'image_alt' => sanitize_text_field($data['image_alt']),
@@ -347,7 +360,7 @@ class MTZ_Slider_Database {
         $result = $wpdb->insert(
             $this->images_table,
             $insert_data,
-            array('%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d')
+            array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d')
         );
 
         if ($result === false) {
@@ -367,12 +380,17 @@ class MTZ_Slider_Database {
     public function update_image($id, $data) {
         global $wpdb;
 
+        // Asegurar que la estructura esté al día (por si falta link_url)
+        $this->ensure_tables_exist();
+
         // Sanitizar datos
         $clean_data = array();
         foreach ($data as $key => $value) {
             if ($key === 'image_description') {
                 $clean_data[$key] = sanitize_textarea_field($value);
             } elseif ($key === 'image_url') {
+                $clean_data[$key] = esc_url_raw($value);
+            } elseif ($key === 'link_url') {
                 $clean_data[$key] = esc_url_raw($value);
             } else {
                 $clean_data[$key] = sanitize_text_field($value);

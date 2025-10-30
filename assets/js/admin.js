@@ -35,7 +35,7 @@
       $(document).on(
         "click",
         ".mtz-copy-shortcode",
-        this.copyShortcode.bind(this)
+        function() {}
       );
 
       // Eventos modales
@@ -147,10 +147,12 @@
 
     selectSlider: function(e) {
       // No hacer nada si el click fue en el shortcode o en el botón de copiar
-      if ($(e.target).hasClass('mtz-copy-shortcode') || 
-          $(e.target).closest('.mtz-copy-shortcode').length > 0 ||
-          $(e.target).hasClass('mtz-shortcode-input') ||
-          $(e.target).closest('.mtz-shortcode-input').length > 0) {
+      if (
+        $(e.target).hasClass("mtz-copy-shortcode") ||
+        $(e.target).closest(".mtz-copy-shortcode").length > 0 ||
+        $(e.target).hasClass("mtz-shortcode-input") ||
+        $(e.target).closest(".mtz-shortcode-input").length > 0
+      ) {
         return;
       }
 
@@ -197,75 +199,7 @@
       });
     },
 
-    copyShortcode: function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-
-      const shortcode = $(e.currentTarget).data("shortcode");
-
-      if (!shortcode) {
-        console.error("No shortcode found in button data");
-        this.showNotice("Error: No se encontró el shortcode", "error");
-        return;
-      }
-
-      const $button = $(e.currentTarget);
-
-      // Intentar usar la Clipboard API moderna
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard
-          .writeText(shortcode)
-          .then(() => {
-            // Copiado exitosamente
-            const originalHTML = $button.html();
-            $button.html('<i data-lucide="check"></i>');
-            $button.css("color", "#00a32a");
-
-            // Reinicializar Lucide para el nuevo icono
-            if (typeof lucide !== "undefined") {
-              lucide.createIcons();
-            }
-
-            setTimeout(function() {
-              $button.html(originalHTML);
-              $button.css("color", "");
-              // Reinicializar Lucide para restaurar el icono original
-              if (typeof lucide !== "undefined") {
-                lucide.createIcons();
-              }
-            }, 2000);
-          })
-          .catch(err => {
-            console.error("Error al copiar:", err);
-            this.showNotice("Error al copiar el shortcode", "error");
-          });
-      } else {
-        // Fallback para navegadores antiguos
-        const tempInput = $("<input>");
-        $("body").append(tempInput);
-        tempInput.val(shortcode).select();
-        document.execCommand("copy");
-        tempInput.remove();
-
-        const originalHTML = $button.html();
-        $button.html('<i data-lucide="check"></i>');
-        $button.css("color", "#00a32a");
-
-        // Reinicializar Lucide para el nuevo icono
-        if (typeof lucide !== "undefined") {
-          lucide.createIcons();
-        }
-
-        setTimeout(function() {
-          $button.html(originalHTML);
-          $button.css("color", "");
-          // Reinicializar Lucide para restaurar el icono original
-          if (typeof lucide !== "undefined") {
-            lucide.createIcons();
-          }
-        }, 2000);
-      }
-    },
+    // copyShortcode eliminado
 
     // ============ MÉTODOS PARA IMÁGENES ============
 
@@ -303,6 +237,7 @@
             slider_id: MTZSlider.currentSliderId,
             image_id: attachment.id,
             image_url: attachment.url,
+            link_url: "",
             image_title: attachment.title || "",
             image_alt: attachment.alt || "",
             image_description: attachment.caption || "",
@@ -344,11 +279,14 @@
       if (MTZSlider.images.length === 0) {
         $grid.html(`
           <div class="mtz-slider-empty-state">
-            <span class="dashicons dashicons-images-alt2"></span>
+            <i data-lucide="image"></i>
             <p>${mtzSlider.strings.emptyState ||
               "No hay imágenes en el slider."}</p>
           </div>
         `);
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
         return;
       }
 
@@ -361,10 +299,10 @@
             <div class="mtz-slider-image-overlay">
               <div class="mtz-slider-image-actions">
                 <button class="mtz-slider-edit" data-id="${image.id}">
-                  <span class="dashicons dashicons-edit"></span>
+                  <i data-lucide="pencil"></i>
                 </button>
                 <button class="mtz-slider-delete" data-id="${image.id}">
-                  <span class="dashicons dashicons-trash"></span>
+                  <i data-lucide="trash-2"></i>
                 </button>
               </div>
             </div>
@@ -374,6 +312,9 @@
 
       html += "</div>";
       $grid.html(html);
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
     },
 
     editImage: function(e) {
@@ -389,6 +330,7 @@
       $("#mtz-image-title").val(image.image_title || "");
       $("#mtz-image-alt").val(image.image_alt || "");
       $("#mtz-image-description").val(image.image_description || "");
+      $("#mtz-image-link").val(image.link_url || "");
       $("#mtz-image-active").prop("checked", image.is_active == 1);
 
       $("#mtz-image-modal").show();
@@ -433,6 +375,7 @@
         image_title: $("#mtz-image-title").val(),
         image_alt: $("#mtz-image-alt").val(),
         image_description: $("#mtz-image-description").val(),
+        link_url: $("#mtz-image-link").val(),
         is_active: $("#mtz-image-active").is(":checked") ? 1 : 0
       };
 

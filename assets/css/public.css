@@ -28,15 +28,21 @@
 .mtz-slide {
     min-width: 100%;
     width: 100%;
-    height: 60vh;
+    height: 80vh;
     min-height: 400px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+
+.mtz-slide-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .mtz-slide::before {
@@ -71,6 +77,28 @@
     line-height: 1.6;
     text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
     animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+/* Botón "Ver más..." */
+.mtz-slide-button {
+    --mtz-primary: #2271b1; /* color principal por defecto; se puede sobrescribir en el tema */
+    --mtz-secondary: #135e96; /* color secundario por defecto; se puede sobrescribir en el tema */
+    display: inline-block;
+    margin-top: 18px;
+    padding: 10px 16px;
+    background: var(--mtz-primary);
+    color: #fff !important;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 400; /* sin negrita */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.mtz-slide-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    background: var(--mtz-secondary);
 }
 
 @keyframes fadeInUp {
@@ -119,8 +147,22 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.mtz-slider-prev i,
-.mtz-slider-next i {
+/* Evitar que el botón se ponga gris al hacer click/focus (estilos por defecto del navegador) */
+.mtz-slider-prev:focus,
+.mtz-slider-next:focus,
+.mtz-slider-prev:focus-visible,
+.mtz-slider-next:focus-visible {
+    outline: none;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.mtz-slider-prev:active,
+.mtz-slider-next:active {
+    background: #fff;
+}
+
+.mtz-slider-prev svg,
+.mtz-slider-next svg {
     width: 24px;
     height: 24px;
     stroke: #333;
@@ -141,11 +183,17 @@
 .mtz-slider-dot {
     width: 12px;
     height: 12px;
+    aspect-ratio: 1 / 1;
+    display: inline-block;
+    padding: 0;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.5);
     border: 2px solid #fff;
     cursor: pointer;
     transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    line-height: 1;
 }
 
 .mtz-slider-dot.active {
@@ -175,6 +223,7 @@
     justify-content: center;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: #333; /* aseguro color del ícono Lucide (usa currentColor) */
 }
 
 .mtz-slider-pause-play:hover {
@@ -183,7 +232,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.mtz-slider-pause-play i {
+.mtz-slider-pause-play svg {
     width: 18px;
     height: 18px;
     stroke: #333;

@@ -233,6 +233,7 @@ class MTZ_Slider_API {
         $data = array(
             'image_id' => isset($params['image_id']) ? intval($params['image_id']) : 0,
             'image_url' => isset($params['image_url']) ? esc_url_raw($params['image_url']) : '',
+            'link_url' => isset($params['link_url']) ? esc_url_raw($params['link_url']) : '',
             'image_title' => isset($params['image_title']) ? sanitize_text_field($params['image_title']) : '',
             'image_description' => isset($params['image_description']) ? sanitize_textarea_field($params['image_description']) : '',
             'image_alt' => isset($params['image_alt']) ? sanitize_text_field($params['image_alt']) : '',
@@ -272,6 +273,9 @@ class MTZ_Slider_API {
         }
         if (isset($params['image_alt'])) {
             $data['image_alt'] = sanitize_text_field($params['image_alt']);
+        }
+        if (isset($params['link_url'])) {
+            $data['link_url'] = esc_url_raw($params['link_url']);
         }
         if (isset($params['sort_order'])) {
             $data['sort_order'] = intval($params['sort_order']);

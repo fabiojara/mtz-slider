@@ -1,4 +1,4 @@
-# MTZ Slider
+# MTZ Slider (v2.2.0)
 
 Plugin moderno y responsive para WordPress que permite crear sliders de imágenes con un panel de administración intuitivo.
 
@@ -10,6 +10,8 @@ Plugin moderno y responsive para WordPress que permite crear sliders de imágene
 - ✅ **Base de Datos Segura**: Tablas personalizadas con prefijo `mtz-slider`
 - ✅ **Arrastra y Suelta**: Reordena las imágenes fácilmente
 - ✅ **Autoplay**: Reproducción automática configurable
+- ✅ **Botón por imagen en frontend**: “Conocer más...” con URL configurable
+- ✅ **Íconos Lucide**: Unificación a la librería Lucide en admin y frontend
 - ✅ **Navegación por Teclado**: Soporte para flechas del teclado
 - ✅ **Swipe**: Navegación por gestos en dispositivos móviles
 - ✅ **Responsive**: Diseño adaptable a cualquier dispositivo
@@ -94,12 +96,13 @@ mtz-slider/
 
 ## 🗄️ Base de Datos
 
-El plugin crea automáticamente la siguiente tabla:
+El plugin crea automáticamente las siguientes tablas/campos:
 
 - `wp_mtz_slider_images`: Almacena las imágenes del slider
   - `id`: ID único de la imagen
   - `image_id`: ID de la imagen en WordPress
   - `image_url`: URL de la imagen
+  - `link_url`: URL asociada al botón “Conocer más...”
   - `image_title`: Título de la imagen
   - `image_description`: Descripción
   - `image_alt`: Texto alternativo
@@ -112,12 +115,10 @@ El plugin crea automáticamente la siguiente tabla:
 
 ### Estilos CSS
 
-Los estilos públicos se encuentran en `assets/css/public.css`. Puedes sobrescribirlos desde tu tema hijo:
+Los estilos públicos se encuentran en `assets/css/public.css`. Puedes sobrescribirlos desde tu tema hijo. Altura por defecto: `80vh` (antes `60vh`). Ejemplo:
 
 ```css
-.mtz-slider {
-    /* Tus estilos personalizados */
-}
+.mtz-slide { height: 80vh; }
 ```
 
 ### JavaScript

@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 <div class="wrap mtz-slider-admin">
     <div class="mtz-slider-header-actions">
         <h1 class="mtz-slider-title">
-            <span class="dashicons dashicons-images-alt2"></span>
+            <i data-lucide="images"></i>
             <?php esc_html_e('MTZ Slider', 'mtz-slider'); ?>
             <span class="mtz-version-badge">v<?php echo MTZ_SLIDER_VERSION; ?></span>
         </h1>
@@ -84,7 +84,7 @@ if (!defined('ABSPATH')) {
             <div class="mtz-sliders-list" id="mtz-sliders-list">
                 <?php if (empty($sliders)): ?>
                     <div class="mtz-empty-sliders">
-                        <span class="dashicons dashicons-images-alt2"></span>
+                        <i data-lucide="image"></i>
                         <p><?php esc_html_e('No hay sliders. ¡Crea uno nuevo!', 'mtz-slider'); ?></p>
                     </div>
                 <?php else: ?>
@@ -109,14 +109,11 @@ if (!defined('ABSPATH')) {
                                     ?>
                                 </div>
                                 <p class="mtz-slider-shortcode-hint">
-                                    <?php esc_html_e('Copia el siguiente código donde desees mostrar el slider:', 'mtz-slider'); ?>
+                                <?php esc_html_e('Copia el siguiente código y pégalo en la entrada o pagina donde desees mostrar el slider con imágenes.', 'mtz-slider'); ?>
                                 </p>
                             </div>
                             <div class="mtz-slider-item-shortcode" onclick="event.stopPropagation();">
                                 <input type="text" readonly value="<?php echo esc_attr($shortcode); ?>" class="mtz-shortcode-input" onclick="event.stopPropagation();">
-                                <button class="button button-small mtz-copy-shortcode" data-shortcode="<?php echo esc_attr($shortcode); ?>" onclick="event.stopPropagation();">
-                                    <i data-lucide="copy"></i>
-                                </button>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -144,9 +141,9 @@ if (!defined('ABSPATH')) {
                     <div class="mtz-slider-notice" id="mtz-notice"></div>
                 </div>
 
-                <div class="mtz-slider-grid" id="mtz-slider-grid">
+                    <div class="mtz-slider-grid" id="mtz-slider-grid">
                     <div class="mtz-slider-empty-state">
-                        <span class="dashicons dashicons-images-alt2"></span>
+                        <i data-lucide="image"></i>
                         <p><?php esc_html_e('No hay imágenes en el slider. Haz clic en "Agregar Imágenes" para comenzar.', 'mtz-slider'); ?></p>
                     </div>
                 </div>
@@ -156,7 +153,7 @@ if (!defined('ABSPATH')) {
                 </div>
             <?php else: ?>
                 <div class="mtz-no-slider">
-                    <span class="dashicons dashicons-images-alt2"></span>
+                    <i data-lucide="image"></i>
                     <h3><?php esc_html_e('¡Crea tu primer slider!', 'mtz-slider'); ?></h3>
                     <p><?php esc_html_e('Haz clic en el botón "Crear Nuevo Slider" para comenzar.', 'mtz-slider'); ?></p>
                 </div>
@@ -231,6 +228,12 @@ if (!defined('ABSPATH')) {
                     <div class="mtz-form-field">
                         <label for="mtz-image-description"><?php esc_html_e('Descripción', 'mtz-slider'); ?></label>
                         <textarea id="mtz-image-description" rows="3" class="large-text"></textarea>
+                    </div>
+
+                    <div class="mtz-form-field">
+                        <label for="mtz-image-link"><?php esc_html_e('URL del botón "Ver más"', 'mtz-slider'); ?></label>
+                        <input type="url" id="mtz-image-link" class="regular-text" placeholder="https://tusitio.com/detalle" />
+                        <p class="description"><?php esc_html_e('Opcional. Si la defines, en el slider aparecerá un botón "Ver más..." que llevará a esta URL.', 'mtz-slider'); ?></p>
                     </div>
 
                     <div class="mtz-form-field">

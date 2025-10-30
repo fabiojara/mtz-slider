@@ -1,6 +1,6 @@
-# 🔄 Instrucciones de Actualización - Versión 2.0.0
+# 🔄 Instrucciones de Actualización - Versión 2.2.0
 
-## ⚠️ IMPORTANTE: Actualización a Versión 2.0.0
+## ⚠️ IMPORTANTE: Actualización a Versión 2.2.0
 
 Si estás actualizando desde una versión anterior, sigue estos pasos:
 
@@ -43,14 +43,14 @@ Si tienes acceso a los logs de WordPress, verifica:
 - `wp-content/debug.log`
 - Errores en `error_log` de PHP
 
-## ✅ Cambios en la Versión 2.0.0
+## ✅ Cambios en la Versión 2.2.0
 
-- ✅ Soporte para múltiples sliders
-- ✅ Cada slider tiene su propio shortcode único
-- ✅ Interfaz mejorada con panel lateral
-- ✅ Botón para copiar shortcode fácilmente
-- ✅ Mejor manejo de errores
-- ✅ Logs de depuración en consola
+- ✅ Altura por defecto del slider cambiada a `80vh` (antes `60vh`)
+- ✅ Lazy-loading y `srcset/sizes` en imágenes del slider
+- ✅ Autoplay pausado cuando el slider no está en viewport (IntersectionObserver)
+- ✅ Frontend reescrito sin jQuery (Vanilla JS)
+- ✅ Carga condicional de assets solo cuando existe el shortcode en la página
+- ✅ Preparación de build con Vite (minificación y cache busting)
 
 ## 📋 Shortcode Nuevo Formato
 

@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.0.0
+ * Version: 2.2.0
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.0.0');
+define('MTZ_SLIDER_VERSION', '2.2.0');
 define('MTZ_SLIDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -141,15 +141,40 @@ class MTZ_Slider {
      * Encolar scripts públicos
      */
     public function enqueue_public_scripts() {
-        // Cargar fuente Poppins
+        // Encolar solo si la página contiene shortcode
+        if (!$this->page_has_slider_shortcode()) {
+            return;
+        }
+
+        $this->enqueue_public_assets();
+    }
+
+    private function page_has_slider_shortcode() {
+        if (is_admin()) return false;
+        if (is_singular()) {
+            global $post;
+            if ($post && has_shortcode($post->post_content, 'mtz_slider')) return true;
+        }
+        return false;
+    }
+
+    private function enqueue_public_assets() {
+        // Fuente Poppins
         wp_enqueue_style('google-fonts-poppins', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap', array(), null);
 
-        wp_enqueue_style('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/css/public.css', array('google-fonts-poppins'), MTZ_SLIDER_VERSION);
+        // Cache busting por filemtime (o versión del plugin)
+        $css_path = MTZ_SLIDER_PLUGIN_DIR . 'assets/css/public.css';
+        $js_path  = MTZ_SLIDER_PLUGIN_DIR . 'assets/js/public.js';
+        $css_ver  = file_exists($css_path) ? filemtime($css_path) : MTZ_SLIDER_VERSION;
+        $js_ver   = file_exists($js_path) ? filemtime($js_path) : MTZ_SLIDER_VERSION;
 
-        // Encolar Lucide Icons
+        wp_enqueue_style('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/css/public.css', array('google-fonts-poppins'), $css_ver);
+
+        // Lucide Icons
         wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.js', array(), 'latest', false);
 
-        wp_enqueue_script('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/js/public.js', array('jquery', 'lucide'), MTZ_SLIDER_VERSION, true);
+        // Frontend sin jQuery
+        wp_enqueue_script('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/js/public.js', array('lucide'), $js_ver, true);
 
         wp_localize_script('mtz-slider-public', 'mtzSliderPublic', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
@@ -246,6 +271,9 @@ class MTZ_Slider {
         );
 
         extract($template_data);
+
+        // Asegurar assets cuando se use el shortcode en PHP/plantillas
+        $this->enqueue_public_assets();
 
         ob_start();
         include MTZ_SLIDER_PLUGIN_DIR . 'public/views/slider.php';

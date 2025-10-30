@@ -1,20 +1,18 @@
 /**
- * JavaScript público del Slider - MTZ Slider
+ * JavaScript público del Slider - MTZ Slider (Vanilla JS)
  */
-
-(function($) {
+(function() {
   "use strict";
 
-  // Clase para manejar cada instancia del slider
   class SliderInstance {
-    constructor($slider) {
-      this.$slider = $slider;
+    constructor(sliderEl) {
+      this.sliderEl = sliderEl;
+      this.trackEl = sliderEl.querySelector(".mtz-slider-track");
+      this.slides = Array.from(sliderEl.querySelectorAll(".mtz-slide"));
       this.currentSlide = 0;
-      this.totalSlides = $slider.find(".mtz-slide").length;
-      this.autoplay =
-        $slider.data("autoplay") === "true" ||
-        $slider.data("autoplay") === true;
-      this.speed = parseInt($slider.data("speed")) || 5000;
+      this.totalSlides = this.slides.length;
+      this.autoplay = String(sliderEl.dataset.autoplay) === "true";
+      this.speed = parseInt(sliderEl.dataset.speed || "5000", 10);
       this.autoplayInterval = null;
 
       this.init();
@@ -23,229 +21,110 @@
     init() {
       this.setupSlider();
       this.bindEvents();
-
-      if (this.autoplay) {
-        this.startAutoplay();
-      }
+      if (this.autoplay) this.startAutoplay();
+      this.setupViewportObserver();
     }
 
     setupSlider() {
       if (this.totalSlides === 0) return;
-
-      // Crear dots
       this.createDots();
-
-      // Mostrar primer slide
       this.showSlide(0);
     }
 
     createDots() {
-      const $dotsContainer = this.$slider.find(".mtz-slider-dots");
-
+      const dotsContainer = this.sliderEl.querySelector(".mtz-slider-dots");
+      if (!dotsContainer) return;
+      dotsContainer.innerHTML = "";
       for (let i = 0; i < this.totalSlides; i++) {
-        const $dot = $('<button class="mtz-slider-dot"></button>');
-        if (i === 0) {
-          $dot.addClass("active");
-        }
-        const slideIndex = i;
-        $dot.on("click", () => this.goToSlide(slideIndex));
-        $dotsContainer.append($dot);
+        const dot = document.createElement("button");
+        dot.className = "mtz-slider-dot";
+        if (i === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => this.goToSlide(i));
+        dotsContainer.appendChild(dot);
       }
     }
 
     showSlide(index) {
       if (this.totalSlides === 0) return;
-
-      this.currentSlide = index % this.totalSlides;
-      if (this.currentSlide < 0) {
-        this.currentSlide = this.totalSlides - 1;
-      }
-
+      this.currentSlide = ((index % this.totalSlides) + this.totalSlides) % this.totalSlides;
       const translateX = -this.currentSlide * 100;
-      this.$slider
-        .find(".mtz-slider-track")
-        .css("transform", `translateX(${translateX}%)`);
-
-      // Actualizar dots
-      this.$slider
-        .find(".mtz-slider-dot")
-        .removeClass("active")
-        .eq(this.currentSlide)
-        .addClass("active");
+      this.trackEl.style.transform = `translateX(${translateX}%)`;
+      const dots = Array.from(this.sliderEl.querySelectorAll(".mtz-slider-dot"));
+      dots.forEach((d, i) => d.classList.toggle("active", i === this.currentSlide));
     }
 
-    nextSlide() {
-      this.showSlide(this.currentSlide + 1);
-    }
-
-    prevSlide() {
-      this.showSlide(this.currentSlide - 1);
-    }
+    nextSlide() { this.showSlide(this.currentSlide + 1); }
+    prevSlide() { this.showSlide(this.currentSlide - 1); }
 
     goToSlide(index) {
       this.showSlide(index);
-      if (this.autoplay) {
-        this.restartAutoplay();
-      }
+      if (this.autoplay) this.restartAutoplay();
     }
 
     bindEvents() {
-      const that = this;
+      const nextBtn = this.sliderEl.querySelector(".mtz-slider-next");
+      const prevBtn = this.sliderEl.querySelector(".mtz-slider-prev");
+      nextBtn && nextBtn.addEventListener("click", (e) => { e.stopPropagation(); this.nextSlide(); if (this.autoplay) this.restartAutoplay(); });
+      prevBtn && prevBtn.addEventListener("click", (e) => { e.stopPropagation(); this.prevSlide(); if (this.autoplay) this.restartAutoplay(); });
 
-      // Botones de navegación
-      this.$slider.find(".mtz-slider-next").on("click", function(e) {
-        e.stopPropagation();
-        that.nextSlide();
-        if (that.autoplay) {
-          that.restartAutoplay();
-        }
-      });
+      this.sliderEl.addEventListener("mouseenter", () => { if (this.autoplay) this.stopAutoplay(); });
+      this.sliderEl.addEventListener("mouseleave", () => { if (this.autoplay) this.startAutoplay(); });
 
-      this.$slider.find(".mtz-slider-prev").on("click", function(e) {
-        e.stopPropagation();
-        that.prevSlide();
-        if (that.autoplay) {
-          that.restartAutoplay();
-        }
-      });
-
-      // Botón de pausa/reproducción
-      this.$slider.find(".mtz-slider-pause-play").on("click", function(e) {
-        e.stopPropagation();
-        that.toggleAutoplay();
-      });
-
-      // Pausa al pasar el mouse
-      this.$slider.on("mouseenter", function() {
-        if (that.autoplay) {
-          that.stopAutoplay();
-        }
-      });
-
-      this.$slider.on("mouseleave", function() {
-        if (that.autoplay) {
-          that.startAutoplay();
-        }
-      });
-
-      // Swipe para dispositivos móviles
-      let startX = 0;
-      let startY = 0;
-      let distX = 0;
-      let distY = 0;
-
-      this.$slider.on("touchstart", function(e) {
-        startX = e.originalEvent.touches[0].pageX;
-        startY = e.originalEvent.touches[0].pageY;
-      });
-
-      this.$slider.on("touchend", function(e) {
-        distX = e.originalEvent.changedTouches[0].pageX - startX;
-        distY = e.originalEvent.changedTouches[0].pageY - startY;
-
+      let startX = 0, startY = 0;
+      this.sliderEl.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].pageX;
+        startY = e.touches[0].pageY;
+      }, { passive: true });
+      this.sliderEl.addEventListener("touchend", (e) => {
+        const distX = e.changedTouches[0].pageX - startX;
+        const distY = e.changedTouches[0].pageY - startY;
         if (Math.abs(distX) > Math.abs(distY)) {
-          if (distX > 50) {
-            that.prevSlide();
-            if (that.autoplay) that.restartAutoplay();
-          } else if (distX < -50) {
-            that.nextSlide();
-            if (that.autoplay) that.restartAutoplay();
-          }
+          if (distX > 50) this.prevSlide();
+          else if (distX < -50) this.nextSlide();
+          if (this.autoplay) this.restartAutoplay();
         }
+      }, { passive: true });
 
-        e.preventDefault();
+      // Accesibilidad con teclado
+      document.addEventListener("keydown", (e) => {
+        if (!this.sliderEl.contains(document.activeElement)) return;
+        if (e.key === "ArrowLeft") { e.preventDefault(); this.prevSlide(); if (this.autoplay) this.restartAutoplay(); }
+        if (e.key === "ArrowRight") { e.preventDefault(); this.nextSlide(); if (this.autoplay) this.restartAutoplay(); }
       });
     }
 
     startAutoplay() {
       if (!this.autoplay || this.totalSlides <= 1) return;
-
       this.stopAutoplay();
-
-      const that = this;
-      this.autoplayInterval = setInterval(function() {
-        that.nextSlide();
-      }, this.speed);
-
-      this.$slider
-        .find(".mtz-slider-pause-play .dashicons")
-        .removeClass("dashicons-controls-play")
-        .addClass("dashicons-controls-pause");
+      this.autoplayInterval = setInterval(() => this.nextSlide(), this.speed);
     }
+    stopAutoplay() { if (this.autoplayInterval) { clearInterval(this.autoplayInterval); this.autoplayInterval = null; } }
+    restartAutoplay() { this.stopAutoplay(); this.startAutoplay(); }
 
-    stopAutoplay() {
-      if (this.autoplayInterval) {
-        clearInterval(this.autoplayInterval);
-        this.autoplayInterval = null;
-      }
-    }
-
-    restartAutoplay() {
-      this.stopAutoplay();
-      this.startAutoplay();
-    }
-
-    toggleAutoplay() {
-      this.autoplay = !this.autoplay;
-
-      if (this.autoplay) {
-        this.startAutoplay();
-      } else {
-        this.stopAutoplay();
-        this.$slider
-          .find(".mtz-slider-pause-play .dashicons")
-          .removeClass("dashicons-controls-pause")
-          .addClass("dashicons-controls-play");
-      }
+    setupViewportObserver() {
+      if (!("IntersectionObserver" in window)) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (this.autoplay) {
+            if (entry.isIntersecting) this.startAutoplay(); else this.stopAutoplay();
+          }
+        });
+      }, { threshold: 0.2 });
+      observer.observe(this.sliderEl);
     }
   }
 
-  // Inicializar todos los sliders en la página
-  $(document).ready(function() {
-    // Inicializar Lucide Icons
+  function ready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+
+  ready(function() {
     if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
-
-    // Navegación con teclado (solo para el slider activo en focus)
-    let currentFocusedSlider = null;
-
-    $(document).on("keydown", function(e) {
-      if (currentFocusedSlider) {
-        if (e.key === "ArrowLeft") {
-          e.preventDefault();
-          currentFocusedSlider.prevSlide();
-          if (currentFocusedSlider.autoplay)
-            currentFocusedSlider.restartAutoplay();
-        } else if (e.key === "ArrowRight") {
-          e.preventDefault();
-          currentFocusedSlider.nextSlide();
-          if (currentFocusedSlider.autoplay)
-            currentFocusedSlider.restartAutoplay();
-        }
-      }
-    });
-
-    $(".mtz-slider-wrapper").on("focusin", function() {
-      const instance = $(this).data("sliderInstance");
-      if (instance) {
-        currentFocusedSlider = instance;
-      }
-    });
-
-    $(".mtz-slider-wrapper").on("focusout", function() {
-      currentFocusedSlider = null;
-    });
-
-    // Inicializar cada slider de forma independiente
-    $(".mtz-slider-wrapper").each(function() {
-      const $sliderWrapper = $(this);
-      const $slider = $sliderWrapper.find(".mtz-slider");
-
-      if ($slider.length) {
-        const instance = new SliderInstance($slider);
-        $sliderWrapper.data("sliderInstance", instance);
-      }
+    document.querySelectorAll(".mtz-slider-wrapper .mtz-slider").forEach((slider) => {
+      new SliderInstance(slider);
     });
   });
-})(jQuery);
+})();
