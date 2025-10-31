@@ -366,7 +366,7 @@ class MTZ_Slider {
         // Obtener releases desde GitHub
         $releases = $this->get_github_releases();
         $current_version = MTZ_SLIDER_VERSION;
-        
+
         // Obtener mensaje de error si existe
         $error_message = get_transient('mtz_slider_releases_error');
         if ($error_message === false) {
@@ -416,7 +416,7 @@ class MTZ_Slider {
             $error_message = $response->get_error_message();
             // Guardar error para mostrarlo
             set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
-            
+
             // Intentar con curl si está disponible como fallback
             if (function_exists('curl_init')) {
                 $ch = curl_init();
@@ -425,18 +425,18 @@ class MTZ_Slider {
                 curl_setopt($ch, CURLOPT_TIMEOUT, 15);
                 curl_setopt($ch, CURLOPT_USERAGENT, 'WordPress-MTZ-Slider');
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/vnd.github.v3+json'));
-                
+
                 // Si es local y hay problemas SSL
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                 }
-                
+
                 $body = curl_exec($ch);
                 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 $curl_error = curl_error($ch);
                 curl_close($ch);
-                
+
                 if ($http_code === 200 && !empty($body)) {
                     $data = json_decode($body, true);
                     if (is_array($data)) {
@@ -491,8 +491,8 @@ class MTZ_Slider {
             }
         }
 
-        // Guardar error si existe para mostrarlo en la vista
-        if (!empty($error_message)) {
+        // Guardar error si existe y no se obtuvieron releases
+        if (!empty($error_message) && empty($releases)) {
             set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
         } else {
             delete_transient($error_key);
