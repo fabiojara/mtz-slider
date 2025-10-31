@@ -540,10 +540,18 @@
 .mtz-slider-item.active {
     background: #e6f1f9; /* Azul-gris claro para slider activo */
     border-left: 6px solid #2271b1;
+    color: #000; /* Texto negro para slider activo */
 }
 
 .mtz-slider-item.active:hover {
     background: #d9e8f5; /* Tonos más oscuros al hover si está activo */
+}
+
+/* Textos dentro del slider activo en negro */
+.mtz-slider-item.active .mtz-slider-item-header h4,
+.mtz-slider-item.active .mtz-slider-item-stat,
+.mtz-slider-item.active .mtz-slider-shortcode-hint {
+    color: #000 !important;
 }
 
 .mtz-slider-item-header {
