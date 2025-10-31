@@ -63,7 +63,22 @@ if (!defined('ABSPATH')) {
                 <div class="mtz-no-releases">
                     <i data-lucide="package-x"></i>
                     <p><?php esc_html_e('No se pudieron cargar las actualizaciones desde GitHub.', 'mtz-slider'); ?></p>
-                    <p class="mtz-subtext"><?php esc_html_e('Verifica tu conexión a internet o intenta más tarde.', 'mtz-slider'); ?></p>
+                    <?php if (!empty($error_message)): ?>
+                        <div class="mtz-error-details">
+                            <p class="mtz-error-message">
+                                <strong><?php esc_html_e('Error:', 'mtz-slider'); ?></strong>
+                                <?php echo esc_html($error_message); ?>
+                            </p>
+                            <?php if (defined('WP_DEBUG') && WP_DEBUG): ?>
+                                <p class="mtz-subtext">
+                                    <?php esc_html_e('Modo debug activado. Puedes agregar esta línea en wp-config.php para desactivar verificación SSL en local:', 'mtz-slider'); ?>
+                                </p>
+                                <code class="mtz-code-block">define('MTZ_SLIDER_ALLOW_UNVERIFIED_SSL', true);</code>
+                            <?php endif; ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="mtz-subtext"><?php esc_html_e('Verifica tu conexión a internet o intenta más tarde.', 'mtz-slider'); ?></p>
+                    <?php endif; ?>
                 </div>
             <?php else: ?>
                 <div class="mtz-releases-grid">
@@ -72,7 +87,7 @@ if (!defined('ABSPATH')) {
                         $is_current = version_compare($release['version'], $current_version, '==');
                         $is_newer = version_compare($release['version'], $current_version, '>');
                         $is_older = version_compare($release['version'], $current_version, '<');
-                        
+
                         $date = date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($release['published_at']));
                         ?>
                         <div class="mtz-release-card <?php echo $is_current ? 'current' : ($is_newer ? 'newer' : 'older'); ?>">
@@ -142,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         refreshBtn.addEventListener('click', function() {
             this.disabled = true;
             this.innerHTML = '<i data-lucide="refresh-cw" class="spinning"></i> <?php esc_html_e('Actualizando...', 'mtz-slider'); ?>';
-            
+
             // Recargar la página después de borrar el cache
             // Recargar página con parámetro para refrescar
             const url = new URL(window.location.href);
@@ -150,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = url.toString();
         });
     }
-    
+
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }

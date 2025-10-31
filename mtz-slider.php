@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.3
+ * Version: 2.3.4
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.3');
+define('MTZ_SLIDER_VERSION', '2.3.4');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -303,7 +303,7 @@ class MTZ_Slider {
             'dashicons-images-alt2',
             30
         );
-        
+
         // Submenu para actualizaciones
         add_submenu_page(
             'mtz-slider',
@@ -366,6 +366,12 @@ class MTZ_Slider {
         // Obtener releases desde GitHub
         $releases = $this->get_github_releases();
         $current_version = MTZ_SLIDER_VERSION;
+        
+        // Obtener mensaje de error si existe
+        $error_message = get_transient('mtz_slider_releases_error');
+        if ($error_message === false) {
+            $error_message = '';
+        }
 
         include MTZ_SLIDER_PLUGIN_DIR . 'admin/views/updates-page.php';
     }
@@ -377,6 +383,7 @@ class MTZ_Slider {
      */
     private function get_github_releases() {
         $cache_key = 'mtz_slider_all_releases';
+        $error_key = 'mtz_slider_releases_error';
         $cached = get_transient($cache_key);
 
         if ($cached !== false) {
@@ -384,42 +391,114 @@ class MTZ_Slider {
         }
 
         $api_url = 'https://api.github.com/repos/fabiojara/mtz-slider/releases';
-        
-        $response = wp_remote_get($api_url, array(
+
+        // Configuración para wp_remote_get
+        $args = array(
             'timeout' => 15,
             'headers' => array(
                 'Accept' => 'application/vnd.github.v3+json',
                 'User-Agent' => 'WordPress-MTZ-Slider',
             ),
-        ));
+            'sslverify' => true, // Verificar SSL por defecto
+        );
+
+        // En local, permitir desactivar verificación SSL si es necesario
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('MTZ_SLIDER_ALLOW_UNVERIFIED_SSL') && MTZ_SLIDER_ALLOW_UNVERIFIED_SSL) {
+            $args['sslverify'] = false;
+        }
+
+        $response = wp_remote_get($api_url, $args);
 
         $releases = array();
+        $error_message = '';
 
-        if (!is_wp_error($response)) {
-            $body = wp_remote_retrieve_body($response);
-            $data = json_decode($body, true);
+        if (is_wp_error($response)) {
+            $error_message = $response->get_error_message();
+            // Guardar error para mostrarlo
+            set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
+            
+            // Intentar con curl si está disponible como fallback
+            if (function_exists('curl_init')) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $api_url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+                curl_setopt($ch, CURLOPT_USERAGENT, 'WordPress-MTZ-Slider');
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/vnd.github.v3+json'));
+                
+                // Si es local y hay problemas SSL
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                }
+                
+                $body = curl_exec($ch);
+                $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $curl_error = curl_error($ch);
+                curl_close($ch);
+                
+                if ($http_code === 200 && !empty($body)) {
+                    $data = json_decode($body, true);
+                    if (is_array($data)) {
+                        foreach ($data as $release) {
+                            if (isset($release['tag_name']) && isset($release['published_at'])) {
+                                $version = ltrim($release['tag_name'], 'v');
+                                $releases[] = array(
+                                    'version' => $version,
+                                    'tag' => $release['tag_name'],
+                                    'name' => isset($release['name']) ? $release['name'] : $release['tag_name'],
+                                    'published_at' => $release['published_at'],
+                                    'body' => isset($release['body']) ? $release['body'] : '',
+                                    'zip_url' => isset($release['zipball_url']) ? $release['zipball_url'] : '',
+                                    'html_url' => isset($release['html_url']) ? $release['html_url'] : '',
+                                    'prerelease' => isset($release['prerelease']) ? $release['prerelease'] : false,
+                                    'draft' => isset($release['draft']) ? $release['draft'] : false,
+                                );
+                            }
+                        }
+                    }
+                } else {
+                    $error_message = $curl_error ? $curl_error : 'HTTP ' . $http_code;
+                }
+            }
+        } else {
+            $response_code = wp_remote_retrieve_response_code($response);
+            if ($response_code === 200) {
+                $body = wp_remote_retrieve_body($response);
+                $data = json_decode($body, true);
 
-            if (is_array($data)) {
-                foreach ($data as $release) {
-                    if (isset($release['tag_name']) && isset($release['published_at'])) {
-                        $version = ltrim($release['tag_name'], 'v');
-                        $releases[] = array(
-                            'version' => $version,
-                            'tag' => $release['tag_name'],
-                            'name' => isset($release['name']) ? $release['name'] : $release['tag_name'],
-                            'published_at' => $release['published_at'],
-                            'body' => isset($release['body']) ? $release['body'] : '',
-                            'zip_url' => isset($release['zipball_url']) ? $release['zipball_url'] : '',
-                            'html_url' => isset($release['html_url']) ? $release['html_url'] : '',
-                            'prerelease' => isset($release['prerelease']) ? $release['prerelease'] : false,
-                            'draft' => isset($release['draft']) ? $release['draft'] : false,
-                        );
+                if (is_array($data)) {
+                    foreach ($data as $release) {
+                        if (isset($release['tag_name']) && isset($release['published_at'])) {
+                            $version = ltrim($release['tag_name'], 'v');
+                            $releases[] = array(
+                                'version' => $version,
+                                'tag' => $release['tag_name'],
+                                'name' => isset($release['name']) ? $release['name'] : $release['tag_name'],
+                                'published_at' => $release['published_at'],
+                                'body' => isset($release['body']) ? $release['body'] : '',
+                                'zip_url' => isset($release['zipball_url']) ? $release['zipball_url'] : '',
+                                'html_url' => isset($release['html_url']) ? $release['html_url'] : '',
+                                'prerelease' => isset($release['prerelease']) ? $release['prerelease'] : false,
+                                'draft' => isset($release['draft']) ? $release['draft'] : false,
+                            );
+                        }
                     }
                 }
+            } else {
+                $error_message = 'HTTP ' . $response_code . ': ' . wp_remote_retrieve_response_message($response);
+                set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
             }
         }
 
-        // Cachear por 1 hora
+        // Guardar error si existe para mostrarlo en la vista
+        if (!empty($error_message)) {
+            set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
+        } else {
+            delete_transient($error_key);
+        }
+
+        // Cachear por 1 hora (incluso si está vacío para no consultar repetidamente)
         set_transient($cache_key, $releases, 1 * HOUR_IN_SECONDS);
 
         return $releases;
