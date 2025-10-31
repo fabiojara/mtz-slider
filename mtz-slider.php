@@ -265,14 +265,14 @@ class MTZ_Slider {
             error_log('[MTZ Slider] maybe_process_shortcode_in_elementor llamado');
             error_log('[MTZ Slider] Contenido recibido: ' . substr($content, 0, 200));
         }
-        
+
         // Si el contenido contiene el shortcode, asegurar que los assets estén cargados
         if (has_shortcode($content, 'mtz_slider') || strpos($content, '[mtz_slider') !== false) {
             if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
                 error_log('[MTZ Slider] Shortcode detectado en widget de Elementor. Cargando assets...');
             }
             $this->enqueue_public_assets();
-            
+
             // Procesar el shortcode si aún no está procesado
             if (strpos($content, '[mtz_slider') !== false && strpos($content, 'mtz-slider-wrapper') === false) {
                 if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
@@ -281,7 +281,7 @@ class MTZ_Slider {
                 $content = do_shortcode($content);
             }
         }
-        
+
         return $content;
     }
 
@@ -295,7 +295,7 @@ class MTZ_Slider {
             return;
         }
         $assets_enqueued = true;
-        
+
         if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
             error_log('[MTZ Slider] Cargando assets públicos...');
         }
@@ -652,9 +652,36 @@ class MTZ_Slider {
         // Asegurar assets cuando se use el shortcode en PHP/plantillas
         $this->enqueue_public_assets();
 
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] Iniciando renderizado del template. Assets cargados.');
+        }
+
         ob_start();
-        include MTZ_SLIDER_PLUGIN_DIR . 'public/views/slider.php';
-        return ob_get_clean();
+        $template_path = MTZ_SLIDER_PLUGIN_DIR . 'public/views/slider.php';
+        
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] Ruta del template: ' . $template_path);
+            error_log('[MTZ Slider] Template existe: ' . (file_exists($template_path) ? 'SI' : 'NO'));
+        }
+        
+        if (!file_exists($template_path)) {
+            if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log('[MTZ Slider] ERROR CRÍTICO: Template no existe en: ' . $template_path);
+            }
+            return '';
+        }
+        
+        include $template_path;
+        $output = ob_get_clean();
+        
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] Renderizado completado. Longitud del output: ' . strlen($output) . ' caracteres');
+            if (empty($output)) {
+                error_log('[MTZ Slider] ERROR: Output vacío después del renderizado');
+            }
+        }
+        
+        return $output;
     }
 }
 
