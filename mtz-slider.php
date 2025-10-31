@@ -413,7 +413,7 @@ class MTZ_Slider {
 
         $response = null;
         $api_url = '';
-        
+
         // Intentar con releases primero
         foreach ($api_urls as $url) {
             $response = wp_remote_get($url, $args);
@@ -425,7 +425,7 @@ class MTZ_Slider {
                 }
             }
         }
-        
+
         // Si no funcionó con wp_remote_get, usar fallback con curl
         if (empty($api_url) && function_exists('curl_init')) {
             foreach ($api_urls as $url) {
@@ -435,17 +435,17 @@ class MTZ_Slider {
                 curl_setopt($ch, CURLOPT_TIMEOUT, 15);
                 curl_setopt($ch, CURLOPT_USERAGENT, 'WordPress-MTZ-Slider');
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/vnd.github.v3+json'));
-                
+
                 // Si es local y hay problemas SSL
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                 }
-                
+
                 $body = curl_exec($ch);
                 $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 curl_close($ch);
-                
+
                 if ($http_code === 200 && !empty($body)) {
                     $api_url = $url;
                     // Crear respuesta simulada para continuar con el flujo
@@ -464,38 +464,13 @@ class MTZ_Slider {
         $releases = array();
         $error_message = '';
 
-        if (is_wp_error($response)) {
-            $error_message = $response->get_error_message();
-            // Guardar error para mostrarlo
-            set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
-
-            // Intentar con curl si está disponible como fallback
-            if (function_exists('curl_init')) {
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $api_url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-                curl_setopt($ch, CURLOPT_USERAGENT, 'WordPress-MTZ-Slider');
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/vnd.github.v3+json'));
-
-                // Si es local y hay problemas SSL
-                if (defined('WP_DEBUG') && WP_DEBUG) {
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-                }
-
-                $body = curl_exec($ch);
-                $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                $curl_error = curl_error($ch);
-                curl_close($ch);
-
         if (!empty($api_url) && !empty($response)) {
             $body = wp_remote_retrieve_body($response);
             if (empty($body)) {
                 // Si es respuesta simulada de curl
                 $body = isset($response['body']) ? $response['body'] : '';
             }
-            
+
             $data = json_decode($body, true);
 
             if (is_array($data) && !empty($data)) {
@@ -504,7 +479,7 @@ class MTZ_Slider {
                     if (isset($item['tag_name'])) {
                         $tag_name = $item['tag_name'];
                         $version = ltrim($tag_name, 'v');
-                        
+
                         // Si es un release, tiene más información
                         if (isset($item['published_at'])) {
                             $releases[] = array(
@@ -518,7 +493,7 @@ class MTZ_Slider {
                                 'prerelease' => isset($item['prerelease']) ? $item['prerelease'] : false,
                                 'draft' => isset($item['draft']) ? $item['draft'] : false,
                             );
-                        } 
+                        }
                         // Si es un tag, construir información básica
                         elseif (strpos($api_url, '/tags') !== false) {
                             // Para tags, necesitamos obtener más información
