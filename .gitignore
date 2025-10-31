@@ -57,3 +57,6 @@ wp-config.php
 *.token
 *.token.*
 
+# ZIP files (generated automatically)
+*.zip
+
