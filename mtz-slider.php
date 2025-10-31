@@ -196,16 +196,16 @@ class MTZ_Slider {
      * Encolar scripts públicos
      */
     public function enqueue_public_scripts() {
-        // Verificar en contenido del post y en Elementor
-        if (!$this->page_has_slider_shortcode()) {
-            // Si Elementor está activo, cargar assets de todas formas (se optimizará luego)
-            if (defined('ELEMENTOR_VERSION')) {
-                $this->enqueue_public_assets();
-                return;
-            }
+        // Si Elementor está activo, cargar assets siempre (Elementor procesa shortcodes dinámicamente)
+        if (defined('ELEMENTOR_VERSION')) {
+            $this->enqueue_public_assets();
             return;
         }
-
+        
+        // Para otros casos, verificar si hay shortcode en el contenido
+        if (!$this->page_has_slider_shortcode()) {
+            return;
+        }
         $this->enqueue_public_assets();
     }
 
@@ -223,7 +223,7 @@ class MTZ_Slider {
     public function maybe_enqueue_for_elementor($element) {
         // Cargar assets siempre cuando hay un elemento de Elementor (por si acaso)
         $this->enqueue_public_assets();
-        
+
         // Buscar shortcode en diferentes configuraciones de Elementor
         $settings = $element->get_settings();
 

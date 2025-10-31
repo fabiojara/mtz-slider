@@ -532,7 +532,7 @@
       jQuery(document).on('elementor/popup/show', function() {
         setTimeout(initSliders, 100);
       });
-      
+
       // Escuchar cuando Elementor renderiza contenido dinámicamente
       jQuery(document).on('elementor/render', function() {
         setTimeout(initSliders, 100);
