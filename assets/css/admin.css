@@ -530,15 +530,20 @@
     border-bottom: 1px solid #f0f0f0;
     cursor: pointer;
     transition: background 0.3s ease;
+    background: #f5f5f5; /* Gris claro para sliders inactivos */
 }
 
 .mtz-slider-item:hover {
-    background: #f8f9fa;
+    background: #f0f0f0;
 }
 
 .mtz-slider-item.active {
-    background: #e6f1f9;
+    background: #e6f1f9; /* Azul-gris claro para slider activo */
     border-left: 3px solid #2271b1;
+}
+
+.mtz-slider-item.active:hover {
+    background: #d9e8f5; /* Tonos más oscuros al hover si está activo */
 }
 
 .mtz-slider-item-header {
