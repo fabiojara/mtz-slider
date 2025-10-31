@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.8
+ * Version: 2.3.9
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.8');
+define('MTZ_SLIDER_VERSION', '2.3.9');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -201,7 +201,7 @@ class MTZ_Slider {
             $this->enqueue_public_assets();
             return;
         }
-        
+
         // Para otros casos, verificar si hay shortcode en el contenido
         if (!$this->page_has_slider_shortcode()) {
             return;
@@ -261,10 +261,27 @@ class MTZ_Slider {
      * Procesar shortcode cuando Elementor renderiza el contenido del widget
      */
     public function maybe_process_shortcode_in_elementor($content, $widget) {
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] maybe_process_shortcode_in_elementor llamado');
+            error_log('[MTZ Slider] Contenido recibido: ' . substr($content, 0, 200));
+        }
+        
         // Si el contenido contiene el shortcode, asegurar que los assets estén cargados
         if (has_shortcode($content, 'mtz_slider') || strpos($content, '[mtz_slider') !== false) {
+            if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log('[MTZ Slider] Shortcode detectado en widget de Elementor. Cargando assets...');
+            }
             $this->enqueue_public_assets();
+            
+            // Procesar el shortcode si aún no está procesado
+            if (strpos($content, '[mtz_slider') !== false && strpos($content, 'mtz-slider-wrapper') === false) {
+                if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                    error_log('[MTZ Slider] Procesando shortcode en contenido de Elementor...');
+                }
+                $content = do_shortcode($content);
+            }
         }
+        
         return $content;
     }
 
@@ -272,9 +289,16 @@ class MTZ_Slider {
         // Evitar cargar múltiples veces
         static $assets_enqueued = false;
         if ($assets_enqueued) {
+            if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log('[MTZ Slider] Assets ya fueron cargados, omitiendo...');
+            }
             return;
         }
         $assets_enqueued = true;
+        
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] Cargando assets públicos...');
+        }
 
         // Fuente Poppins
         wp_enqueue_style('google-fonts-poppins', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap', array(), null);
@@ -568,6 +592,11 @@ class MTZ_Slider {
      * Renderizar shortcode del slider
      */
     public function render_slider_shortcode($atts) {
+        // Log para depuración
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] render_slider_shortcode llamado. Parámetros: ' . print_r($atts, true));
+        }
+
         $atts = shortcode_atts(array(
             'id' => 1,
             'autoplay' => null,
@@ -577,7 +606,14 @@ class MTZ_Slider {
         $database = new MTZ_Slider_Database();
         $slider = $database->get_slider(intval($atts['id']));
 
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] Slider obtenido: ' . ($slider ? 'SI (ID: ' . $slider['id'] . ', Activo: ' . ($slider['is_active'] ? 'SI' : 'NO') . ')' : 'NO'));
+        }
+
         if (!$slider || !$slider['is_active']) {
+            if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log('[MTZ Slider] ERROR: Slider no encontrado o no está activo. ID solicitado: ' . intval($atts['id']));
+            }
             return '';
         }
 
@@ -591,7 +627,14 @@ class MTZ_Slider {
 
         $images = $database->get_slider_images(intval($atts['id']));
 
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[MTZ Slider] Imágenes obtenidas: ' . count($images) . ' imágenes');
+        }
+
         if (empty($images)) {
+            if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log('[MTZ Slider] ERROR: No hay imágenes en el slider ID: ' . intval($atts['id']));
+            }
             return '';
         }
 
