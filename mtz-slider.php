@@ -458,7 +458,7 @@ class MTZ_Slider {
                                 // Si no hay fecha del commit, usar fecha actual aproximada
                                 $commit_date = date('Y-m-d\TH:i:s\Z');
                             }
-                            
+
                             if (!empty($tag_name)) {
                                 $releases[] = array(
                                     'version' => $version,
