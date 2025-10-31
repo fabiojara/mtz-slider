@@ -99,7 +99,7 @@ class MTZ_Slider {
 
         // Cargar la clase de base de datos primero
         $database_file = MTZ_SLIDER_PLUGIN_DIR . 'includes/class-mtz-slider-database.php';
-        
+
         // Verificar que el archivo existe antes de intentar cargarlo
         if (!file_exists($database_file)) {
             // Intentar rutas alternativas por si hay problemas con la estructura
@@ -107,7 +107,7 @@ class MTZ_Slider {
                 dirname(MTZ_SLIDER_PLUGIN_DIR) . '/mtz-slider/includes/class-mtz-slider-database.php',
                 dirname(dirname(MTZ_SLIDER_PLUGIN_DIR)) . '/mtz-slider/includes/class-mtz-slider-database.php',
             );
-            
+
             $found = false;
             foreach ($alternatives as $alt_path) {
                 if (file_exists($alt_path)) {
@@ -116,10 +116,10 @@ class MTZ_Slider {
                     break;
                 }
             }
-            
+
             if (!$found) {
                 wp_die(sprintf(
-                    __('Error: No se encontró el archivo de base de datos. Ruta buscada: %s. Verifica que el plugin se haya instalado correctamente con todos sus archivos.', 'mtz-slider'), 
+                    __('Error: No se encontró el archivo de base de datos. Ruta buscada: %s. Verifica que el plugin se haya instalado correctamente con todos sus archivos.', 'mtz-slider'),
                     $database_file
                 ));
             }
@@ -231,7 +231,7 @@ class MTZ_Slider {
      */
     public function add_admin_menu() {
         add_menu_page(
-            __('MTZ Slider', 'mtz-slider'),
+            __('MTZ Slider by Mantiz Technology SAS', 'mtz-slider'),
             __('MTZ Slider', 'mtz-slider'),
             'manage_options',
             'mtz-slider',
