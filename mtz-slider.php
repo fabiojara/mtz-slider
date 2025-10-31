@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.9');
+define('MTZ_SLIDER_VERSION', '2.4.0');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -658,29 +658,29 @@ class MTZ_Slider {
 
         ob_start();
         $template_path = MTZ_SLIDER_PLUGIN_DIR . 'public/views/slider.php';
-        
+
         if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
             error_log('[MTZ Slider] Ruta del template: ' . $template_path);
             error_log('[MTZ Slider] Template existe: ' . (file_exists($template_path) ? 'SI' : 'NO'));
         }
-        
+
         if (!file_exists($template_path)) {
             if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
                 error_log('[MTZ Slider] ERROR CRÍTICO: Template no existe en: ' . $template_path);
             }
             return '';
         }
-        
+
         include $template_path;
         $output = ob_get_clean();
-        
+
         if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
             error_log('[MTZ Slider] Renderizado completado. Longitud del output: ' . strlen($output) . ' caracteres');
             if (empty($output)) {
                 error_log('[MTZ Slider] ERROR: Output vacío después del renderizado');
             }
         }
-        
+
         return $output;
     }
 }

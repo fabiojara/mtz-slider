@@ -423,32 +423,62 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
-  function initSliders() {
-    // Buscar todos los sliders (pueden haber sido agregados dinámicamente)
-    // Buscar por wrapper primero, luego por slider directamente
-    const wrappers = document.querySelectorAll(".mtz-slider-wrapper");
-    const sliders = document.querySelectorAll(".mtz-slider");
+function initSliders() {
+  // Debug logging
+  if (typeof console !== 'undefined' && console.log) {
+    console.log('[MTZ Slider] initSliders() llamado');
+  }
+  
+  // Buscar todos los sliders (pueden haber sido agregados dinámicamente)
+  // Buscar por wrapper primero, luego por slider directamente
+  const wrappers = document.querySelectorAll(".mtz-slider-wrapper");
+  const sliders = document.querySelectorAll(".mtz-slider");
 
-    // Combinar ambos selectores para encontrar todos los sliders
-    const allSliders = new Set();
-    wrappers.forEach(wrapper => {
-      const slider = wrapper.querySelector(".mtz-slider");
-      if (slider) allSliders.add(slider);
-    });
-    sliders.forEach(slider => allSliders.add(slider));
+  if (typeof console !== 'undefined' && console.log) {
+    console.log('[MTZ Slider] Wrappers encontrados:', wrappers.length);
+    console.log('[MTZ Slider] Sliders encontrados:', sliders.length);
+  }
 
-    // Inicializar cada slider encontrado
-    allSliders.forEach(slider => {
-      // Evitar inicializar dos veces
-      if (!slider.dataset.initialized && slider.classList.contains('mtz-slider')) {
-        slider.dataset.initialized = "true";
-        try {
-          new SliderInstance(slider);
-        } catch (e) {
-          console.error('Error inicializando slider:', e);
+  // Combinar ambos selectores para encontrar todos los sliders
+  const allSliders = new Set();
+  wrappers.forEach(wrapper => {
+    const slider = wrapper.querySelector(".mtz-slider");
+    if (slider) allSliders.add(slider);
+  });
+  sliders.forEach(slider => allSliders.add(slider));
+
+  if (typeof console !== 'undefined' && console.log) {
+    console.log('[MTZ Slider] Total de sliders únicos a inicializar:', allSliders.size);
+  }
+
+  // Inicializar cada slider encontrado
+  let initializedCount = 0;
+  allSliders.forEach(slider => {
+    // Evitar inicializar dos veces
+    if (!slider.dataset.initialized && slider.classList.contains('mtz-slider')) {
+      slider.dataset.initialized = "true";
+      try {
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] Inicializando slider:', slider.id || 'sin ID');
+        }
+        new SliderInstance(slider);
+        initializedCount++;
+      } catch (e) {
+        console.error('[MTZ Slider] Error inicializando slider:', e);
+        if (typeof console !== 'undefined' && console.log) {
+          console.error('[MTZ Slider] Stack trace:', e.stack);
         }
       }
-    });
+    } else {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] Slider ya inicializado:', slider.id || 'sin ID');
+      }
+    }
+  });
+  
+  if (typeof console !== 'undefined' && console.log) {
+    console.log('[MTZ Slider] Sliders inicializados en esta ejecución:', initializedCount);
+  }
 
     // Inicializar iconos de Lucide después de inicializar sliders
     if (typeof lucide !== "undefined") {
@@ -468,8 +498,15 @@
 
   // Inicializar también cuando Elementor cargue el contenido
   if (typeof window.elementorFrontend !== "undefined") {
+    if (typeof console !== 'undefined' && console.log) {
+      console.log('[MTZ Slider] Elementor detectado, configurando hooks...');
+    }
+    
     // Inicializar inmediatamente cuando Elementor esté listo
     window.elementorFrontend.hooks.addAction("frontend/init", function() {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] Elementor frontend/init ejecutado');
+      }
       setTimeout(initSliders, 100);
     });
 
@@ -501,30 +538,50 @@
 
     // Hook para widgets (donde comúnmente van los shortcodes) - MÁS IMPORTANTE
     window.elementorFrontend.hooks.addAction("frontend/element_ready/widget", function($scope) {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] Elementor widget ready', $scope);
+      }
       // Inicializar de inmediato cuando se renderiza un widget
       setTimeout(initSliders, 50);
       // Verificar específicamente en este widget
       if ($scope && $scope[0]) {
         const sliderElements = $scope[0].querySelectorAll ? $scope[0].querySelectorAll('.mtz-slider') : [];
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] Sliders en widget:', sliderElements.length);
+        }
         if (sliderElements.length > 0) {
           setTimeout(initSliders, 50);
+          // Reintentar después de un delay
+          setTimeout(initSliders, 300);
+          setTimeout(initSliders, 800);
         }
       }
     });
 
     // Hook para shortcode widget específicamente - CRÍTICO
     window.elementorFrontend.hooks.addAction("frontend/element_ready/shortcode.default", function($scope) {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] Elementor shortcode.default widget ready', $scope);
+      }
       // Inicializar inmediatamente para widget de shortcode
       setTimeout(initSliders, 50);
       // Verificar nuevamente después de un breve delay para asegurar que el HTML está en el DOM
       setTimeout(function() {
         if ($scope && $scope[0]) {
           const sliderElements = $scope[0].querySelectorAll ? $scope[0].querySelectorAll('.mtz-slider') : [];
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[MTZ Slider] Sliders encontrados en widget de shortcode:', sliderElements.length);
+          }
           if (sliderElements.length > 0) {
             initSliders();
           }
         }
       }, 200);
+      
+      // Reintentar varias veces porque Elementor puede tardar
+      setTimeout(initSliders, 500);
+      setTimeout(initSliders, 1000);
+      setTimeout(initSliders, 2000);
     });
 
     // También escuchar cuando se actualiza el elemento
