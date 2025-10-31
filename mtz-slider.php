@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.5
+ * Version: 2.3.6
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.5');
+define('MTZ_SLIDER_VERSION', '2.3.6');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -65,9 +65,11 @@ class MTZ_Slider {
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_public_scripts'));
 
-        // Hook para Elementor
+        // Hook para Elementor - cargar assets siempre en frontend cuando Elementor está activo
         add_action('elementor/frontend/after_enqueue_scripts', array($this, 'enqueue_public_assets'));
         add_action('elementor/frontend/before_render', array($this, 'maybe_enqueue_for_elementor'));
+        // Hook adicional para asegurar que los assets se carguen
+        add_action('elementor/frontend/init', array($this, 'enqueue_public_assets'));
 
         // Agregar menú de administración
         add_action('admin_menu', array($this, 'add_admin_menu'));
@@ -192,6 +194,11 @@ class MTZ_Slider {
     public function enqueue_public_scripts() {
         // Verificar en contenido del post y en Elementor
         if (!$this->page_has_slider_shortcode()) {
+            // Si Elementor está activo, cargar assets de todas formas (se optimizará luego)
+            if (defined('ELEMENTOR_VERSION')) {
+                $this->enqueue_public_assets();
+                return;
+            }
             return;
         }
 
@@ -210,16 +217,50 @@ class MTZ_Slider {
      * Verificar si hay shortcode en Elementor antes de renderizar
      */
     public function maybe_enqueue_for_elementor($element) {
-        if ($element->get_settings('text') && has_shortcode($element->get_settings('text'), 'mtz_slider')) {
+        // Buscar shortcode en diferentes configuraciones de Elementor
+        $settings = $element->get_settings();
+        
+        // Verificar en campo 'text'
+        if (!empty($settings['text']) && has_shortcode($settings['text'], 'mtz_slider')) {
             $this->enqueue_public_assets();
+            return;
+        }
+        
+        // Verificar en campo 'editor' (bloques de texto)
+        if (!empty($settings['editor']) && has_shortcode($settings['editor'], 'mtz_slider')) {
+            $this->enqueue_public_assets();
+            return;
+        }
+        
+        // Verificar en campo 'html' (HTML personalizado)
+        if (!empty($settings['html']) && has_shortcode($settings['html'], 'mtz_slider')) {
+            $this->enqueue_public_assets();
+            return;
+        }
+        
+        // Verificar en campo 'shortcode' (si existe widget de shortcode)
+        if (!empty($settings['shortcode']) && has_shortcode($settings['shortcode'], 'mtz_slider')) {
+            $this->enqueue_public_assets();
+            return;
+        }
+        
+        // Verificar en todo el contenido del elemento (búsqueda más amplia)
+        $element_content = $element->get_raw_data();
+        if (!empty($element_content)) {
+            $content_string = json_encode($element_content);
+            if (strpos($content_string, '[mtz_slider') !== false) {
+                $this->enqueue_public_assets();
+            }
         }
     }
 
     private function enqueue_public_assets() {
         // Evitar cargar múltiples veces
-        if (wp_style_is('mtz-slider-public', 'enqueued')) {
+        static $assets_enqueued = false;
+        if ($assets_enqueued) {
             return;
         }
+        $assets_enqueued = true;
 
         // Fuente Poppins
         wp_enqueue_style('google-fonts-poppins', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap', array(), null);

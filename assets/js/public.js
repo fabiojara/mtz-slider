@@ -425,25 +425,40 @@
 
   function initSliders() {
     // Buscar todos los sliders (pueden haber sido agregados dinámicamente)
-    document
-      .querySelectorAll(".mtz-slider-wrapper .mtz-slider")
-      .forEach(slider => {
-        // Evitar inicializar dos veces
-        if (!slider.dataset.initialized) {
-          slider.dataset.initialized = "true";
-          try {
-            new SliderInstance(slider);
-          } catch (e) {
-            console.error('Error inicializando slider:', e);
-          }
+    // Buscar por wrapper primero, luego por slider directamente
+    const wrappers = document.querySelectorAll(".mtz-slider-wrapper");
+    const sliders = document.querySelectorAll(".mtz-slider");
+    
+    // Combinar ambos selectores para encontrar todos los sliders
+    const allSliders = new Set();
+    wrappers.forEach(wrapper => {
+      const slider = wrapper.querySelector(".mtz-slider");
+      if (slider) allSliders.add(slider);
+    });
+    sliders.forEach(slider => allSliders.add(slider));
+    
+    // Inicializar cada slider encontrado
+    allSliders.forEach(slider => {
+      // Evitar inicializar dos veces
+      if (!slider.dataset.initialized && slider.classList.contains('mtz-slider')) {
+        slider.dataset.initialized = "true";
+        try {
+          new SliderInstance(slider);
+        } catch (e) {
+          console.error('Error inicializando slider:', e);
         }
-      });
+      }
+    });
 
     // Inicializar iconos de Lucide después de inicializar sliders
     if (typeof lucide !== "undefined") {
       // Esperar un poco para que los elementos estén en el DOM
       setTimeout(function() {
-        lucide.createIcons();
+        try {
+          lucide.createIcons();
+        } catch (e) {
+          console.error('Error inicializando iconos Lucide:', e);
+        }
       }, 50);
     }
   }
@@ -457,23 +472,47 @@
     window.elementorFrontend.hooks.addAction("frontend/element_ready/global", function($scope) {
       // Verificar si el elemento contiene un slider
       if ($scope && $scope.find && $scope.find('.mtz-slider').length > 0) {
-        setTimeout(initSliders, 200);
+        setTimeout(initSliders, 100);
+      }
+      // También buscar sin jQuery
+      if ($scope && $scope[0]) {
+        const sliderElements = $scope[0].querySelectorAll ? $scope[0].querySelectorAll('.mtz-slider') : [];
+        if (sliderElements.length > 0) {
+          setTimeout(initSliders, 100);
+        }
       }
     });
 
     // Hook para cuando Elementor termina de renderizar
     window.elementorFrontend.hooks.addAction("frontend/init", function() {
-      setTimeout(initSliders, 300);
+      setTimeout(initSliders, 200);
     });
 
     // Escuchar cuando se renderiza una sección
     window.elementorFrontend.hooks.addAction("frontend/element_ready/section", function($scope) {
-      setTimeout(initSliders, 200);
+      setTimeout(initSliders, 150);
+    });
+
+    // Hook para widgets (donde comúnmente van los shortcodes)
+    window.elementorFrontend.hooks.addAction("frontend/element_ready/widget", function($scope) {
+      setTimeout(initSliders, 100);
+    });
+
+    // Hook para shortcode widget específicamente
+    window.elementorFrontend.hooks.addAction("frontend/element_ready/shortcode.default", function($scope) {
+      setTimeout(initSliders, 100);
     });
 
     // También escuchar cuando se actualiza el elemento
     if (typeof jQuery !== "undefined") {
       jQuery(document).on('elementor/popup/show', function() {
+        setTimeout(initSliders, 150);
+      });
+    }
+
+    // Escuchar cuando Elementor renderiza contenido dinámicamente
+    if (typeof window.elementorFrontend.on !== "undefined") {
+      window.elementorFrontend.on('components:init', function() {
         setTimeout(initSliders, 200);
       });
     }
