@@ -41,33 +41,58 @@
       if (this.wrapperEl) {
         const wrapperRect = this.wrapperEl.getBoundingClientRect();
         
-        // Solo forzar dimensiones si el contenedor padre tiene dimensiones
+        // Intentar obtener el ancho del contenedor padre
         const parent = this.wrapperEl.parentElement;
+        let parentWidth = 0;
         if (parent) {
           const parentRect = parent.getBoundingClientRect();
-          if (parentRect.width > 0 && wrapperRect.width === 0) {
+          parentWidth = parentRect.width;
+          
+          if (parentWidth > 0 && wrapperRect.width === 0) {
             // Si el padre tiene ancho pero el wrapper no, usar 100%
             if (typeof console !== 'undefined' && console.log) {
-              console.log('[MTZ Slider] Wrapper sin dimensiones pero padre tiene ancho:', parentRect.width);
+              console.log('[MTZ Slider] Wrapper sin dimensiones pero padre tiene ancho:', parentWidth);
             }
             this.wrapperEl.style.width = '100%';
+          } else if (parentWidth === 0 && wrapperRect.width === 0) {
+            // Si el padre no tiene dimensiones, usar el viewport width
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+            if (viewportWidth > 0) {
+              if (typeof console !== 'undefined' && console.log) {
+                console.log('[MTZ Slider] Padre sin dimensiones, usando viewport width:', viewportWidth);
+              }
+              // Usar el 100% del contenedor padre o del viewport
+              this.wrapperEl.style.width = '100%';
+              this.wrapperEl.style.minWidth = viewportWidth + 'px';
+            }
+          }
+        } else {
+          // Si no hay padre, usar viewport width directamente
+          const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+          if (viewportWidth > 0 && wrapperRect.width === 0) {
+            if (typeof console !== 'undefined' && console.log) {
+              console.log('[MTZ Slider] Sin padre, usando viewport width:', viewportWidth);
+            }
+            this.wrapperEl.style.width = '100%';
+            this.wrapperEl.style.minWidth = viewportWidth + 'px';
           }
         }
         
-        // Forzar visibilidad (pero no dimensiones si no hay contenedor padre)
+        // Forzar visibilidad
         this.wrapperEl.style.display = 'block';
         this.wrapperEl.style.visibility = 'visible';
         this.wrapperEl.style.opacity = '1';
         
         if (typeof console !== 'undefined' && console.log) {
-          console.log('[MTZ Slider] Wrapper dimensiones:', {
-            width: wrapperRect.width,
-            height: wrapperRect.height
+          const finalRect = this.wrapperEl.getBoundingClientRect();
+          console.log('[MTZ Slider] Wrapper dimensiones finales:', {
+            width: finalRect.width,
+            height: finalRect.height
           });
         }
       }
 
-      // Forzar visibilidad en el slider
+      // Forzar visibilidad y dimensiones en el slider
       const sliderRect = this.sliderEl.getBoundingClientRect();
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] Slider dimensiones iniciales:', {
@@ -76,11 +101,21 @@
         });
       }
       
-      // Solo aplicar width si el wrapper tiene dimensiones
+      // Aplicar width al slider
+      this.sliderEl.style.width = '100%';
+      this.sliderEl.style.minWidth = '100%';
+      
+      // Si el wrapper tiene dimensiones, el slider las heredará
       if (this.wrapperEl) {
         const wrapperRect = this.wrapperEl.getBoundingClientRect();
         if (wrapperRect.width > 0) {
-          this.sliderEl.style.width = '100%';
+          // El slider ya tiene width: 100%, así que heredará del wrapper
+        } else {
+          // Si el wrapper no tiene dimensiones, usar viewport width
+          const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+          if (viewportWidth > 0) {
+            this.sliderEl.style.minWidth = viewportWidth + 'px';
+          }
         }
       }
       
