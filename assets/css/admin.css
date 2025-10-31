@@ -539,7 +539,7 @@
 
 .mtz-slider-item.active {
     background: #e6f1f9; /* Azul-gris claro para slider activo */
-    border-left: 3px solid #2271b1;
+    border-left: 6px solid #2271b1;
 }
 
 .mtz-slider-item.active:hover {
