@@ -200,7 +200,7 @@ class MTZ_Slider {
 
     private function page_has_slider_shortcode() {
         if (is_admin()) return false;
-        
+
         // Siempre cargar en frontend para evitar problemas con builders
         // Los assets solo se ejecutarán si hay un slider presente
         return true;

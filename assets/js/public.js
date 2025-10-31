@@ -30,7 +30,7 @@
           }
         }, 50);
       }
-      
+
       this.setupSlider();
       this.bindEvents();
       if (this.autoplay) this.startAutoplay();
@@ -39,13 +39,13 @@
 
     setupSlider() {
       if (this.totalSlides === 0) return;
-      
+
       // Asegurar que el track esté visible
       if (this.trackEl) {
         this.trackEl.style.display = 'flex';
         this.trackEl.style.width = '100%';
       }
-      
+
       // Asegurar que todas las slides sean visibles inicialmente (para verificar que cargan)
       this.slides.forEach((slide, index) => {
         if (slide) {
@@ -54,7 +54,7 @@
           slide.style.flexShrink = '0';
         }
       });
-      
+
       this.createDots();
       this.showSlide(0);
     }
@@ -74,11 +74,11 @@
 
     showSlide(index) {
       if (this.totalSlides === 0) return;
-      
+
       // Validar índice
       if (index < 0) index = this.totalSlides - 1;
       if (index >= this.totalSlides) index = 0;
-      
+
       const previousSlide = this.currentSlide;
       this.currentSlide =
         (index % this.totalSlides + this.totalSlides) % this.totalSlides;
@@ -438,7 +438,7 @@
           }
         }
       });
-    
+
     // Inicializar iconos de Lucide después de inicializar sliders
     if (typeof lucide !== "undefined") {
       // Esperar un poco para que los elementos estén en el DOM
@@ -460,17 +460,17 @@
         setTimeout(initSliders, 200);
       }
     });
-    
+
     // Hook para cuando Elementor termina de renderizar
     window.elementorFrontend.hooks.addAction("frontend/init", function() {
       setTimeout(initSliders, 300);
     });
-    
+
     // Escuchar cuando se renderiza una sección
     window.elementorFrontend.hooks.addAction("frontend/element_ready/section", function($scope) {
       setTimeout(initSliders, 200);
     });
-    
+
     // También escuchar cuando se actualiza el elemento
     if (typeof jQuery !== "undefined") {
       jQuery(document).on('elementor/popup/show', function() {
@@ -485,7 +485,7 @@
       setTimeout(initSliders, 100);
     });
   }
-  
+
   // Inicializar también cuando window.load
   if (window.addEventListener) {
     window.addEventListener('load', function() {
@@ -504,7 +504,7 @@
             if (node.nodeType === 1) {
               // Verificar si el nodo agregado es o contiene un slider
               if (node.classList && (
-                  node.classList.contains("mtz-slider") || 
+                  node.classList.contains("mtz-slider") ||
                   node.classList.contains("mtz-slider-wrapper") ||
                   node.querySelector(".mtz-slider") ||
                   node.querySelector(".mtz-slider-wrapper")
