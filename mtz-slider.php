@@ -450,14 +450,21 @@ class MTZ_Slider {
                         }
                         // Si es un tag, construir información básica
                         elseif (strpos($api_url, '/tags') !== false) {
-                            // Para tags, necesitamos obtener más información
-                            $tag_info = isset($item['commit']) && isset($item['commit']['sha']) ? $item : null;
-                            if ($tag_info) {
+                            // Para tags, obtener información del commit
+                            $commit_date = '';
+                            if (isset($item['commit']) && isset($item['commit']['commit']) && isset($item['commit']['commit']['author'])) {
+                                $commit_date = $item['commit']['commit']['author']['date'];
+                            } elseif (isset($item['commit']) && isset($item['commit']['sha'])) {
+                                // Si no hay fecha del commit, usar fecha actual aproximada
+                                $commit_date = date('Y-m-d\TH:i:s\Z');
+                            }
+                            
+                            if (!empty($tag_name)) {
                                 $releases[] = array(
                                     'version' => $version,
                                     'tag' => $tag_name,
                                     'name' => $tag_name,
-                                    'published_at' => isset($item['commit']['commit']['author']['date']) ? $item['commit']['commit']['author']['date'] : date('Y-m-d\TH:i:s\Z'),
+                                    'published_at' => $commit_date ? $commit_date : date('Y-m-d\TH:i:s\Z'),
                                     'body' => '',
                                     'zip_url' => 'https://github.com/fabiojara/mtz-slider/archive/refs/tags/' . $tag_name . '.zip',
                                     'html_url' => 'https://github.com/fabiojara/mtz-slider/releases/tag/' . $tag_name,
@@ -487,6 +494,13 @@ class MTZ_Slider {
             set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
         } else {
             delete_transient($error_key);
+        }
+
+        // Ordenar releases por versión (más reciente primero)
+        if (!empty($releases)) {
+            usort($releases, function($a, $b) {
+                return version_compare($b['version'], $a['version']);
+            });
         }
 
         // Cachear por 1 hora (incluso si está vacío para no consultar repetidamente)
