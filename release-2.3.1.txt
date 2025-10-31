@@ -1,0 +1,38 @@
+MTZ Slider v2.3.1
+
+Nuevas características:
+
+- Checkbox para activar/desactivar slider
+  * Checkbox junto al nombre del slider en el panel de administración
+  * Permite activar o desactivar el slider completo
+  * Estado guardado automáticamente al cambiar
+
+- Mejoras en la interfaz
+  * Sliders inactivos con fondo gris claro (#f5f5f5)
+  * Borde izquierdo del slider activo aumentado a 6px
+  * Textos del slider activo en color negro para mejor legibilidad
+  * Texto de descripción movido a la misma línea que el botón "Agregar Imágenes"
+
+- Correcciones
+  * Mejoras en centrado de contenido durante animaciones
+  * Optimización del sistema de actualizaciones automáticas
+
+Cómo actualizar:
+
+1. Si tienes el plugin instalado:
+   - Ve a WordPress Admin -> Plugins -> Plugins instalados
+   - Busca "MTZ Slider"
+   - Si aparece el aviso "Hay una nueva versión disponible", haz clic en "Actualizar ahora"
+   - Espera a que se complete la actualización
+
+2. Si instalas por primera vez:
+   - Descarga el ZIP desde GitHub Releases
+   - Instala desde WordPress Admin -> Plugins -> Añadir nuevo -> Subir plugin
+   - Activa el plugin
+
+Notas importantes:
+
+- Los sliders desactivados no se mostrarán en el frontend
+- El estado de activación se guarda automáticamente al cambiar el checkbox
+- Puedes activar/desactivar sliders desde el panel de administración sin necesidad de editarlos
+

@@ -116,6 +116,40 @@
     box-shadow: 0 1px 1px rgba(0,0,0,.04);
 }
 
+.mtz-slider-title-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.mtz-slider-title-row h2 {
+    margin: 0;
+    flex: 1;
+}
+
+.mtz-slider-active-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1d2327;
+    margin: 0;
+}
+
+.mtz-slider-active-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.mtz-toggle-label {
+    user-select: none;
+}
+
 .mtz-slider-effect-selector {
     margin-top: 15px;
     padding-top: 15px;

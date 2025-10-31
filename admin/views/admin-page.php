@@ -135,7 +135,13 @@ if (!defined('ABSPATH')) {
                 <input type="hidden" id="mtz-current-slider-id" value="<?php echo esc_attr($current_slider_id); ?>">
 
                 <div class="mtz-slider-header">
-                    <h2><?php echo esc_html($current_slider['name']); ?></h2>
+                    <div class="mtz-slider-title-row">
+                        <h2><?php echo esc_html($current_slider['name']); ?></h2>
+                        <label class="mtz-slider-active-toggle">
+                            <input type="checkbox" id="mtz-slider-active-status" <?php checked(isset($current_slider['is_active']) ? $current_slider['is_active'] : 1, 1); ?> />
+                            <span class="mtz-toggle-label"><?php esc_html_e('Activo', 'mtz-slider'); ?></span>
+                        </label>
+                    </div>
                     <div class="mtz-slider-effect-selector">
                         <label for="mtz-slider-effect"><?php esc_html_e('Selecciona el efecto de animación', 'mtz-slider'); ?></label>
                         <select id="mtz-slider-effect" class="mtz-effect-select">

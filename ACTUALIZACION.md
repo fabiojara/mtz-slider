@@ -19,6 +19,11 @@ Si tras activar no ves cambios, revisa consola del navegador y logs de WordPress
 
 ## 🗓️ Changelog
 
+### 2.3.1
+- ✅ **Checkbox para activar/desactivar slider**: Checkbox junto al nombre del slider para activar o desactivar el slider completo
+- 🎨 **Mejoras en interfaz**: Sliders inactivos con fondo gris claro, borde izquierdo aumentado a 6px, textos en negro
+- 📝 **Ajustes de layout**: Texto de descripción movido a la misma línea que el botón "Agregar Imágenes"
+
 ### 2.3.0
 - ✨ **Sistema completo de efectos de animación**: Fade, Slide (Horizontal/Vertical), Zoom (In/Out), Flip (Horizontal/Vertical), Cubo 3D
 - 🎨 **Selector de efectos en el panel de administración**: Cambia el efecto de animación desde el header del slider o al crear/editar

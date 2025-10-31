@@ -33,6 +33,7 @@
       $(".mtz-slider-item").on("click", this.selectSlider.bind(this));
       $(".mtz-slider-item-delete").on("click", this.deleteSlider.bind(this));
       $("#mtz-slider-effect").on("change", this.updateSliderEffect.bind(this));
+      $("#mtz-slider-active-status").on("change", this.updateSliderActiveStatus.bind(this));
       $(document).on("dblclick", ".mtz-slider-item", this.editSlider.bind(this));
       $(document).on(
         "click",
@@ -262,6 +263,34 @@
       if (sliderId) {
         MTZSlider.openSliderModal({target: sliderItem[0]});
       }
+    },
+
+    updateSliderActiveStatus: function() {
+      const sliderId = $("#mtz-current-slider-id").val();
+      if (!sliderId) return;
+
+      const isActive = $("#mtz-slider-active-status").is(":checked") ? 1 : 0;
+
+      $.ajax({
+        url: mtzSlider.apiUrl + "sliders/" + sliderId,
+        method: "PUT",
+        data: JSON.stringify({ is_active: isActive }),
+        contentType: "application/json",
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
+        },
+        success: function() {
+          const message = isActive 
+            ? "Slider activado correctamente" 
+            : "Slider desactivado correctamente";
+          MTZSlider.showNotice(message, "success");
+        },
+        error: function() {
+          MTZSlider.showNotice("Error al actualizar el estado del slider", "error");
+          // Revertir checkbox en caso de error
+          $("#mtz-slider-active-status").prop("checked", !isActive);
+        }
+      });
     },
 
     // copyShortcode eliminado
