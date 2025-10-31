@@ -9,15 +9,23 @@
 }
 
 .mtz-slider-wrapper {
-    width: 100%;
+    width: 100% !important;
+    min-width: 1px;
     position: relative;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .mtz-slider {
     position: relative;
-    width: 100%;
+    width: 100% !important;
+    min-width: 1px;
     overflow: hidden;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     /* Mejorar experiencia táctil en móviles y tablets */
     touch-action: pan-y pinch-zoom;
     -webkit-user-select: none;

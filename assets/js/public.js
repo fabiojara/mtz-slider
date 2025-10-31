@@ -9,8 +9,9 @@
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance constructor iniciado para:', sliderEl.id || 'sin ID');
       }
-      
+
       this.sliderEl = sliderEl;
+      this.wrapperEl = sliderEl.closest('.mtz-slider-wrapper') || sliderEl.parentElement;
       this.trackEl = sliderEl.querySelector(".mtz-slider-track");
       this.slides = Array.from(sliderEl.querySelectorAll(".mtz-slide"));
       this.currentSlide = 0;
@@ -19,8 +20,11 @@
       this.speed = parseInt(sliderEl.dataset.speed || "5000", 10);
       this.animationEffect = sliderEl.dataset.animationEffect || "fade";
       this.autoplayInterval = null;
+      this.resizeObserver = null;
+      this.initialized = false;
 
       if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance - wrapperEl encontrado:', !!this.wrapperEl);
         console.log('[MTZ Slider] SliderInstance - trackEl encontrado:', !!this.trackEl);
         console.log('[MTZ Slider] SliderInstance - totalSlides:', this.totalSlides);
         console.log('[MTZ Slider] SliderInstance - autoplay:', this.autoplay);
@@ -28,14 +32,135 @@
         console.log('[MTZ Slider] SliderInstance - slides:', this.slides.map(s => s.id || 'sin ID'));
       }
 
-      this.init();
+      // Verificar dimensiones antes de inicializar
+      this.ensureDimensionsAndInit();
+    }
+
+    ensureDimensionsAndInit() {
+      // Forzar dimensiones en el wrapper y slider si no las tienen
+      if (this.wrapperEl) {
+        const wrapperRect = this.wrapperEl.getBoundingClientRect();
+        if (wrapperRect.width === 0) {
+          // Si el wrapper no tiene ancho, forzar dimensiones
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[MTZ Slider] Wrapper sin dimensiones, forzando dimensiones...');
+          }
+          
+          // Intentar obtener el ancho del contenedor padre
+          const parent = this.wrapperEl.parentElement;
+          if (parent) {
+            const parentRect = parent.getBoundingClientRect();
+            if (parentRect.width > 0) {
+              this.wrapperEl.style.width = '100%';
+              this.wrapperEl.style.minWidth = '1px';
+            }
+          }
+          
+          // Forzar dimensiones mínimas
+          this.wrapperEl.style.display = 'block';
+          this.wrapperEl.style.visibility = 'visible';
+          this.wrapperEl.style.opacity = '1';
+        }
+      }
+
+      // Forzar dimensiones en el slider
+      const sliderRect = this.sliderEl.getBoundingClientRect();
+      if (sliderRect.width === 0) {
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] Slider sin dimensiones, forzando dimensiones...');
+        }
+        this.sliderEl.style.width = '100%';
+        this.sliderEl.style.minWidth = '1px';
+        this.sliderEl.style.display = 'block';
+        this.sliderEl.style.visibility = 'visible';
+        this.sliderEl.style.opacity = '1';
+      }
+
+      // Usar ResizeObserver para esperar a que tenga dimensiones
+      if (this.wrapperEl && 'ResizeObserver' in window && !this.resizeObserver) {
+        let checkCount = 0;
+        const maxChecks = 50; // Máximo 5 segundos (50 * 100ms)
+        
+        this.resizeObserver = new ResizeObserver((entries) => {
+          checkCount++;
+          const entry = entries[0];
+          const width = entry.contentRect.width;
+          
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[MTZ Slider] ResizeObserver - Ancho detectado:', width, 'intento:', checkCount);
+          }
+
+          if (width > 0 && !this.initialized) {
+            if (typeof console !== 'undefined' && console.log) {
+              console.log('[MTZ Slider] Dimensiones detectadas, inicializando slider...');
+            }
+            this.resizeObserver.disconnect();
+            this.init();
+          } else if (checkCount >= maxChecks && !this.initialized) {
+            // Si después de varios intentos no tiene dimensiones, inicializar de todos modos
+            if (typeof console !== 'undefined' && console.warn) {
+              console.warn('[MTZ Slider] No se detectaron dimensiones después de', maxChecks, 'intentos. Inicializando de todos modos...');
+            }
+            this.resizeObserver.disconnect();
+            this.init();
+          }
+        });
+
+        this.resizeObserver.observe(this.wrapperEl || this.sliderEl);
+        
+        // Timeout de seguridad: si después de 5 segundos no se ha inicializado, inicializar de todos modos
+        setTimeout(() => {
+          if (!this.initialized) {
+            if (typeof console !== 'undefined' && console.warn) {
+              console.warn('[MTZ Slider] Timeout de seguridad: inicializando slider sin dimensiones confirmadas');
+            }
+            if (this.resizeObserver) {
+              this.resizeObserver.disconnect();
+            }
+            this.init();
+          }
+        }, 5000);
+      } else {
+        // Si no hay ResizeObserver disponible, inicializar directamente después de un pequeño delay
+        setTimeout(() => {
+          this.init();
+        }, 100);
+      }
     }
 
     init() {
+      if (this.initialized) {
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] SliderInstance ya estaba inicializado, omitiendo...');
+        }
+        return;
+      }
+
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.init() ejecutado');
+        
+        // Verificar dimensiones actuales
+        if (this.wrapperEl) {
+          const wrapperRect = this.wrapperEl.getBoundingClientRect();
+          console.log('[MTZ Slider] Wrapper dimensiones:', {
+            width: wrapperRect.width,
+            height: wrapperRect.height,
+            top: wrapperRect.top,
+            left: wrapperRect.left
+          });
+        }
+        
+        const sliderRect = this.sliderEl.getBoundingClientRect();
+        console.log('[MTZ Slider] Slider dimensiones:', {
+          width: sliderRect.width,
+          height: sliderRect.height,
+          top: sliderRect.top,
+          left: sliderRect.left
+        });
       }
-      
+
+      this.initialized = true;
+
       // Asegurar que los iconos de Lucide estén disponibles
       if (typeof lucide !== "undefined") {
         // Inicializar iconos en este slider específico
@@ -51,7 +176,7 @@
       this.bindEvents();
       if (this.autoplay) this.startAutoplay();
       this.setupViewportObserver();
-      
+
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.init() completado');
       }
@@ -61,7 +186,7 @@
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.setupSlider() ejecutado - totalSlides:', this.totalSlides);
       }
-      
+
       if (this.totalSlides === 0) {
         if (typeof console !== 'undefined' && console.warn) {
           console.warn('[MTZ Slider] SliderInstance.setupSlider() - No hay slides, saliendo');
@@ -93,7 +218,7 @@
 
       this.createDots();
       this.showSlide(0);
-      
+
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.setupSlider() completado');
       }
@@ -116,7 +241,7 @@
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.showSlide() ejecutado - index:', index, 'totalSlides:', this.totalSlides);
       }
-      
+
       if (this.totalSlides === 0) {
         if (typeof console !== 'undefined' && console.warn) {
           console.warn('[MTZ Slider] SliderInstance.showSlide() - No hay slides, saliendo');
@@ -145,7 +270,7 @@
       dots.forEach((d, i) =>
         d.classList.toggle("active", i === this.currentSlide)
       );
-      
+
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.showSlide() completado - currentSlide visible:', this.slides[this.currentSlide] ? 'SI' : 'NO');
       }
@@ -155,7 +280,7 @@
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.applyAnimation() ejecutado - previousIndex:', previousIndex, 'currentIndex:', currentIndex);
       }
-      
+
       const previousSlide = this.slides[previousIndex];
       const currentSlide = this.slides[currentIndex];
 
@@ -329,13 +454,13 @@
             console.log('[MTZ Slider] SliderInstance.applyAnimation() - Efecto default aplicado');
           }
       }
-      
+
       // Asegurar que el slider sea visible
       if (this.sliderEl && currentSlide) {
         this.sliderEl.style.display = 'block';
         this.sliderEl.style.visibility = 'visible';
         this.sliderEl.style.opacity = '1';
-        
+
         // Verificar dimensiones
         const rect = this.sliderEl.getBoundingClientRect();
         if (typeof console !== 'undefined' && console.log) {
@@ -347,7 +472,7 @@
           });
         }
       }
-      
+
       if (typeof console !== 'undefined' && console.log) {
         console.log('[MTZ Slider] SliderInstance.applyAnimation() completado');
       }
