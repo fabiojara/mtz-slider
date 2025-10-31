@@ -33,6 +33,18 @@ class MTZ_Slider_API {
             'permission_callback' => array($this, 'check_permissions'),
         ));
 
+        // Obtener un slider específico
+        register_rest_route($namespace, '/sliders/(?P<id>\d+)', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_slider'),
+            'permission_callback' => array($this, 'check_permissions'),
+            'args' => array(
+                'id' => array('required' => true, 'validate_callback' => function($param) {
+                    return is_numeric($param);
+                }),
+            ),
+        ));
+
         // Crear nuevo slider
         register_rest_route($namespace, '/sliders', array(
             'methods' => 'POST',
@@ -144,6 +156,23 @@ class MTZ_Slider_API {
     }
 
     /**
+     * Obtener un slider específico
+     */
+    public function get_slider($request) {
+        $database = new MTZ_Slider_Database();
+
+        $id = $request->get_param('id');
+        $slider = $database->get_slider($id);
+
+        if ($slider) {
+            $slider['shortcode'] = '[mtz_slider id="' . $id . '"]';
+            return new WP_REST_Response($slider, 200);
+        } else {
+            return new WP_Error('not_found', 'Slider no encontrado', array('status' => 404));
+        }
+    }
+
+    /**
      * Crear slider
      */
     public function create_slider($request) {
@@ -154,8 +183,9 @@ class MTZ_Slider_API {
         $name = isset($params['name']) ? sanitize_text_field($params['name']) : 'Nuevo Slider';
         $autoplay = isset($params['autoplay']) ? intval($params['autoplay']) : 1;
         $speed = isset($params['speed']) ? intval($params['speed']) : 5000;
+        $animation_effect = isset($params['animation_effect']) ? sanitize_text_field($params['animation_effect']) : 'fade';
 
-        $result = $database->create_slider($name, $autoplay, $speed);
+        $result = $database->create_slider($name, $autoplay, $speed, $animation_effect);
 
         if ($result) {
             $slider = $database->get_slider($result);

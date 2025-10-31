@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.2.1
+ * Version: 2.3.0
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.2.1');
+define('MTZ_SLIDER_VERSION', '2.3.0');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -296,6 +296,7 @@ class MTZ_Slider {
         // Usar configuración del slider o parámetros del shortcode
         $autoplay = $atts['autoplay'] !== null ? filter_var($atts['autoplay'], FILTER_VALIDATE_BOOLEAN) : $slider['autoplay'];
         $speed = $atts['speed'] !== null ? intval($atts['speed']) : $slider['speed'];
+        $animation_effect = isset($slider['animation_effect']) ? $slider['animation_effect'] : 'fade';
 
         // Convertir autoplay de int a bool
         $autoplay = $autoplay == 1 || $autoplay === true || $autoplay === 'true';
@@ -311,6 +312,7 @@ class MTZ_Slider {
             'images' => $images,
             'autoplay' => $autoplay,
             'speed' => $speed,
+            'animation_effect' => $animation_effect,
             'atts' => $atts
         );
 

@@ -40,6 +40,7 @@ class MTZ_Slider_Database {
             name varchar(255) NOT NULL,
             autoplay tinyint(1) DEFAULT 1,
             speed int(11) DEFAULT 5000,
+            animation_effect varchar(50) DEFAULT 'fade',
             is_active tinyint(1) DEFAULT 1,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -102,6 +103,13 @@ class MTZ_Slider_Database {
         if (empty($link_column_exists)) {
             $wpdb->query("ALTER TABLE {$this->images_table} ADD COLUMN link_url varchar(255) DEFAULT '' AFTER image_url");
             error_log('Columna link_url agregada a la tabla wp_mtz_slider_images');
+        }
+
+        // Verificar si la columna animation_effect existe en la tabla de sliders
+        $animation_column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$this->sliders_table} LIKE 'animation_effect'");
+        if (empty($animation_column_exists)) {
+            $wpdb->query("ALTER TABLE {$this->sliders_table} ADD COLUMN animation_effect varchar(50) DEFAULT 'fade' AFTER speed");
+            error_log('Columna animation_effect agregada a la tabla wp_mtz_slider_sliders');
         }
     }
 
@@ -190,7 +198,7 @@ class MTZ_Slider_Database {
     /**
      * Crear nuevo slider
      */
-    public function create_slider($name, $autoplay = 1, $speed = 5000) {
+    public function create_slider($name, $autoplay = 1, $speed = 5000, $animation_effect = 'fade') {
         global $wpdb;
 
         // Asegurarse de que las tablas existan
@@ -202,9 +210,10 @@ class MTZ_Slider_Database {
                 'name' => sanitize_text_field($name),
                 'autoplay' => intval($autoplay),
                 'speed' => intval($speed),
+                'animation_effect' => sanitize_text_field($animation_effect),
                 'is_active' => 1
             ),
-            array('%s', '%d', '%d', '%d')
+            array('%s', '%d', '%d', '%s', '%d')
         );
 
         if ($result === false) {
@@ -248,6 +257,9 @@ class MTZ_Slider_Database {
         }
         if (isset($data['speed'])) {
             $update_data['speed'] = intval($data['speed']);
+        }
+        if (isset($data['animation_effect'])) {
+            $update_data['animation_effect'] = sanitize_text_field($data['animation_effect']);
         }
         if (isset($data['is_active'])) {
             $update_data['is_active'] = intval($data['is_active']);

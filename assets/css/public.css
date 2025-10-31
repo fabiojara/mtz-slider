@@ -18,6 +18,11 @@
     width: 100%;
     overflow: hidden;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    /* Mejorar experiencia táctil en móviles y tablets */
+    touch-action: pan-y pinch-zoom;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .mtz-slider-track {
@@ -35,6 +40,10 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    /* Mejorar experiencia táctil */
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
 }
 
 .mtz-slide-img {
@@ -56,12 +65,29 @@
 }
 
 .mtz-slide-content {
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
     max-width: 1200px;
+    width: 90%;
     padding: 40px;
     text-align: center;
     color: #fff;
+    pointer-events: none;
+}
+
+.mtz-slide-content * {
+    pointer-events: auto;
+}
+
+/* Permitir selección de texto en el contenido si es necesario */
+.mtz-slide-content p,
+.mtz-slide-content h2,
+.mtz-slide-content h1 {
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 .mtz-slide-title {
@@ -281,5 +307,238 @@
     .mtz-slide-title {
         font-size: 1.5rem;
     }
+}
+
+/* ========================================
+   EFECTOS DE ANIMACIÓN
+   ======================================== */
+
+/* Efecto Fade */
+.mtz-effect-fade .mtz-slide {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+}
+
+.mtz-effect-fade .mtz-slide.mtz-slide-active {
+    opacity: 1;
+    position: relative;
+}
+
+/* Asegurar que el contenido siempre esté centrado con fade */
+.mtz-effect-fade .mtz-slide .mtz-slide-content,
+.mtz-effect-fade .mtz-slide.mtz-slide-active .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+}
+
+.mtz-animate-fade {
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Efecto Slide Horizontal */
+.mtz-effect-slide-horizontal .mtz-slider-track {
+    flex-direction: row;
+}
+
+.mtz-effect-slide-horizontal .mtz-slide {
+    flex-shrink: 0;
+}
+
+/* Asegurar que el contenido siempre esté centrado con slide horizontal */
+.mtz-effect-slide-horizontal .mtz-slide .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+}
+
+/* Efecto Slide Vertical */
+.mtz-effect-slide-vertical .mtz-slider-track {
+    flex-direction: column;
+    height: 100%;
+}
+
+.mtz-effect-slide-vertical .mtz-slide {
+    min-width: 100%;
+    height: 100%;
+}
+
+/* Asegurar que el contenido siempre esté centrado con slide vertical */
+.mtz-effect-slide-vertical .mtz-slide .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+}
+
+/* Efecto Zoom In */
+.mtz-effect-zoom-in .mtz-slide {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+
+.mtz-effect-zoom-in .mtz-slide.mtz-slide-active {
+    opacity: 1;
+    transform: scale(1);
+    position: relative;
+}
+
+/* Asegurar que el contenido siempre esté centrado con zoom */
+.mtz-effect-zoom-in .mtz-slide .mtz-slide-content,
+.mtz-effect-zoom-in .mtz-slide.mtz-slide-active .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+}
+
+.mtz-animate-zoom-in {
+    animation: zoomIn 0.6s ease-in-out;
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Efecto Zoom Out */
+.mtz-effect-zoom-out .mtz-slide {
+    position: absolute;
+    opacity: 0;
+    transform: scale(1.2);
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+
+.mtz-effect-zoom-out .mtz-slide.mtz-slide-active {
+    opacity: 1;
+    transform: scale(1);
+    position: relative;
+}
+
+/* Asegurar que el contenido siempre esté centrado con zoom out */
+.mtz-effect-zoom-out .mtz-slide .mtz-slide-content,
+.mtz-effect-zoom-out .mtz-slide.mtz-slide-active .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+}
+
+.mtz-animate-zoom-out {
+    animation: zoomOut 0.6s ease-in-out;
+}
+
+@keyframes zoomOut {
+    from {
+        opacity: 0;
+        transform: scale(1.2);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Efecto Flip Horizontal */
+.mtz-effect-flip-horizontal .mtz-slide {
+    position: absolute;
+    opacity: 0;
+    transform: rotateY(90deg);
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.mtz-effect-flip-horizontal .mtz-slide.mtz-slide-active {
+    opacity: 1;
+    transform: rotateY(0deg);
+    position: relative;
+}
+
+/* Asegurar que el contenido siempre esté centrado con flip horizontal */
+.mtz-effect-flip-horizontal .mtz-slide .mtz-slide-content,
+.mtz-effect-flip-horizontal .mtz-slide.mtz-slide-active .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+    transform-style: preserve-3d;
+}
+
+.mtz-animate-flip-horizontal {
+    animation: flipHorizontal 0.6s ease-in-out;
+}
+
+@keyframes flipHorizontal {
+    from {
+        opacity: 0;
+        transform: rotateY(90deg);
+    }
+    to {
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
+}
+
+/* Efecto Flip Vertical */
+.mtz-effect-flip-vertical .mtz-slide {
+    position: absolute;
+    opacity: 0;
+    transform: rotateX(90deg);
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.mtz-effect-flip-vertical .mtz-slide.mtz-slide-active {
+    opacity: 1;
+    transform: rotateX(0deg);
+    position: relative;
+}
+
+/* Asegurar que el contenido siempre esté centrado con flip vertical */
+.mtz-effect-flip-vertical .mtz-slide .mtz-slide-content,
+.mtz-effect-flip-vertical .mtz-slide.mtz-slide-active .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+    transform-style: preserve-3d;
+}
+
+.mtz-animate-flip-vertical {
+    animation: flipVertical 0.6s ease-in-out;
+}
+
+@keyframes flipVertical {
+    from {
+        opacity: 0;
+        transform: rotateX(90deg);
+    }
+    to {
+        opacity: 1;
+        transform: rotateX(0deg);
+    }
+}
+
+/* Efecto Cube 3D */
+.mtz-effect-cube {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.mtz-effect-cube .mtz-slider-track {
+    transform-style: preserve-3d;
+}
+
+.mtz-effect-cube .mtz-slide {
+    position: absolute;
+    backface-visibility: hidden;
+}
+
+.mtz-effect-cube .mtz-slide.mtz-slide-active {
+    position: relative;
+}
+
+/* Asegurar que el contenido siempre esté centrado con cube */
+.mtz-effect-cube .mtz-slide .mtz-slide-content,
+.mtz-effect-cube .mtz-slide.mtz-slide-active .mtz-slide-content {
+    transform: translate(-50%, -50%) !important;
+    transform-style: preserve-3d;
 }
 

@@ -115,7 +115,7 @@ $exclude = @('node_modules', '.git', '.gitignore', 'vite.config.js', 'package.js
 Get-ChildItem -Path $pluginDir -Recurse -File | Where-Object {
     $file = $_
     $shouldInclude = $true
-    
+
     # Verificar exclusiones
     foreach ($pattern in $exclude) {
         if ($file.Name -like $pattern) {
@@ -123,22 +123,22 @@ Get-ChildItem -Path $pluginDir -Recurse -File | Where-Object {
             break
         }
     }
-    
+
     # Verificar rutas excluidas
     if ($file.FullName -match '\\node_modules\\' -or $file.FullName -match '\\\.git\\') {
         $shouldInclude = $false
     }
-    
+
     return $shouldInclude
 } | ForEach-Object {
     $relativePath = $_.FullName.Substring($pluginDir.FullName.Length + 1)
     $targetPath = Join-Path $targetDir $relativePath
     $targetFolder = Split-Path $targetPath -Parent
-    
+
     if (!(Test-Path $targetFolder)) {
         New-Item -ItemType Directory -Path $targetFolder -Force | Out-Null
     }
-    
+
     Copy-Item $_.FullName $targetPath -Force
 }
 
@@ -191,7 +191,7 @@ $headers = @{
 try {
     $releaseUrl = "https://api.github.com/repos/$repoOwner/$repoName/releases"
     $response = Invoke-RestMethod -Uri $releaseUrl -Method Post -Headers $headers -Body $releaseData -ContentType "application/json"
-    
+
     $releaseId = $response.id
     Write-Host "   ✓ Release creado: $tagName (ID: $releaseId)" -ForegroundColor Green
     Write-Host "   URL: $($response.html_url)" -ForegroundColor Cyan
@@ -219,7 +219,7 @@ try {
         Accept = "application/vnd.github.v3+json"
         "Content-Type" = "application/zip"
     }
-    
+
     $uploadResponse = Invoke-RestMethod -Uri $uploadUrl -Method Post -Headers $uploadHeaders -Body $zipBytes
     Write-Host "   ✓ ZIP subido exitosamente" -ForegroundColor Green
     Write-Host "   URL de descarga: $($uploadResponse.browser_download_url)" -ForegroundColor Cyan

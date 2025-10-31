@@ -19,6 +19,7 @@ $unique_id = 'mtz-slider-' . $slider_id;
          id="<?php echo esc_attr($unique_id); ?>-container"
          data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
          data-speed="<?php echo esc_attr($speed); ?>"
+         data-animation-effect="<?php echo esc_attr(isset($animation_effect) ? $animation_effect : 'fade'); ?>"
          data-slider-id="<?php echo esc_attr($slider_id); ?>">
 
         <div class="mtz-slider-track">

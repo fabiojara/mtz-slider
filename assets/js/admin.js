@@ -32,6 +32,8 @@
       $("#mtz-slider-form").on("submit", this.saveSlider.bind(this));
       $(".mtz-slider-item").on("click", this.selectSlider.bind(this));
       $(".mtz-slider-item-delete").on("click", this.deleteSlider.bind(this));
+      $("#mtz-slider-effect").on("change", this.updateSliderEffect.bind(this));
+      $(document).on("dblclick", ".mtz-slider-item", this.editSlider.bind(this));
       $(document).on(
         "click",
         ".mtz-copy-shortcode",
@@ -70,11 +72,40 @@
 
     // ============ MÉTODOS PARA SLIDERS ============
 
-    openSliderModal: function() {
-      $("#mtz-modal-title").text("Crear Nuevo Slider");
-      $("#mtz-slider-form")[0].reset();
-      $("#mtz-slider-id").val("");
-      $("#mtz-slider-modal").show();
+    openSliderModal: function(e) {
+      e = e || {target: null};
+      const sliderItem = $(e.target || e).closest(".mtz-slider-item");
+      const sliderId = sliderItem.length ? sliderItem.data("slider-id") : null;
+
+      if (sliderId) {
+        // Cargar datos del slider para editar
+        $.ajax({
+          url: mtzSlider.apiUrl + "sliders/" + sliderId,
+          method: "GET",
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
+          },
+          success: function(slider) {
+            $("#mtz-modal-title").text("Editar Slider");
+            $("#mtz-slider-id").val(slider.id);
+            $("#mtz-slider-name").val(slider.name);
+            $("#mtz-slider-autoplay").prop("checked", slider.autoplay == 1);
+            $("#mtz-slider-speed").val(slider.speed || 5000);
+            $("#mtz-slider-modal-effect").val(slider.animation_effect || "fade");
+            $("#mtz-slider-modal").show();
+          },
+          error: function() {
+            MTZSlider.showNotice("Error al cargar el slider", "error");
+          }
+        });
+      } else {
+        // Crear nuevo slider
+        $("#mtz-modal-title").text("Crear Nuevo Slider");
+        $("#mtz-slider-form")[0].reset();
+        $("#mtz-slider-id").val("");
+        $("#mtz-slider-modal-effect").val("fade");
+        $("#mtz-slider-modal").show();
+      }
     },
 
     saveSlider: function(e) {
@@ -84,8 +115,9 @@
       const name = $("#mtz-slider-name").val();
       const autoplay = $("#mtz-slider-autoplay").is(":checked") ? 1 : 0;
       const speed = $("#mtz-slider-speed").val();
+      const animation_effect = $("#mtz-slider-modal-effect").val() || "fade";
 
-      console.log("Guardando slider:", { sliderId, name, autoplay, speed });
+      console.log("Guardando slider:", { sliderId, name, autoplay, speed, animation_effect });
 
       if (!name) {
         this.showNotice("Por favor ingresa un nombre para el slider", "error");
@@ -98,6 +130,7 @@
       const data = {
         name: name,
         autoplay: autoplay,
+        animation_effect: animation_effect,
         speed: speed
       };
 
@@ -197,6 +230,38 @@
           MTZSlider.showNotice("Error al eliminar el slider", "error");
         }
       });
+    },
+
+    updateSliderEffect: function() {
+      const sliderId = $("#mtz-current-slider-id").val();
+      if (!sliderId) return;
+
+      const animation_effect = $("#mtz-slider-effect").val();
+
+      $.ajax({
+        url: mtzSlider.apiUrl + "sliders/" + sliderId,
+        method: "PUT",
+        data: JSON.stringify({ animation_effect: animation_effect }),
+        contentType: "application/json",
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
+        },
+        success: function() {
+          MTZSlider.showNotice("Efecto actualizado correctamente", "success");
+        },
+        error: function() {
+          MTZSlider.showNotice("Error al actualizar el efecto", "error");
+        }
+      });
+    },
+
+    editSlider: function(e) {
+      e.stopPropagation();
+      const sliderItem = $(e.target).closest(".mtz-slider-item");
+      const sliderId = sliderItem.data("slider-id");
+      if (sliderId) {
+        MTZSlider.openSliderModal({target: sliderItem[0]});
+      }
     },
 
     // copyShortcode eliminado

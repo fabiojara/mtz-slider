@@ -137,7 +137,7 @@ Antes de crear el release:
 - El tag ya existe en GitHub
 - Problemas de conexión
 
-**Solución**: 
+**Solución**:
 - Verifica que el token esté correcto en el script
 - Si el tag ya existe, elimínalo desde GitHub o usa otra versión
 

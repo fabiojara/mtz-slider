@@ -139,6 +139,19 @@ if (!defined('ABSPATH')) {
                     <p class="description">
                         <?php esc_html_e('Gestiona las imágenes de tu slider. Arrastra para reordenar.', 'mtz-slider'); ?>
                     </p>
+                    <div class="mtz-slider-effect-selector">
+                        <label for="mtz-slider-effect"><?php esc_html_e('Selecciona el efecto de animación', 'mtz-slider'); ?></label>
+                        <select id="mtz-slider-effect" class="mtz-effect-select">
+                            <option value="fade" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'fade'); ?>><?php esc_html_e('Fade', 'mtz-slider'); ?></option>
+                            <option value="slide-horizontal" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'slide-horizontal'); ?>><?php esc_html_e('Deslizar Horizontal', 'mtz-slider'); ?></option>
+                            <option value="slide-vertical" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'slide-vertical'); ?>><?php esc_html_e('Deslizar Vertical', 'mtz-slider'); ?></option>
+                            <option value="zoom-in" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'zoom-in'); ?>><?php esc_html_e('Zoom In', 'mtz-slider'); ?></option>
+                            <option value="zoom-out" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'zoom-out'); ?>><?php esc_html_e('Zoom Out', 'mtz-slider'); ?></option>
+                            <option value="flip-horizontal" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'flip-horizontal'); ?>><?php esc_html_e('Voltear Horizontal', 'mtz-slider'); ?></option>
+                            <option value="flip-vertical" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'flip-vertical'); ?>><?php esc_html_e('Voltear Vertical', 'mtz-slider'); ?></option>
+                            <option value="cube" <?php selected(isset($current_slider['animation_effect']) ? $current_slider['animation_effect'] : 'fade', 'cube'); ?>><?php esc_html_e('Cubo 3D', 'mtz-slider'); ?></option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="mtz-slider-toolbar">
@@ -196,6 +209,21 @@ if (!defined('ABSPATH')) {
                         <label for="mtz-slider-speed"><?php esc_html_e('Velocidad (milisegundos)', 'mtz-slider'); ?></label>
                         <input type="number" id="mtz-slider-speed" value="5000" min="1000" max="20000" step="500" />
                         <p class="description"><?php esc_html_e('Tiempo que cada imagen permanece visible antes de cambiar.', 'mtz-slider'); ?></p>
+                    </div>
+
+                    <div class="mtz-form-field">
+                        <label for="mtz-slider-modal-effect"><?php esc_html_e('Efecto de animación', 'mtz-slider'); ?></label>
+                        <select id="mtz-slider-modal-effect" class="regular-text">
+                            <option value="fade"><?php esc_html_e('Fade', 'mtz-slider'); ?></option>
+                            <option value="slide-horizontal"><?php esc_html_e('Deslizar Horizontal', 'mtz-slider'); ?></option>
+                            <option value="slide-vertical"><?php esc_html_e('Deslizar Vertical', 'mtz-slider'); ?></option>
+                            <option value="zoom-in"><?php esc_html_e('Zoom In', 'mtz-slider'); ?></option>
+                            <option value="zoom-out"><?php esc_html_e('Zoom Out', 'mtz-slider'); ?></option>
+                            <option value="flip-horizontal"><?php esc_html_e('Voltear Horizontal', 'mtz-slider'); ?></option>
+                            <option value="flip-vertical"><?php esc_html_e('Voltear Vertical', 'mtz-slider'); ?></option>
+                            <option value="cube"><?php esc_html_e('Cubo 3D', 'mtz-slider'); ?></option>
+                        </select>
+                        <p class="description"><?php esc_html_e('Efecto de transición entre imágenes.', 'mtz-slider'); ?></p>
                     </div>
 
                     <div class="mtz-form-actions">
