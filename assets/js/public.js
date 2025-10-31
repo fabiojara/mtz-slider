@@ -20,6 +20,17 @@
     }
 
     init() {
+      // Asegurar que los iconos de Lucide estén disponibles
+      if (typeof lucide !== "undefined") {
+        // Inicializar iconos en este slider específico
+        setTimeout(() => {
+          const icons = this.sliderEl.querySelectorAll('[data-lucide]');
+          if (icons.length > 0) {
+            lucide.createIcons(icons);
+          }
+        }, 50);
+      }
+      
       this.setupSlider();
       this.bindEvents();
       if (this.autoplay) this.startAutoplay();
@@ -28,6 +39,22 @@
 
     setupSlider() {
       if (this.totalSlides === 0) return;
+      
+      // Asegurar que el track esté visible
+      if (this.trackEl) {
+        this.trackEl.style.display = 'flex';
+        this.trackEl.style.width = '100%';
+      }
+      
+      // Asegurar que todas las slides sean visibles inicialmente (para verificar que cargan)
+      this.slides.forEach((slide, index) => {
+        if (slide) {
+          slide.style.minWidth = '100%';
+          slide.style.width = '100%';
+          slide.style.flexShrink = '0';
+        }
+      });
+      
       this.createDots();
       this.showSlide(0);
     }
@@ -47,6 +74,11 @@
 
     showSlide(index) {
       if (this.totalSlides === 0) return;
+      
+      // Validar índice
+      if (index < 0) index = this.totalSlides - 1;
+      if (index >= this.totalSlides) index = 0;
+      
       const previousSlide = this.currentSlide;
       this.currentSlide =
         (index % this.totalSlides + this.totalSlides) % this.totalSlides;
@@ -100,16 +132,18 @@
       // Configurar slides según el efecto
       switch (this.animationEffect) {
         case "fade":
-          if (previousSlide) previousSlide.style.opacity = "0";
-          if (currentSlide) {
-            currentSlide.style.opacity = "1";
-            currentSlide.style.display = "block";
-            currentSlide.classList.add("mtz-animate-fade");
-          }
-          // Ocultar otros slides
+          // Para fade, todas las slides deben estar visibles pero con opacidad
           this.slides.forEach((slide, i) => {
-            if (i !== currentIndex) {
-              slide.style.display = "none";
+            if (slide) {
+              slide.style.display = "block";
+              slide.style.position = i === currentIndex ? "relative" : "absolute";
+              slide.style.opacity = i === currentIndex ? "1" : "0";
+              slide.style.zIndex = i === currentIndex ? "2" : "1";
+              if (i === currentIndex) {
+                slide.classList.add("mtz-slide-active", "mtz-animate-fade");
+              } else {
+                slide.classList.remove("mtz-slide-active", "mtz-animate-fade");
+              }
             }
           });
           break;
@@ -390,52 +424,109 @@
   }
 
   function initSliders() {
-    if (typeof lucide !== "undefined") {
-      lucide.createIcons();
-    }
+    // Buscar todos los sliders (pueden haber sido agregados dinámicamente)
     document
       .querySelectorAll(".mtz-slider-wrapper .mtz-slider")
       .forEach(slider => {
         // Evitar inicializar dos veces
         if (!slider.dataset.initialized) {
           slider.dataset.initialized = "true";
-          new SliderInstance(slider);
+          try {
+            new SliderInstance(slider);
+          } catch (e) {
+            console.error('Error inicializando slider:', e);
+          }
         }
       });
+    
+    // Inicializar iconos de Lucide después de inicializar sliders
+    if (typeof lucide !== "undefined") {
+      // Esperar un poco para que los elementos estén en el DOM
+      setTimeout(function() {
+        lucide.createIcons();
+      }, 50);
+    }
   }
 
   // Inicializar cuando el DOM esté listo
   ready(initSliders);
 
-  // Inicializar también cuando Elementor cargue el contenido (si está disponible)
+  // Inicializar también cuando Elementor cargue el contenido
   if (typeof window.elementorFrontend !== "undefined") {
-    window.elementorFrontend.hooks.addAction("frontend/element_ready/global", function() {
+    // Hook para cuando Elementor inicializa
+    window.elementorFrontend.hooks.addAction("frontend/element_ready/global", function($scope) {
+      // Verificar si el elemento contiene un slider
+      if ($scope && $scope.find && $scope.find('.mtz-slider').length > 0) {
+        setTimeout(initSliders, 200);
+      }
+    });
+    
+    // Hook para cuando Elementor termina de renderizar
+    window.elementorFrontend.hooks.addAction("frontend/init", function() {
+      setTimeout(initSliders, 300);
+    });
+    
+    // Escuchar cuando se renderiza una sección
+    window.elementorFrontend.hooks.addAction("frontend/element_ready/section", function($scope) {
+      setTimeout(initSliders, 200);
+    });
+    
+    // También escuchar cuando se actualiza el elemento
+    if (typeof jQuery !== "undefined") {
+      jQuery(document).on('elementor/popup/show', function() {
+        setTimeout(initSliders, 200);
+      });
+    }
+  }
+
+  // Para el maquetador nativo de WordPress (Gutenberg)
+  if (typeof wp !== "undefined" && typeof wp.domReady !== "undefined") {
+    wp.domReady(function() {
       setTimeout(initSliders, 100);
+    });
+  }
+  
+  // Inicializar también cuando window.load
+  if (window.addEventListener) {
+    window.addEventListener('load', function() {
+      setTimeout(initSliders, 200);
     });
   }
 
   // Inicializar cuando se agreguen nuevos elementos al DOM (MutationObserver)
   if (typeof MutationObserver !== "undefined") {
+    let initTimeout;
     const observer = new MutationObserver(function(mutations) {
       let shouldInit = false;
       mutations.forEach(function(mutation) {
         if (mutation.addedNodes.length > 0) {
           mutation.addedNodes.forEach(function(node) {
-            if (node.nodeType === 1 && (node.classList.contains("mtz-slider") || node.querySelector(".mtz-slider"))) {
-              shouldInit = true;
+            if (node.nodeType === 1) {
+              // Verificar si el nodo agregado es o contiene un slider
+              if (node.classList && (
+                  node.classList.contains("mtz-slider") || 
+                  node.classList.contains("mtz-slider-wrapper") ||
+                  node.querySelector(".mtz-slider") ||
+                  node.querySelector(".mtz-slider-wrapper")
+              )) {
+                shouldInit = true;
+              }
             }
           });
         }
       });
       if (shouldInit) {
-        setTimeout(initSliders, 100);
+        // Debounce para evitar múltiples inicializaciones
+        clearTimeout(initTimeout);
+        initTimeout = setTimeout(initSliders, 150);
       }
     });
 
     ready(function() {
       observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
+        attributes: false
       });
     });
   }

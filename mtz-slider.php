@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.4
+ * Version: 2.3.5
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.4');
+define('MTZ_SLIDER_VERSION', '2.3.5');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -200,56 +200,10 @@ class MTZ_Slider {
 
     private function page_has_slider_shortcode() {
         if (is_admin()) return false;
-
-        // Verificar en contenido estándar de WordPress
-        if (is_singular()) {
-            global $post;
-            if ($post) {
-                // Verificar en post_content
-                if (has_shortcode($post->post_content, 'mtz_slider')) {
-                    return true;
-                }
-
-                // Verificar en metadata de Elementor (si existe)
-                $elementor_data = get_post_meta($post->ID, '_elementor_data', true);
-                if (!empty($elementor_data)) {
-                    // Elementor guarda datos en JSON
-                    if (is_string($elementor_data)) {
-                        $decoded = json_decode($elementor_data, true);
-                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                            $json_string = json_encode($decoded);
-                            if (strpos($json_string, 'mtz_slider') !== false) {
-                                return true;
-                            }
-                        }
-                    }
-                    // También verificar como string
-                    if (strpos($elementor_data, 'mtz_slider') !== false) {
-                        return true;
-                    }
-                }
-
-                // Verificar en todo el contenido procesado (por si Elementor lo guarda de otra forma)
-                $all_content = $post->post_content;
-                if (strpos($all_content, '[mtz_slider') !== false) {
-                    return true;
-                }
-            }
-        }
-
-        // Verificar en widgets/opciones
-        if (is_active_widget(false, false, 'text')) {
-            $widget_text = get_option('widget_text');
-            if (is_array($widget_text)) {
-                foreach ($widget_text as $widget) {
-                    if (isset($widget['text']) && has_shortcode($widget['text'], 'mtz_slider')) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+        
+        // Siempre cargar en frontend para evitar problemas con builders
+        // Los assets solo se ejecutarán si hay un slider presente
+        return true;
     }
 
     /**
@@ -278,7 +232,7 @@ class MTZ_Slider {
 
         wp_enqueue_style('mtz-slider-public', MTZ_SLIDER_PLUGIN_URL . 'assets/css/public.css', array('google-fonts-poppins'), $css_ver);
 
-        // Lucide Icons
+        // Lucide Icons - cargar antes del slider script
         wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.js', array(), 'latest', false);
 
         // Frontend sin jQuery
