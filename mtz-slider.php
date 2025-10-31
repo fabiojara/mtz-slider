@@ -390,7 +390,11 @@ class MTZ_Slider {
             return $cached;
         }
 
-        $api_url = 'https://api.github.com/repos/fabiojara/mtz-slider/releases';
+        // Intentar primero con releases, luego con tags si no funciona
+        $api_urls = array(
+            'https://api.github.com/repos/fabiojara/mtz-slider/releases',
+            'https://api.github.com/repos/fabiojara/mtz-slider/tags'
+        );
 
         // Configuración para wp_remote_get
         $args = array(
@@ -407,7 +411,55 @@ class MTZ_Slider {
             $args['sslverify'] = false;
         }
 
-        $response = wp_remote_get($api_url, $args);
+        $response = null;
+        $api_url = '';
+        
+        // Intentar con releases primero
+        foreach ($api_urls as $url) {
+            $response = wp_remote_get($url, $args);
+            if (!is_wp_error($response)) {
+                $response_code = wp_remote_retrieve_response_code($response);
+                if ($response_code === 200) {
+                    $api_url = $url;
+                    break;
+                }
+            }
+        }
+        
+        // Si no funcionó con wp_remote_get, usar fallback con curl
+        if (empty($api_url) && function_exists('curl_init')) {
+            foreach ($api_urls as $url) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+                curl_setopt($ch, CURLOPT_USERAGENT, 'WordPress-MTZ-Slider');
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/vnd.github.v3+json'));
+                
+                // Si es local y hay problemas SSL
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+                }
+                
+                $body = curl_exec($ch);
+                $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                
+                if ($http_code === 200 && !empty($body)) {
+                    $api_url = $url;
+                    // Crear respuesta simulada para continuar con el flujo
+                    $response = array(
+                        'body' => $body,
+                        'response' => array(
+                            'code' => 200,
+                            'message' => 'OK'
+                        )
+                    );
+                    break;
+                }
+            }
+        }
 
         $releases = array();
         $error_message = '';
@@ -437,58 +489,68 @@ class MTZ_Slider {
                 $curl_error = curl_error($ch);
                 curl_close($ch);
 
-                if ($http_code === 200 && !empty($body)) {
-                    $data = json_decode($body, true);
-                    if (is_array($data)) {
-                        foreach ($data as $release) {
-                            if (isset($release['tag_name']) && isset($release['published_at'])) {
-                                $version = ltrim($release['tag_name'], 'v');
+        if (!empty($api_url) && !empty($response)) {
+            $body = wp_remote_retrieve_body($response);
+            if (empty($body)) {
+                // Si es respuesta simulada de curl
+                $body = isset($response['body']) ? $response['body'] : '';
+            }
+            
+            $data = json_decode($body, true);
+
+            if (is_array($data) && !empty($data)) {
+                foreach ($data as $item) {
+                    // Manejar releases
+                    if (isset($item['tag_name'])) {
+                        $tag_name = $item['tag_name'];
+                        $version = ltrim($tag_name, 'v');
+                        
+                        // Si es un release, tiene más información
+                        if (isset($item['published_at'])) {
+                            $releases[] = array(
+                                'version' => $version,
+                                'tag' => $tag_name,
+                                'name' => isset($item['name']) ? $item['name'] : $tag_name,
+                                'published_at' => $item['published_at'],
+                                'body' => isset($item['body']) ? $item['body'] : '',
+                                'zip_url' => isset($item['zipball_url']) ? $item['zipball_url'] : 'https://github.com/fabiojara/mtz-slider/archive/refs/tags/' . $tag_name . '.zip',
+                                'html_url' => isset($item['html_url']) ? $item['html_url'] : 'https://github.com/fabiojara/mtz-slider/releases/tag/' . $tag_name,
+                                'prerelease' => isset($item['prerelease']) ? $item['prerelease'] : false,
+                                'draft' => isset($item['draft']) ? $item['draft'] : false,
+                            );
+                        } 
+                        // Si es un tag, construir información básica
+                        elseif (strpos($api_url, '/tags') !== false) {
+                            // Para tags, necesitamos obtener más información
+                            $tag_info = isset($item['commit']) && isset($item['commit']['sha']) ? $item : null;
+                            if ($tag_info) {
                                 $releases[] = array(
                                     'version' => $version,
-                                    'tag' => $release['tag_name'],
-                                    'name' => isset($release['name']) ? $release['name'] : $release['tag_name'],
-                                    'published_at' => $release['published_at'],
-                                    'body' => isset($release['body']) ? $release['body'] : '',
-                                    'zip_url' => isset($release['zipball_url']) ? $release['zipball_url'] : '',
-                                    'html_url' => isset($release['html_url']) ? $release['html_url'] : '',
-                                    'prerelease' => isset($release['prerelease']) ? $release['prerelease'] : false,
-                                    'draft' => isset($release['draft']) ? $release['draft'] : false,
+                                    'tag' => $tag_name,
+                                    'name' => $tag_name,
+                                    'published_at' => isset($item['commit']['commit']['author']['date']) ? $item['commit']['commit']['author']['date'] : date('Y-m-d\TH:i:s\Z'),
+                                    'body' => '',
+                                    'zip_url' => 'https://github.com/fabiojara/mtz-slider/archive/refs/tags/' . $tag_name . '.zip',
+                                    'html_url' => 'https://github.com/fabiojara/mtz-slider/releases/tag/' . $tag_name,
+                                    'prerelease' => false,
+                                    'draft' => false,
                                 );
                             }
                         }
                     }
-                } else {
-                    $error_message = $curl_error ? $curl_error : 'HTTP ' . $http_code;
                 }
             }
         } else {
-            $response_code = wp_remote_retrieve_response_code($response);
-            if ($response_code === 200) {
-                $body = wp_remote_retrieve_body($response);
-                $data = json_decode($body, true);
-
-                if (is_array($data)) {
-                    foreach ($data as $release) {
-                        if (isset($release['tag_name']) && isset($release['published_at'])) {
-                            $version = ltrim($release['tag_name'], 'v');
-                            $releases[] = array(
-                                'version' => $version,
-                                'tag' => $release['tag_name'],
-                                'name' => isset($release['name']) ? $release['name'] : $release['tag_name'],
-                                'published_at' => $release['published_at'],
-                                'body' => isset($release['body']) ? $release['body'] : '',
-                                'zip_url' => isset($release['zipball_url']) ? $release['zipball_url'] : '',
-                                'html_url' => isset($release['html_url']) ? $release['html_url'] : '',
-                                'prerelease' => isset($release['prerelease']) ? $release['prerelease'] : false,
-                                'draft' => isset($release['draft']) ? $release['draft'] : false,
-                            );
-                        }
-                    }
-                }
-            } else {
+            // Si no se pudo conectar, obtener error
+            if (is_wp_error($response)) {
+                $error_message = $response->get_error_message();
+            } elseif (!empty($response)) {
+                $response_code = wp_remote_retrieve_response_code($response);
                 $error_message = 'HTTP ' . $response_code . ': ' . wp_remote_retrieve_response_message($response);
-                set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
+            } else {
+                $error_message = 'No se pudo conectar con la API de GitHub. Verifica tu conexión a internet.';
             }
+            set_transient($error_key, $error_message, 10 * MINUTE_IN_SECONDS);
         }
 
         // Guardar error si existe y no se obtuvieron releases
