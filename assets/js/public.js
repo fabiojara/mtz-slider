@@ -428,7 +428,7 @@ function initSliders() {
   if (typeof console !== 'undefined' && console.log) {
     console.log('[MTZ Slider] initSliders() llamado');
   }
-  
+
   // Buscar todos los sliders (pueden haber sido agregados dinámicamente)
   // Buscar por wrapper primero, luego por slider directamente
   const wrappers = document.querySelectorAll(".mtz-slider-wrapper");
@@ -475,7 +475,7 @@ function initSliders() {
       }
     }
   });
-  
+
   if (typeof console !== 'undefined' && console.log) {
     console.log('[MTZ Slider] Sliders inicializados en esta ejecución:', initializedCount);
   }
@@ -501,7 +501,7 @@ function initSliders() {
     if (typeof console !== 'undefined' && console.log) {
       console.log('[MTZ Slider] Elementor detectado, configurando hooks...');
     }
-    
+
     // Inicializar inmediatamente cuando Elementor esté listo
     window.elementorFrontend.hooks.addAction("frontend/init", function() {
       if (typeof console !== 'undefined' && console.log) {
@@ -577,7 +577,7 @@ function initSliders() {
           }
         }
       }, 200);
-      
+
       // Reintentar varias veces porque Elementor puede tardar
       setTimeout(initSliders, 500);
       setTimeout(initSliders, 1000);
