@@ -6,6 +6,10 @@
 
   class SliderInstance {
     constructor(sliderEl) {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance constructor iniciado para:', sliderEl.id || 'sin ID');
+      }
+      
       this.sliderEl = sliderEl;
       this.trackEl = sliderEl.querySelector(".mtz-slider-track");
       this.slides = Array.from(sliderEl.querySelectorAll(".mtz-slide"));
@@ -16,10 +20,22 @@
       this.animationEffect = sliderEl.dataset.animationEffect || "fade";
       this.autoplayInterval = null;
 
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance - trackEl encontrado:', !!this.trackEl);
+        console.log('[MTZ Slider] SliderInstance - totalSlides:', this.totalSlides);
+        console.log('[MTZ Slider] SliderInstance - autoplay:', this.autoplay);
+        console.log('[MTZ Slider] SliderInstance - animationEffect:', this.animationEffect);
+        console.log('[MTZ Slider] SliderInstance - slides:', this.slides.map(s => s.id || 'sin ID'));
+      }
+
       this.init();
     }
 
     init() {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.init() ejecutado');
+      }
+      
       // Asegurar que los iconos de Lucide estén disponibles
       if (typeof lucide !== "undefined") {
         // Inicializar iconos en este slider específico
@@ -35,15 +51,35 @@
       this.bindEvents();
       if (this.autoplay) this.startAutoplay();
       this.setupViewportObserver();
+      
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.init() completado');
+      }
     }
 
     setupSlider() {
-      if (this.totalSlides === 0) return;
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.setupSlider() ejecutado - totalSlides:', this.totalSlides);
+      }
+      
+      if (this.totalSlides === 0) {
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('[MTZ Slider] SliderInstance.setupSlider() - No hay slides, saliendo');
+        }
+        return;
+      }
 
       // Asegurar que el track esté visible
       if (this.trackEl) {
         this.trackEl.style.display = 'flex';
         this.trackEl.style.width = '100%';
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] SliderInstance.setupSlider() - trackEl configurado');
+        }
+      } else {
+        if (typeof console !== 'undefined' && console.error) {
+          console.error('[MTZ Slider] SliderInstance.setupSlider() - trackEl NO encontrado!');
+        }
       }
 
       // Asegurar que todas las slides sean visibles inicialmente (para verificar que cargan)
@@ -57,6 +93,10 @@
 
       this.createDots();
       this.showSlide(0);
+      
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.setupSlider() completado');
+      }
     }
 
     createDots() {
@@ -73,7 +113,16 @@
     }
 
     showSlide(index) {
-      if (this.totalSlides === 0) return;
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.showSlide() ejecutado - index:', index, 'totalSlides:', this.totalSlides);
+      }
+      
+      if (this.totalSlides === 0) {
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('[MTZ Slider] SliderInstance.showSlide() - No hay slides, saliendo');
+        }
+        return;
+      }
 
       // Validar índice
       if (index < 0) index = this.totalSlides - 1;
@@ -82,6 +131,10 @@
       const previousSlide = this.currentSlide;
       this.currentSlide =
         (index % this.totalSlides + this.totalSlides) % this.totalSlides;
+
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.showSlide() - previousSlide:', previousSlide, 'currentSlide:', this.currentSlide);
+      }
 
       // Aplicar efecto de animación
       this.applyAnimation(previousSlide, this.currentSlide);
@@ -92,11 +145,25 @@
       dots.forEach((d, i) =>
         d.classList.toggle("active", i === this.currentSlide)
       );
+      
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.showSlide() completado - currentSlide visible:', this.slides[this.currentSlide] ? 'SI' : 'NO');
+      }
     }
 
     applyAnimation(previousIndex, currentIndex) {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.applyAnimation() ejecutado - previousIndex:', previousIndex, 'currentIndex:', currentIndex);
+      }
+      
       const previousSlide = this.slides[previousIndex];
       const currentSlide = this.slides[currentIndex];
+
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.applyAnimation() - previousSlide:', !!previousSlide, 'currentSlide:', !!currentSlide);
+        console.log('[MTZ Slider] SliderInstance.applyAnimation() - trackEl:', !!this.trackEl);
+        console.log('[MTZ Slider] SliderInstance.applyAnimation() - animationEffect:', this.animationEffect);
+      }
 
       // Remover todas las clases de animación
       this.slides.forEach(slide => {
@@ -115,8 +182,17 @@
       });
 
       // Aplicar clase de efecto
-      this.trackEl.className =
-        "mtz-slider-track mtz-effect-" + this.animationEffect;
+      if (this.trackEl) {
+        this.trackEl.className =
+          "mtz-slider-track mtz-effect-" + this.animationEffect;
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] SliderInstance.applyAnimation() - trackEl.className:', this.trackEl.className);
+        }
+      } else {
+        if (typeof console !== 'undefined' && console.error) {
+          console.error('[MTZ Slider] SliderInstance.applyAnimation() - trackEl NO encontrado!');
+        }
+      }
 
       // Asegurar que el contenido siempre esté centrado
       this.slides.forEach(slide => {
@@ -132,6 +208,9 @@
       // Configurar slides según el efecto
       switch (this.animationEffect) {
         case "fade":
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[MTZ Slider] SliderInstance.applyAnimation() - Aplicando efecto fade');
+          }
           // Para fade, todas las slides deben estar visibles pero con opacidad
           this.slides.forEach((slide, i) => {
             if (slide) {
@@ -141,11 +220,20 @@
               slide.style.zIndex = i === currentIndex ? "2" : "1";
               if (i === currentIndex) {
                 slide.classList.add("mtz-slide-active", "mtz-animate-fade");
+                if (typeof console !== 'undefined' && console.log) {
+                  console.log('[MTZ Slider] SliderInstance.applyAnimation() - Slide', i, 'activada (opacity: 1)');
+                }
               } else {
                 slide.classList.remove("mtz-slide-active", "mtz-animate-fade");
+                if (typeof console !== 'undefined' && console.log) {
+                  console.log('[MTZ Slider] SliderInstance.applyAnimation() - Slide', i, 'desactivada (opacity: 0)');
+                }
               }
             }
           });
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[MTZ Slider] SliderInstance.applyAnimation() - Efecto fade completado');
+          }
           break;
 
         case "slide-horizontal":
@@ -237,6 +325,31 @@
           const defaultTranslateX = -this.currentSlide * 100;
           this.trackEl.style.transform = `translateX(${defaultTranslateX}%)`;
           this.trackEl.style.transition = "transform 0.5s ease-in-out";
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[MTZ Slider] SliderInstance.applyAnimation() - Efecto default aplicado');
+          }
+      }
+      
+      // Asegurar que el slider sea visible
+      if (this.sliderEl && currentSlide) {
+        this.sliderEl.style.display = 'block';
+        this.sliderEl.style.visibility = 'visible';
+        this.sliderEl.style.opacity = '1';
+        
+        // Verificar dimensiones
+        const rect = this.sliderEl.getBoundingClientRect();
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] SliderInstance.applyAnimation() - Slider dimensiones:', {
+            width: rect.width,
+            height: rect.height,
+            top: rect.top,
+            left: rect.left
+          });
+        }
+      }
+      
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] SliderInstance.applyAnimation() completado');
       }
 
       // Marcar slide actual como activo
