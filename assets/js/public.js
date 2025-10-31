@@ -640,19 +640,33 @@ function initSliders() {
                   node.querySelector(".mtz-slider-wrapper")
               )) {
                 shouldInit = true;
+                if (typeof console !== 'undefined' && console.log) {
+                  console.log('[MTZ Slider] MutationObserver: Slider detectado en nodo agregado');
+                }
               }
             }
           });
         }
       });
       if (shouldInit) {
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[MTZ Slider] MutationObserver: Inicializando sliders después de detectar cambios');
+        }
         // Debounce para evitar múltiples inicializaciones
         clearTimeout(initTimeout);
-        initTimeout = setTimeout(initSliders, 150);
+        initTimeout = setTimeout(function() {
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[MTZ Slider] MutationObserver: Ejecutando initSliders después de delay');
+          }
+          initSliders();
+        }, 150);
       }
     });
 
     ready(function() {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[MTZ Slider] MutationObserver configurado para observar cambios en el DOM');
+      }
       observer.observe(document.body, {
         childList: true,
         subtree: true,

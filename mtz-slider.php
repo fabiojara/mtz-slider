@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.4.0');
+define('MTZ_SLIDER_VERSION', '2.4.1');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
