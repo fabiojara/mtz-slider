@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.6
+ * Version: 2.3.7
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.6');
+define('MTZ_SLIDER_VERSION', '2.3.7');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -219,31 +219,31 @@ class MTZ_Slider {
     public function maybe_enqueue_for_elementor($element) {
         // Buscar shortcode en diferentes configuraciones de Elementor
         $settings = $element->get_settings();
-        
+
         // Verificar en campo 'text'
         if (!empty($settings['text']) && has_shortcode($settings['text'], 'mtz_slider')) {
             $this->enqueue_public_assets();
             return;
         }
-        
+
         // Verificar en campo 'editor' (bloques de texto)
         if (!empty($settings['editor']) && has_shortcode($settings['editor'], 'mtz_slider')) {
             $this->enqueue_public_assets();
             return;
         }
-        
+
         // Verificar en campo 'html' (HTML personalizado)
         if (!empty($settings['html']) && has_shortcode($settings['html'], 'mtz_slider')) {
             $this->enqueue_public_assets();
             return;
         }
-        
+
         // Verificar en campo 'shortcode' (si existe widget de shortcode)
         if (!empty($settings['shortcode']) && has_shortcode($settings['shortcode'], 'mtz_slider')) {
             $this->enqueue_public_assets();
             return;
         }
-        
+
         // Verificar en todo el contenido del elemento (búsqueda más amplia)
         $element_content = $element->get_raw_data();
         if (!empty($element_content)) {
@@ -254,7 +254,7 @@ class MTZ_Slider {
         }
     }
 
-    private function enqueue_public_assets() {
+    public function enqueue_public_assets() {
         // Evitar cargar múltiples veces
         static $assets_enqueued = false;
         if ($assets_enqueued) {

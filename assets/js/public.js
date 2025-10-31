@@ -428,7 +428,7 @@
     // Buscar por wrapper primero, luego por slider directamente
     const wrappers = document.querySelectorAll(".mtz-slider-wrapper");
     const sliders = document.querySelectorAll(".mtz-slider");
-    
+
     // Combinar ambos selectores para encontrar todos los sliders
     const allSliders = new Set();
     wrappers.forEach(wrapper => {
@@ -436,7 +436,7 @@
       if (slider) allSliders.add(slider);
     });
     sliders.forEach(slider => allSliders.add(slider));
-    
+
     // Inicializar cada slider encontrado
     allSliders.forEach(slider => {
       // Evitar inicializar dos veces
