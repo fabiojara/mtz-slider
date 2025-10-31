@@ -156,8 +156,17 @@
     margin-bottom: 20px;
     box-shadow: 0 1px 1px rgba(0,0,0,.04);
     display: flex;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
+    flex-wrap: wrap;
+}
+
+.mtz-toolbar-description {
+    margin: 0;
+    color: #646970;
+    font-size: 14px;
+    flex: 1;
+    min-width: 200px;
 }
 
 .mtz-slider-notice {

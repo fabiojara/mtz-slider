@@ -136,9 +136,6 @@ if (!defined('ABSPATH')) {
 
                 <div class="mtz-slider-header">
                     <h2><?php echo esc_html($current_slider['name']); ?></h2>
-                    <p class="description">
-                        <?php esc_html_e('Gestiona las imágenes de tu slider. Arrastra para reordenar.', 'mtz-slider'); ?>
-                    </p>
                     <div class="mtz-slider-effect-selector">
                         <label for="mtz-slider-effect"><?php esc_html_e('Selecciona el efecto de animación', 'mtz-slider'); ?></label>
                         <select id="mtz-slider-effect" class="mtz-effect-select">
@@ -159,6 +156,9 @@ if (!defined('ABSPATH')) {
                         <i data-lucide="image-plus"></i>
                         <?php esc_html_e('Agregar Imágenes', 'mtz-slider'); ?>
                     </button>
+                    <p class="mtz-toolbar-description">
+                        <?php esc_html_e('Gestiona las imágenes de tu slider. Arrastra para reordenar.', 'mtz-slider'); ?>
+                    </p>
                     <div class="mtz-slider-notice" id="mtz-notice"></div>
                 </div>
 
