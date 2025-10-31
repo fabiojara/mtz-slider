@@ -1,0 +1,68 @@
+MTZ Slider v2.3.0
+
+Nuevas características:
+
+- Sistema completo de efectos de animación
+  * Fade (fundido)
+  * Deslizar Horizontal
+  * Deslizar Vertical
+  * Zoom In
+  * Zoom Out
+  * Voltear Horizontal
+  * Voltear Vertical
+  * Cubo 3D
+
+- Selector de efectos de animación en el panel de administración
+  * Selector en el header del slider
+  * Selector en el formulario de crear/editar slider
+  * Actualización automática del efecto seleccionado
+
+- Mejoras en centrado de contenido
+  * Textos y botones siempre centrados independientemente del efecto de animación
+  * Contenido permanece centrado en todas las transiciones
+
+- Mejoras en deslizamiento táctil para móviles y tablets
+  * Deslizar hacia la izquierda: siguiente imagen
+  * Deslizar hacia la derecha: imagen anterior
+  * Prevención de scroll accidental durante swipe
+  * Mejor detección de gestos horizontales vs verticales
+  * Detención automática del autoplay durante arrastre
+
+- Actualizaciones automáticas mejoradas
+  * Soporte mejorado para zipball_url de GitHub
+  * Manejo correcto de estructuras anidadas del ZIP
+  * Post-instalación mejorada para mantener estructura correcta
+
+- Cambios en la interfaz
+  * Título del panel actualizado a "MTZ Slider by Mantiz Technology SAS"
+  * Enlace a mantiztechnology.com agregado debajo del título
+
+- Base de datos
+  * Nuevo campo animation_effect en la tabla de sliders
+  * Migración automática para tablas existentes
+  * Valor por defecto: 'fade'
+
+- API REST
+  * Endpoint GET para obtener un slider individual
+  * Soporte para animation_effect en crear/actualizar slider
+
+Cómo actualizar:
+
+1. Si tienes el plugin instalado:
+   - Ve a WordPress Admin -> Plugins -> Plugins instalados
+   - Busca "MTZ Slider"
+   - Si aparece el aviso "Hay una nueva versión disponible", haz clic en "Actualizar ahora"
+   - Espera a que se complete la actualización
+
+2. Si instalas por primera vez:
+   - Descarga el ZIP desde GitHub Releases
+   - Instala desde WordPress Admin -> Plugins -> Añadir nuevo -> Subir plugin
+   - Activa el plugin
+
+Notas importantes:
+
+- La actualización detectará automáticamente el campo animation_effect y lo agregará a la base de datos
+- Todos los sliders existentes usarán el efecto "fade" por defecto
+- Puedes cambiar el efecto de animación desde el panel de administración
+- Los cambios en efectos de animación se aplican inmediatamente sin recargar la página
+

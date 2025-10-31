@@ -1,21 +1,25 @@
-# MTZ Slider (v2.2.1)
+# MTZ Slider (v2.3.0)
 
 Plugin moderno y responsive para WordPress que permite crear sliders de imágenes con un panel de administración intuitivo.
 
 ## 🚀 Características
 
+- ✅ **8 Efectos de Animación**: Fade, Slide (Horizontal/Vertical), Zoom (In/Out), Flip (Horizontal/Vertical), Cubo 3D
+- ✅ **Selector de Efectos**: Cambia el efecto de animación desde el panel de administración
 - ✅ **Slider Horizontal Responsive**: Las imágenes se adaptan al 100% del ancho del viewport
 - ✅ **Panel Administrativo**: Gestión completa de imágenes desde WordPress
 - ✅ **API REST**: Integración moderna con WordPress REST API
 - ✅ **Base de Datos Segura**: Tablas personalizadas con prefijo `mtz-slider`
 - ✅ **Arrastra y Suelta**: Reordena las imágenes fácilmente
 - ✅ **Autoplay**: Reproducción automática configurable
-- ✅ **Botón por imagen en frontend**: “Conocer más...” con URL configurable
+- ✅ **Botón por imagen en frontend**: "Conocer más..." con URL configurable
 - ✅ **Íconos Lucide**: Unificación a la librería Lucide en admin y frontend
 - ✅ **Navegación por Teclado**: Soporte para flechas del teclado
-- ✅ **Swipe**: Navegación por gestos en dispositivos móviles
+- ✅ **Swipe Mejorado**: Navegación por gestos en dispositivos móviles y tablets con prevención de scroll accidental
+- ✅ **Contenido Siempre Centrado**: Textos y botones permanecen centrados en todas las animaciones
 - ✅ **Responsive**: Diseño adaptable a cualquier dispositivo
 - ✅ **UI/UX Moderna**: Interfaz intuitiva y atractiva
+- ✅ **Actualizaciones Automáticas**: Sistema de actualización automática desde GitHub Releases
 
 ## 📋 Requisitos
 

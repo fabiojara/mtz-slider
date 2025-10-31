@@ -19,6 +19,16 @@ Si tras activar no ves cambios, revisa consola del navegador y logs de WordPress
 
 ## 🗓️ Changelog
 
+### 2.3.0
+- ✨ **Sistema completo de efectos de animación**: Fade, Slide (Horizontal/Vertical), Zoom (In/Out), Flip (Horizontal/Vertical), Cubo 3D
+- 🎨 **Selector de efectos en el panel de administración**: Cambia el efecto de animación desde el header del slider o al crear/editar
+- 📱 **Mejoras en deslizamiento táctil**: Swipe mejorado para móviles y tablets con prevención de scroll accidental
+- 🎯 **Contenido siempre centrado**: Textos y botones permanecen centrados en todas las animaciones
+- 🔄 **Actualizaciones automáticas mejoradas**: Soporte robusto para zipball_url de GitHub
+- 🏢 **Interfaz actualizada**: Título "MTZ Slider by Mantiz Technology SAS" con enlace a mantiztechnology.com
+- 🗄️ **Base de datos**: Nuevo campo `animation_effect` con migración automática
+- 🔌 **API REST**: Endpoint GET para obtener slider individual, soporte para animation_effect
+
 ### 2.2.1
 - Documentación actualizada (README, guía de actualización).
 - Sincronización de metadatos: autor y repositorio en `package.json`.

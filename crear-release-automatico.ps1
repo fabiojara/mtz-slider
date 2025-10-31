@@ -257,6 +257,6 @@ Write-Host "  - Maximo 12 horas (cache)" -ForegroundColor Gray
 Write-Host "  - O inmediatamente si limpias el cache del plugin" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Para limpiar el cache manualmente, ejecuta en WordPress:" -ForegroundColor Yellow
-Write-Host "  delete_transient('mtz_slider_latest_release');" -ForegroundColor Gray
+Write-Host '  delete_transient(''mtz_slider_latest_release'');' -ForegroundColor Gray
 Write-Host ""
 

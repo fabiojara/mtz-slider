@@ -237,16 +237,16 @@ class MTZ_Slider_Updater {
             // El zipball_url de GitHub crea una estructura como: mtz-slider-2.3.0/mtz-slider/
             // o simplemente: mtz-slider-2.3.0/
             $directories = $wp_filesystem->dirlist($destination);
-            
+
             if ($directories && is_array($directories)) {
                 $plugin_found = false;
-                
+
                 // Buscar el directorio que contiene el plugin
                 foreach ($directories as $dir => $info) {
                     if (isset($info['type']) && $info['type'] === 'd') {
                         $subdir = trailingslashit($destination) . $dir;
                         $subdirs = $wp_filesystem->dirlist($subdir);
-                        
+
                         // Verificar si este subdirectorio contiene mtz-slider.php
                         if ($subdirs && is_array($subdirs)) {
                             foreach ($subdirs as $file => $file_info) {
@@ -254,37 +254,37 @@ class MTZ_Slider_Updater {
                                     // Encontramos el directorio del plugin (caso: mtz-slider-2.3.0/mtz-slider/)
                                     $plugin_dir = $subdir;
                                     $plugin_found = true;
-                                    
+
                                     // Asegurar que el directorio de destino existe
                                     if (!$wp_filesystem->exists($install_directory)) {
                                         $wp_filesystem->mkdir($install_directory, FS_CHMOD_DIR);
                                     }
-                                    
+
                                     // Copiar todos los archivos del subdirectorio al destino
                                     $this->copy_all_files($plugin_dir, $install_directory, $wp_filesystem);
-                                    
+
                                     // Limpiar directorio temporal
                                     $wp_filesystem->rmdir($destination, true);
                                     break 2;
                                 }
                             }
                         }
-                        
+
                         // También verificar si este directorio es directamente el plugin (caso: mtz-slider-2.3.0/ contiene mtz-slider.php)
                         if (isset($subdirs[$this->slug]) || (isset($subdirs['mtz-slider.php']) && isset($subdirs['mtz-slider.php']['type']) && $subdirs['mtz-slider.php']['type'] === 'f')) {
                             // Este es el directorio del plugin directamente
                             if (file_exists($subdir . '/mtz-slider.php')) {
                                 $plugin_dir = $subdir;
                                 $plugin_found = true;
-                                
+
                                 // Asegurar que el directorio de destino existe
                                 if (!$wp_filesystem->exists($install_directory)) {
                                     $wp_filesystem->mkdir($install_directory, FS_CHMOD_DIR);
                                 }
-                                
+
                                 // Copiar todos los archivos al destino
                                 $this->copy_all_files($plugin_dir, $install_directory, $wp_filesystem);
-                                
+
                                 // Limpiar directorio temporal
                                 $wp_filesystem->rmdir($destination, true);
                                 break;
@@ -292,7 +292,7 @@ class MTZ_Slider_Updater {
                         }
                     }
                 }
-                
+
                 // Si no encontramos estructura anidada, verificar si el destino directamente contiene mtz-slider.php
                 if (!$plugin_found) {
                     $files = $wp_filesystem->dirlist($destination);
@@ -308,7 +308,7 @@ class MTZ_Slider_Updater {
 
         // Asegurar que el resultado apunta al directorio correcto
         $result['destination'] = $install_directory;
-        
+
         if ($wp_filesystem && $wp_filesystem->exists($install_directory)) {
             $result['destination_name'] = basename($install_directory);
         }
@@ -326,18 +326,18 @@ class MTZ_Slider_Updater {
     private function copy_all_files($source, $dest, $wp_filesystem) {
         $source = untrailingslashit($source);
         $dest = untrailingslashit($dest);
-        
+
         $files = $wp_filesystem->dirlist($source);
-        
+
         if ($files && is_array($files)) {
             foreach ($files as $file => $file_info) {
                 if (!isset($file_info['type'])) {
                     continue;
                 }
-                
+
                 $source_path = trailingslashit($source) . $file;
                 $dest_path = trailingslashit($dest) . $file;
-                
+
                 if ($file_info['type'] === 'd') {
                     // Es un directorio, crearlo y copiar recursivamente
                     if (!$wp_filesystem->exists($dest_path)) {
