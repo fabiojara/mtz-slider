@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.7
+ * Version: 2.3.8
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.7');
+define('MTZ_SLIDER_VERSION', '2.3.8');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -70,6 +70,10 @@ class MTZ_Slider {
         add_action('elementor/frontend/before_render', array($this, 'maybe_enqueue_for_elementor'));
         // Hook adicional para asegurar que los assets se carguen
         add_action('elementor/frontend/init', array($this, 'enqueue_public_assets'));
+        // Hook cuando Elementor renderiza widgets
+        add_action('elementor/widget/before_render_content', array($this, 'enqueue_public_assets'));
+        // Hook cuando Elementor procesa shortcodes
+        add_filter('elementor/widget/render_content', array($this, 'maybe_process_shortcode_in_elementor'), 10, 2);
 
         // Agregar menú de administración
         add_action('admin_menu', array($this, 'add_admin_menu'));
@@ -217,30 +221,29 @@ class MTZ_Slider {
      * Verificar si hay shortcode en Elementor antes de renderizar
      */
     public function maybe_enqueue_for_elementor($element) {
+        // Cargar assets siempre cuando hay un elemento de Elementor (por si acaso)
+        $this->enqueue_public_assets();
+        
         // Buscar shortcode en diferentes configuraciones de Elementor
         $settings = $element->get_settings();
 
         // Verificar en campo 'text'
         if (!empty($settings['text']) && has_shortcode($settings['text'], 'mtz_slider')) {
-            $this->enqueue_public_assets();
             return;
         }
 
         // Verificar en campo 'editor' (bloques de texto)
         if (!empty($settings['editor']) && has_shortcode($settings['editor'], 'mtz_slider')) {
-            $this->enqueue_public_assets();
             return;
         }
 
         // Verificar en campo 'html' (HTML personalizado)
         if (!empty($settings['html']) && has_shortcode($settings['html'], 'mtz_slider')) {
-            $this->enqueue_public_assets();
             return;
         }
 
         // Verificar en campo 'shortcode' (si existe widget de shortcode)
         if (!empty($settings['shortcode']) && has_shortcode($settings['shortcode'], 'mtz_slider')) {
-            $this->enqueue_public_assets();
             return;
         }
 
@@ -249,9 +252,20 @@ class MTZ_Slider {
         if (!empty($element_content)) {
             $content_string = json_encode($element_content);
             if (strpos($content_string, '[mtz_slider') !== false) {
-                $this->enqueue_public_assets();
+                return;
             }
         }
+    }
+
+    /**
+     * Procesar shortcode cuando Elementor renderiza el contenido del widget
+     */
+    public function maybe_process_shortcode_in_elementor($content, $widget) {
+        // Si el contenido contiene el shortcode, asegurar que los assets estén cargados
+        if (has_shortcode($content, 'mtz_slider') || strpos($content, '[mtz_slider') !== false) {
+            $this->enqueue_public_assets();
+        }
+        return $content;
     }
 
     public function enqueue_public_assets() {

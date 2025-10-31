@@ -468,53 +468,87 @@
 
   // Inicializar también cuando Elementor cargue el contenido
   if (typeof window.elementorFrontend !== "undefined") {
-    // Hook para cuando Elementor inicializa
+    // Inicializar inmediatamente cuando Elementor esté listo
+    window.elementorFrontend.hooks.addAction("frontend/init", function() {
+      setTimeout(initSliders, 100);
+    });
+
+    // Hook para cuando Elementor inicializa cualquier elemento
     window.elementorFrontend.hooks.addAction("frontend/element_ready/global", function($scope) {
+      setTimeout(initSliders, 50);
       // Verificar si el elemento contiene un slider
-      if ($scope && $scope.find && $scope.find('.mtz-slider').length > 0) {
-        setTimeout(initSliders, 100);
-      }
-      // También buscar sin jQuery
-      if ($scope && $scope[0]) {
-        const sliderElements = $scope[0].querySelectorAll ? $scope[0].querySelectorAll('.mtz-slider') : [];
-        if (sliderElements.length > 0) {
-          setTimeout(initSliders, 100);
+      if ($scope) {
+        // Con jQuery si está disponible
+        if ($scope.find && typeof jQuery !== "undefined") {
+          if ($scope.find('.mtz-slider').length > 0) {
+            setTimeout(initSliders, 50);
+          }
+        }
+        // Sin jQuery (más directo)
+        if ($scope[0]) {
+          const sliderElements = $scope[0].querySelectorAll ? $scope[0].querySelectorAll('.mtz-slider') : [];
+          if (sliderElements.length > 0) {
+            setTimeout(initSliders, 50);
+          }
         }
       }
     });
 
-    // Hook para cuando Elementor termina de renderizar
-    window.elementorFrontend.hooks.addAction("frontend/init", function() {
-      setTimeout(initSliders, 200);
-    });
-
     // Escuchar cuando se renderiza una sección
     window.elementorFrontend.hooks.addAction("frontend/element_ready/section", function($scope) {
-      setTimeout(initSliders, 150);
+      setTimeout(initSliders, 50);
     });
 
-    // Hook para widgets (donde comúnmente van los shortcodes)
+    // Hook para widgets (donde comúnmente van los shortcodes) - MÁS IMPORTANTE
     window.elementorFrontend.hooks.addAction("frontend/element_ready/widget", function($scope) {
-      setTimeout(initSliders, 100);
+      // Inicializar de inmediato cuando se renderiza un widget
+      setTimeout(initSliders, 50);
+      // Verificar específicamente en este widget
+      if ($scope && $scope[0]) {
+        const sliderElements = $scope[0].querySelectorAll ? $scope[0].querySelectorAll('.mtz-slider') : [];
+        if (sliderElements.length > 0) {
+          setTimeout(initSliders, 50);
+        }
+      }
     });
 
-    // Hook para shortcode widget específicamente
+    // Hook para shortcode widget específicamente - CRÍTICO
     window.elementorFrontend.hooks.addAction("frontend/element_ready/shortcode.default", function($scope) {
-      setTimeout(initSliders, 100);
+      // Inicializar inmediatamente para widget de shortcode
+      setTimeout(initSliders, 50);
+      // Verificar nuevamente después de un breve delay para asegurar que el HTML está en el DOM
+      setTimeout(function() {
+        if ($scope && $scope[0]) {
+          const sliderElements = $scope[0].querySelectorAll ? $scope[0].querySelectorAll('.mtz-slider') : [];
+          if (sliderElements.length > 0) {
+            initSliders();
+          }
+        }
+      }, 200);
     });
 
     // También escuchar cuando se actualiza el elemento
     if (typeof jQuery !== "undefined") {
       jQuery(document).on('elementor/popup/show', function() {
-        setTimeout(initSliders, 150);
+        setTimeout(initSliders, 100);
+      });
+      
+      // Escuchar cuando Elementor renderiza contenido dinámicamente
+      jQuery(document).on('elementor/render', function() {
+        setTimeout(initSliders, 100);
       });
     }
 
     // Escuchar cuando Elementor renderiza contenido dinámicamente
     if (typeof window.elementorFrontend.on !== "undefined") {
       window.elementorFrontend.on('components:init', function() {
-        setTimeout(initSliders, 200);
+        setTimeout(initSliders, 100);
       });
+    }
+
+    // Inicializar también cuando se completa la carga de la página con Elementor
+    if (typeof window.elementorFrontend.config !== "undefined") {
+      setTimeout(initSliders, 300);
     }
   }
 

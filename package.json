@@ -1,6 +1,6 @@
 {
   "name": "mtz-slider",
-  "version": "2.3.7",
+  "version": "2.3.8",
   "description": "Slider moderno y responsive para WordPress con gestión de imágenes desde el panel administrativo",
   "main": "mtz-slider.php",
   "scripts": {
