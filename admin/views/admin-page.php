@@ -12,11 +12,19 @@ if (!defined('ABSPATH')) {
 
 <div class="wrap mtz-slider-admin">
     <div class="mtz-slider-header-actions">
-        <h1 class="mtz-slider-title">
-            <i data-lucide="images"></i>
-            <?php esc_html_e('MTZ Slider by Mantiz Technology SAS', 'mtz-slider'); ?>
-            <span class="mtz-version-badge">v<?php echo MTZ_SLIDER_VERSION; ?></span>
-        </h1>
+        <div class="mtz-slider-header-title">
+            <h1 class="mtz-slider-title">
+                <i data-lucide="images"></i>
+                <?php esc_html_e('MTZ Slider by Mantiz Technology SAS', 'mtz-slider'); ?>
+                <span class="mtz-version-badge">v<?php echo MTZ_SLIDER_VERSION; ?></span>
+            </h1>
+            <p class="mtz-slider-author-link">
+                <a href="https://mantiztechnology.com" target="_blank" rel="noopener noreferrer">
+                    <i data-lucide="external-link"></i>
+                    <?php esc_html_e('www.mantiztechnology.com', 'mtz-slider'); ?>
+                </a>
+            </p>
+        </div>
         <button type="button" class="button" id="mtz-toggle-help">
             <i data-lucide="help-circle"></i>
             <?php esc_html_e('¿Cómo usar este plugin?', 'mtz-slider'); ?>

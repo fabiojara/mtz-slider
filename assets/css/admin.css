@@ -20,13 +20,42 @@
 .mtz-slider-header-actions {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 20px;
+}
+
+.mtz-slider-header-title {
+    flex: 1;
 }
 
 .mtz-slider-title {
     font-size: 24px;
+    margin: 0 0 5px 0;
+}
+
+.mtz-slider-author-link {
     margin: 0;
+    font-size: 14px;
+}
+
+.mtz-slider-author-link a {
+    color: #2271b1;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+}
+
+.mtz-slider-author-link a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+.mtz-slider-author-link a i {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
 }
 
 .mtz-slider-header-actions button {
