@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.2
+ * Version: 2.3.3
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.2');
+define('MTZ_SLIDER_VERSION', '2.3.3');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -64,7 +64,7 @@ class MTZ_Slider {
         // Cargar scripts y estilos
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_public_scripts'));
-        
+
         // Hook para Elementor
         add_action('elementor/frontend/after_enqueue_scripts', array($this, 'enqueue_public_assets'));
         add_action('elementor/frontend/before_render', array($this, 'maybe_enqueue_for_elementor'));
@@ -152,6 +152,7 @@ class MTZ_Slider {
         flush_rewrite_rules();
     }
 
+
     /**
      * Encolar scripts del administrador
      */
@@ -199,7 +200,7 @@ class MTZ_Slider {
 
     private function page_has_slider_shortcode() {
         if (is_admin()) return false;
-        
+
         // Verificar en contenido estándar de WordPress
         if (is_singular()) {
             global $post;
@@ -208,7 +209,7 @@ class MTZ_Slider {
                 if (has_shortcode($post->post_content, 'mtz_slider')) {
                     return true;
                 }
-                
+
                 // Verificar en metadata de Elementor (si existe)
                 $elementor_data = get_post_meta($post->ID, '_elementor_data', true);
                 if (!empty($elementor_data)) {
@@ -227,7 +228,7 @@ class MTZ_Slider {
                         return true;
                     }
                 }
-                
+
                 // Verificar en todo el contenido procesado (por si Elementor lo guarda de otra forma)
                 $all_content = $post->post_content;
                 if (strpos($all_content, '[mtz_slider') !== false) {
@@ -235,7 +236,7 @@ class MTZ_Slider {
                 }
             }
         }
-        
+
         // Verificar en widgets/opciones
         if (is_active_widget(false, false, 'text')) {
             $widget_text = get_option('widget_text');
@@ -247,7 +248,7 @@ class MTZ_Slider {
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -265,7 +266,7 @@ class MTZ_Slider {
         if (wp_style_is('mtz-slider-public', 'enqueued')) {
             return;
         }
-        
+
         // Fuente Poppins
         wp_enqueue_style('google-fonts-poppins', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap', array(), null);
 
@@ -302,6 +303,16 @@ class MTZ_Slider {
             'dashicons-images-alt2',
             30
         );
+        
+        // Submenu para actualizaciones
+        add_submenu_page(
+            'mtz-slider',
+            __('Actualizaciones', 'mtz-slider'),
+            __('Actualizaciones', 'mtz-slider'),
+            'manage_options',
+            'mtz-slider-updates',
+            array($this, 'render_updates_page')
+        );
     }
 
     /**
@@ -337,6 +348,81 @@ class MTZ_Slider {
         extract($view_data);
 
         include MTZ_SLIDER_PLUGIN_DIR . 'admin/views/admin-page.php';
+    }
+
+    /**
+     * Renderizar página de actualizaciones
+     */
+    public function render_updates_page() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // Si hay parámetro refresh, borrar cache
+        if (isset($_GET['refresh']) && $_GET['refresh'] === '1') {
+            delete_transient('mtz_slider_all_releases');
+        }
+
+        // Obtener releases desde GitHub
+        $releases = $this->get_github_releases();
+        $current_version = MTZ_SLIDER_VERSION;
+
+        include MTZ_SLIDER_PLUGIN_DIR . 'admin/views/updates-page.php';
+    }
+
+    /**
+     * Obtener releases desde GitHub
+     *
+     * @return array
+     */
+    private function get_github_releases() {
+        $cache_key = 'mtz_slider_all_releases';
+        $cached = get_transient($cache_key);
+
+        if ($cached !== false) {
+            return $cached;
+        }
+
+        $api_url = 'https://api.github.com/repos/fabiojara/mtz-slider/releases';
+        
+        $response = wp_remote_get($api_url, array(
+            'timeout' => 15,
+            'headers' => array(
+                'Accept' => 'application/vnd.github.v3+json',
+                'User-Agent' => 'WordPress-MTZ-Slider',
+            ),
+        ));
+
+        $releases = array();
+
+        if (!is_wp_error($response)) {
+            $body = wp_remote_retrieve_body($response);
+            $data = json_decode($body, true);
+
+            if (is_array($data)) {
+                foreach ($data as $release) {
+                    if (isset($release['tag_name']) && isset($release['published_at'])) {
+                        $version = ltrim($release['tag_name'], 'v');
+                        $releases[] = array(
+                            'version' => $version,
+                            'tag' => $release['tag_name'],
+                            'name' => isset($release['name']) ? $release['name'] : $release['tag_name'],
+                            'published_at' => $release['published_at'],
+                            'body' => isset($release['body']) ? $release['body'] : '',
+                            'zip_url' => isset($release['zipball_url']) ? $release['zipball_url'] : '',
+                            'html_url' => isset($release['html_url']) ? $release['html_url'] : '',
+                            'prerelease' => isset($release['prerelease']) ? $release['prerelease'] : false,
+                            'draft' => isset($release['draft']) ? $release['draft'] : false,
+                        );
+                    }
+                }
+            }
+        }
+
+        // Cachear por 1 hora
+        set_transient($cache_key, $releases, 1 * HOUR_IN_SECONDS);
+
+        return $releases;
     }
 
     /**

@@ -19,6 +19,11 @@ Si tras activar no ves cambios, revisa consola del navegador y logs de WordPress
 
 ## 🗓️ Changelog
 
+### 2.3.3
+- ✅ **Panel de Actualizaciones**: Nuevo panel que muestra todas las actualizaciones publicadas desde GitHub
+- 🎨 **Interfaz mejorada**: Tarjetas visuales, badges, indicadores de estado
+- 🔧 **Mejoras técnicas**: Caché, refresco manual, información completa de releases
+
 ### 2.3.2
 - ✅ **Compatibilidad con Elementor**: Detección mejorada de shortcodes y carga correcta de assets
 - 🔧 **Detección mejorada**: Busca shortcodes en Elementor, widgets y contenido estándar

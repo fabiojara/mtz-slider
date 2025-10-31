@@ -1,0 +1,43 @@
+MTZ Slider v2.3.3
+
+Nuevas características:
+
+- ✅ **Panel de Actualizaciones**: Nuevo panel dentro del plugin que muestra todas las actualizaciones publicadas en GitHub
+  * Muestra la versión actual instalada
+  * Lista todas las actualizaciones publicadas
+  * Indica qué versiones son más nuevas, actuales o más antiguas
+  * Enlace directo para actualizar desde WordPress
+  * Enlace a GitHub para ver más detalles
+
+- 🎨 **Interfaz mejorada**:
+  * Tarjetas visuales para cada actualización
+  * Badges para pre-releases y borradores
+  * Indicadores de estado (instalada, nueva, antigua)
+  * Botón para refrescar la lista de actualizaciones
+  * Diseño responsive
+
+- 🔧 **Mejoras técnicas**:
+  * Caché de 1 hora para las actualizaciones
+  * Botón de refresco para forzar actualización
+  * Información completa de cada release
+  * Compatible con todos los tipos de releases de GitHub
+
+Cómo usar:
+
+1. Ve a MTZ Slider → Actualizaciones en el menú de WordPress
+2. Verás tu versión actual y todas las actualizaciones publicadas
+3. Las actualizaciones más nuevas tienen un botón "Actualizar ahora" que te lleva a la página de actualizaciones de WordPress
+4. Puedes hacer clic en "Actualizar" para refrescar la lista de actualizaciones desde GitHub
+5. Cada actualización muestra:
+   - Versión
+   - Fecha de publicación
+   - Notas de la versión (changelog)
+   - Enlace a GitHub para ver más detalles
+
+Notas importantes:
+
+- Las actualizaciones se cargan desde GitHub automáticamente
+- La lista se cachea por 1 hora para mejorar el rendimiento
+- Puedes refrescar manualmente usando el botón "Actualizar"
+- Las actualizaciones marcadas como "Instalada" son la versión actual que tienes
+

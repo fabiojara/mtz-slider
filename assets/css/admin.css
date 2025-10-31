@@ -745,6 +745,311 @@
     vertical-align: middle;
 }
 
+/* ========================================
+   Página de Actualizaciones
+   ======================================== */
+
+.mtz-updates-container {
+    max-width: 1200px;
+    margin: 20px 0;
+}
+
+.mtz-current-version-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.mtz-version-card-header {
+    margin-bottom: 15px;
+}
+
+.mtz-version-card-header h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    color: #1d2327;
+}
+
+.mtz-version-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mtz-version-label {
+    font-size: 14px;
+    color: #646970;
+}
+
+.mtz-version-number {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2271b1;
+    padding: 4px 12px;
+    background: #f0f6fc;
+    border-radius: 4px;
+}
+
+.mtz-releases-list {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.mtz-releases-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.mtz-releases-header h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    color: #1d2327;
+}
+
+.mtz-no-releases {
+    text-align: center;
+    padding: 60px 20px;
+    color: #646970;
+}
+
+.mtz-no-releases i {
+    width: 64px;
+    height: 64px;
+    color: #c3c4c7;
+    margin-bottom: 20px;
+}
+
+.mtz-no-releases p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.mtz-subtext {
+    font-size: 14px;
+    color: #8c8f94;
+}
+
+.mtz-releases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.mtz-release-card {
+    background: #f9f9f9;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.mtz-release-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    transform: translateY(-2px);
+}
+
+.mtz-release-card.current {
+    background: #e8f4f8;
+    border-color: #2271b1;
+    border-left: 4px solid #2271b1;
+}
+
+.mtz-release-card.newer {
+    background: #f0f8f0;
+    border-color: #00a32a;
+    border-left: 4px solid #00a32a;
+}
+
+.mtz-release-card.older {
+    background: #f9f9f9;
+    border-color: #c3c4c7;
+}
+
+.mtz-release-header {
+    margin-bottom: 15px;
+}
+
+.mtz-release-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.mtz-release-title h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: #1d2327;
+    flex: 1;
+}
+
+.mtz-release-title h3 i {
+    width: 20px;
+    height: 20px;
+}
+
+.mtz-release-title .current-icon {
+    color: #2271b1;
+}
+
+.mtz-release-title .newer-icon {
+    color: #00a32a;
+}
+
+.mtz-release-title .older-icon {
+    color: #646970;
+}
+
+.mtz-release-tag {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2271b1;
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.mtz-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.mtz-badge-prerelease {
+    background: #ffb900;
+    color: #fff;
+}
+
+.mtz-badge-draft {
+    background: #646970;
+    color: #fff;
+}
+
+.mtz-release-body {
+    margin-top: 15px;
+}
+
+.mtz-release-meta {
+    margin-bottom: 15px;
+}
+
+.mtz-release-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #646970;
+}
+
+.mtz-release-date i {
+    width: 16px;
+    height: 16px;
+}
+
+.mtz-release-notes {
+    margin: 15px 0;
+    padding: 15px;
+    background: #fff;
+    border-radius: 4px;
+    border-left: 3px solid #2271b1;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1d2327;
+}
+
+.mtz-release-notes p {
+    margin: 10px 0;
+}
+
+.mtz-release-notes p:first-child {
+    margin-top: 0;
+}
+
+.mtz-release-notes p:last-child {
+    margin-bottom: 0;
+}
+
+.mtz-release-notes strong {
+    color: #2271b1;
+}
+
+.mtz-release-notes ul,
+.mtz-release-notes ol {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.mtz-release-notes li {
+    margin: 5px 0;
+}
+
+.mtz-release-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.mtz-release-actions .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mtz-release-actions .button i {
+    width: 16px;
+    height: 16px;
+}
+
+.mtz-release-actions .button-disabled {
+    background: #f0f0f1;
+    color: #8c8f94;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.mtz-release-actions .button-disabled:hover {
+    background: #f0f0f1;
+    color: #8c8f94;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .mtz-sliders-container {
