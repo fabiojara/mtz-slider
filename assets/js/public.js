@@ -389,14 +389,54 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
-  ready(function() {
+  function initSliders() {
     if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
     document
       .querySelectorAll(".mtz-slider-wrapper .mtz-slider")
       .forEach(slider => {
-        new SliderInstance(slider);
+        // Evitar inicializar dos veces
+        if (!slider.dataset.initialized) {
+          slider.dataset.initialized = "true";
+          new SliderInstance(slider);
+        }
       });
-  });
+  }
+
+  // Inicializar cuando el DOM esté listo
+  ready(initSliders);
+
+  // Inicializar también cuando Elementor cargue el contenido (si está disponible)
+  if (typeof window.elementorFrontend !== "undefined") {
+    window.elementorFrontend.hooks.addAction("frontend/element_ready/global", function() {
+      setTimeout(initSliders, 100);
+    });
+  }
+
+  // Inicializar cuando se agreguen nuevos elementos al DOM (MutationObserver)
+  if (typeof MutationObserver !== "undefined") {
+    const observer = new MutationObserver(function(mutations) {
+      let shouldInit = false;
+      mutations.forEach(function(mutation) {
+        if (mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === 1 && (node.classList.contains("mtz-slider") || node.querySelector(".mtz-slider"))) {
+              shouldInit = true;
+            }
+          });
+        }
+      });
+      if (shouldInit) {
+        setTimeout(initSliders, 100);
+      }
+    });
+
+    ready(function() {
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    });
+  }
 })();

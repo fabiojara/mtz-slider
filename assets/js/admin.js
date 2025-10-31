@@ -280,8 +280,8 @@
           xhr.setRequestHeader("X-WP-Nonce", mtzSlider.nonce);
         },
         success: function() {
-          const message = isActive 
-            ? "Slider activado correctamente" 
+          const message = isActive
+            ? "Slider activado correctamente"
             : "Slider desactivado correctamente";
           MTZSlider.showNotice(message, "success");
         },

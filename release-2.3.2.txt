@@ -1,0 +1,43 @@
+MTZ Slider v2.3.2
+
+Correcciones y mejoras:
+
+- ✅ **Compatibilidad con Elementor**: El slider ahora funciona correctamente con Elementor
+  * Detección mejorada de shortcodes en contenido de Elementor
+  * Scripts y estilos se cargan correctamente cuando se usa con Elementor
+  * JavaScript se inicializa automáticamente cuando Elementor carga el contenido
+
+- 🔧 **Detección mejorada de shortcodes**:
+  * Busca shortcodes en contenido estándar de WordPress
+  * Detecta shortcodes en metadata de Elementor (_elementor_data)
+  * Verifica shortcodes en widgets y opciones
+
+- 🚀 **Inicialización JavaScript mejorada**:
+  * MutationObserver para detectar sliders agregados dinámicamente
+  * Soporte para hooks de Elementor
+  * Evita inicialización duplicada de sliders
+
+- 📝 **Mejoras técnicas**:
+  * Prevención de carga múltiple de assets
+  * Mejor manejo de contenido renderizado dinámicamente
+  * Compatibilidad mejorada con builders de páginas
+
+Cómo actualizar:
+
+1. Si tienes el plugin instalado:
+   - Ve a WordPress Admin -> Plugins -> Plugins instalados
+   - Busca "MTZ Slider"
+   - Si aparece el aviso "Hay una nueva versión disponible", haz clic en "Actualizar ahora"
+   - Espera a que se complete la actualización
+
+2. Si instalas por primera vez:
+   - Descarga el ZIP desde GitHub Releases
+   - Instala desde WordPress Admin -> Plugins -> Añadir nuevo -> Subir plugin
+   - Activa el plugin
+
+Notas importantes:
+
+- Si usas Elementor, el slider funcionará automáticamente cuando agregues el shortcode
+- Los sliders se inicializan automáticamente cuando Elementor carga el contenido
+- Compatible con widgets de texto y elementos de Elementor que soporten shortcodes
+

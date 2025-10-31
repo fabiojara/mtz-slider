@@ -19,6 +19,12 @@ Si tras activar no ves cambios, revisa consola del navegador y logs de WordPress
 
 ## 🗓️ Changelog
 
+### 2.3.2
+- ✅ **Compatibilidad con Elementor**: Detección mejorada de shortcodes y carga correcta de assets
+- 🔧 **Detección mejorada**: Busca shortcodes en Elementor, widgets y contenido estándar
+- 🚀 **JavaScript mejorado**: MutationObserver y hooks de Elementor para inicialización automática
+- 📝 **Mejoras técnicas**: Prevención de carga múltiple y mejor manejo de contenido dinámico
+
 ### 2.3.1
 - ✅ **Checkbox para activar/desactivar slider**: Checkbox junto al nombre del slider para activar o desactivar el slider completo
 - 🎨 **Mejoras en interfaz**: Sliders inactivos con fondo gris claro, borde izquierdo aumentado a 6px, textos en negro

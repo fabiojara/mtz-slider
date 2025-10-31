@@ -3,7 +3,7 @@
  * Plugin Name: MTZ Slider
  * Plugin URI: https://github.com/fabiojara/mtz-slider
  * Description: Slider moderno y responsive para WordPress. Crea múltiples sliders y gestiona imágenes desde el panel administrativo
- * Version: 2.3.1
+ * Version: 2.3.2
  * Author: Fabio Jara
  * Author URI: https://github.com/fabiojara
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('MTZ_SLIDER_VERSION', '2.3.1');
+define('MTZ_SLIDER_VERSION', '2.3.2');
 define('MTZ_SLIDER_PLUGIN_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('MTZ_SLIDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MTZ_SLIDER_PLUGIN_FILE', __FILE__);
@@ -64,6 +64,10 @@ class MTZ_Slider {
         // Cargar scripts y estilos
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_public_scripts'));
+        
+        // Hook para Elementor
+        add_action('elementor/frontend/after_enqueue_scripts', array($this, 'enqueue_public_assets'));
+        add_action('elementor/frontend/before_render', array($this, 'maybe_enqueue_for_elementor'));
 
         // Agregar menú de administración
         add_action('admin_menu', array($this, 'add_admin_menu'));
@@ -185,7 +189,7 @@ class MTZ_Slider {
      * Encolar scripts públicos
      */
     public function enqueue_public_scripts() {
-        // Encolar solo si la página contiene shortcode
+        // Verificar en contenido del post y en Elementor
         if (!$this->page_has_slider_shortcode()) {
             return;
         }
@@ -195,14 +199,73 @@ class MTZ_Slider {
 
     private function page_has_slider_shortcode() {
         if (is_admin()) return false;
+        
+        // Verificar en contenido estándar de WordPress
         if (is_singular()) {
             global $post;
-            if ($post && has_shortcode($post->post_content, 'mtz_slider')) return true;
+            if ($post) {
+                // Verificar en post_content
+                if (has_shortcode($post->post_content, 'mtz_slider')) {
+                    return true;
+                }
+                
+                // Verificar en metadata de Elementor (si existe)
+                $elementor_data = get_post_meta($post->ID, '_elementor_data', true);
+                if (!empty($elementor_data)) {
+                    // Elementor guarda datos en JSON
+                    if (is_string($elementor_data)) {
+                        $decoded = json_decode($elementor_data, true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                            $json_string = json_encode($decoded);
+                            if (strpos($json_string, 'mtz_slider') !== false) {
+                                return true;
+                            }
+                        }
+                    }
+                    // También verificar como string
+                    if (strpos($elementor_data, 'mtz_slider') !== false) {
+                        return true;
+                    }
+                }
+                
+                // Verificar en todo el contenido procesado (por si Elementor lo guarda de otra forma)
+                $all_content = $post->post_content;
+                if (strpos($all_content, '[mtz_slider') !== false) {
+                    return true;
+                }
+            }
         }
+        
+        // Verificar en widgets/opciones
+        if (is_active_widget(false, false, 'text')) {
+            $widget_text = get_option('widget_text');
+            if (is_array($widget_text)) {
+                foreach ($widget_text as $widget) {
+                    if (isset($widget['text']) && has_shortcode($widget['text'], 'mtz_slider')) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
         return false;
     }
 
+    /**
+     * Verificar si hay shortcode en Elementor antes de renderizar
+     */
+    public function maybe_enqueue_for_elementor($element) {
+        if ($element->get_settings('text') && has_shortcode($element->get_settings('text'), 'mtz_slider')) {
+            $this->enqueue_public_assets();
+        }
+    }
+
     private function enqueue_public_assets() {
+        // Evitar cargar múltiples veces
+        if (wp_style_is('mtz-slider-public', 'enqueued')) {
+            return;
+        }
+        
         // Fuente Poppins
         wp_enqueue_style('google-fonts-poppins', 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap', array(), null);
 
